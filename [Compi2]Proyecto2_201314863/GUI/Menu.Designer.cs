@@ -29,44 +29,44 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.uMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.depurarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generacionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ejecucionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codigoCompartidoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cargarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.erroresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tablaDeSimbolosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gramaticaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.tabPage7 = new System.Windows.Forms.TabPage();
-            this.erroresToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tablaDeSimbolosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gramaticaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.generarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.generacionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ejecucionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cargarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,6 +77,60 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(848, 299);
             this.panel1.TabIndex = 0;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.treeView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Size = new System.Drawing.Size(848, 299);
+            this.splitContainer1.SplitterDistance = 171;
+            this.splitContainer1.TabIndex = 0;
+            // 
+            // treeView1
+            // 
+            this.treeView1.Location = new System.Drawing.Point(3, 3);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(165, 296);
+            this.treeView1.TabIndex = 0;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(3, 3);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(670, 296);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(662, 270);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(662, 270);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // menuStrip1
             // 
@@ -99,6 +153,12 @@
             this.uMLToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.uMLToolStripMenuItem.Text = "UML";
             // 
+            // generarToolStripMenuItem
+            // 
+            this.generarToolStripMenuItem.Name = "generarToolStripMenuItem";
+            this.generarToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.generarToolStripMenuItem.Text = "Generar";
+            // 
             // depurarToolStripMenuItem
             // 
             this.depurarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -107,6 +167,18 @@
             this.depurarToolStripMenuItem.Name = "depurarToolStripMenuItem";
             this.depurarToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.depurarToolStripMenuItem.Text = "Depurar";
+            // 
+            // generacionToolStripMenuItem
+            // 
+            this.generacionToolStripMenuItem.Name = "generacionToolStripMenuItem";
+            this.generacionToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.generacionToolStripMenuItem.Text = "Generacion";
+            // 
+            // ejecucionToolStripMenuItem
+            // 
+            this.ejecucionToolStripMenuItem.Name = "ejecucionToolStripMenuItem";
+            this.ejecucionToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.ejecucionToolStripMenuItem.Text = "Ejecucion";
             // 
             // codigoCompartidoToolStripMenuItem
             // 
@@ -117,6 +189,18 @@
             this.codigoCompartidoToolStripMenuItem.Size = new System.Drawing.Size(125, 20);
             this.codigoCompartidoToolStripMenuItem.Text = "Codigo Compartido";
             // 
+            // importarToolStripMenuItem
+            // 
+            this.importarToolStripMenuItem.Name = "importarToolStripMenuItem";
+            this.importarToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.importarToolStripMenuItem.Text = "Importar";
+            // 
+            // cargarToolStripMenuItem
+            // 
+            this.cargarToolStripMenuItem.Name = "cargarToolStripMenuItem";
+            this.cargarToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.cargarToolStripMenuItem.Text = "Cargar";
+            // 
             // reportesToolStripMenuItem
             // 
             this.reportesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -126,6 +210,24 @@
             this.reportesToolStripMenuItem.Name = "reportesToolStripMenuItem";
             this.reportesToolStripMenuItem.Size = new System.Drawing.Size(65, 20);
             this.reportesToolStripMenuItem.Text = "Reportes";
+            // 
+            // erroresToolStripMenuItem
+            // 
+            this.erroresToolStripMenuItem.Name = "erroresToolStripMenuItem";
+            this.erroresToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.erroresToolStripMenuItem.Text = "Errores";
+            // 
+            // tablaDeSimbolosToolStripMenuItem
+            // 
+            this.tablaDeSimbolosToolStripMenuItem.Name = "tablaDeSimbolosToolStripMenuItem";
+            this.tablaDeSimbolosToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.tablaDeSimbolosToolStripMenuItem.Text = "Tabla de Simbolos";
+            // 
+            // gramaticaToolStripMenuItem
+            // 
+            this.gramaticaToolStripMenuItem.Name = "gramaticaToolStripMenuItem";
+            this.gramaticaToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.gramaticaToolStripMenuItem.Text = "Gramatica";
             // 
             // button1
             // 
@@ -172,23 +274,6 @@
             this.button5.Text = "Compilar";
             this.button5.UseVisualStyleBackColor = true;
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeView1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer1.Size = new System.Drawing.Size(848, 299);
-            this.splitContainer1.SplitterDistance = 171;
-            this.splitContainer1.TabIndex = 0;
-            // 
             // panel2
             // 
             this.panel2.Controls.Add(this.tabControl2);
@@ -196,43 +281,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(848, 177);
             this.panel2.TabIndex = 7;
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(3, 3);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(670, 296);
-            this.tabControl1.TabIndex = 0;
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(662, 270);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(662, 270);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // treeView1
-            // 
-            this.treeView1.Location = new System.Drawing.Point(3, 3);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(165, 296);
-            this.treeView1.TabIndex = 0;
             // 
             // tabControl2
             // 
@@ -262,7 +310,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(833, 127);
+            this.tabPage4.Size = new System.Drawing.Size(833, 148);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "Errores";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -271,7 +319,7 @@
             // 
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(833, 127);
+            this.tabPage5.Size = new System.Drawing.Size(833, 148);
             this.tabPage5.TabIndex = 2;
             this.tabPage5.Text = "Salida proceso de optimizacion";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -280,7 +328,7 @@
             // 
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Size = new System.Drawing.Size(833, 127);
+            this.tabPage6.Size = new System.Drawing.Size(833, 148);
             this.tabPage6.TabIndex = 3;
             this.tabPage6.Text = "Codigo 3D";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -289,58 +337,10 @@
             // 
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
             this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Size = new System.Drawing.Size(833, 127);
+            this.tabPage7.Size = new System.Drawing.Size(833, 148);
             this.tabPage7.TabIndex = 4;
             this.tabPage7.Text = "Codigo 3D Optimizado";
             this.tabPage7.UseVisualStyleBackColor = true;
-            // 
-            // erroresToolStripMenuItem
-            // 
-            this.erroresToolStripMenuItem.Name = "erroresToolStripMenuItem";
-            this.erroresToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.erroresToolStripMenuItem.Text = "Errores";
-            // 
-            // tablaDeSimbolosToolStripMenuItem
-            // 
-            this.tablaDeSimbolosToolStripMenuItem.Name = "tablaDeSimbolosToolStripMenuItem";
-            this.tablaDeSimbolosToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.tablaDeSimbolosToolStripMenuItem.Text = "Tabla de Simbolos";
-            // 
-            // gramaticaToolStripMenuItem
-            // 
-            this.gramaticaToolStripMenuItem.Name = "gramaticaToolStripMenuItem";
-            this.gramaticaToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.gramaticaToolStripMenuItem.Text = "Gramatica";
-            // 
-            // generarToolStripMenuItem
-            // 
-            this.generarToolStripMenuItem.Name = "generarToolStripMenuItem";
-            this.generarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.generarToolStripMenuItem.Text = "Generar";
-            // 
-            // generacionToolStripMenuItem
-            // 
-            this.generacionToolStripMenuItem.Name = "generacionToolStripMenuItem";
-            this.generacionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.generacionToolStripMenuItem.Text = "Generacion";
-            // 
-            // ejecucionToolStripMenuItem
-            // 
-            this.ejecucionToolStripMenuItem.Name = "ejecucionToolStripMenuItem";
-            this.ejecucionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.ejecucionToolStripMenuItem.Text = "Ejecucion";
-            // 
-            // importarToolStripMenuItem
-            // 
-            this.importarToolStripMenuItem.Name = "importarToolStripMenuItem";
-            this.importarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.importarToolStripMenuItem.Text = "Importar";
-            // 
-            // cargarToolStripMenuItem
-            // 
-            this.cargarToolStripMenuItem.Name = "cargarToolStripMenuItem";
-            this.cargarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.cargarToolStripMenuItem.Text = "Cargar";
             // 
             // Form1
             // 
@@ -357,16 +357,16 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "C3D Combiner";
             this.panel1.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.panel2.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
