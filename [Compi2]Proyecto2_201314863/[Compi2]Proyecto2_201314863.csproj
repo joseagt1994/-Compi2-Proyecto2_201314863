@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="irony">
+      <HintPath>..\..\..\Visual Studio 2013\Projects\Compi2_Practica1_201314863\Compi2_Practica1_201314863\bin\Debug\irony.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,9 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Alto Nivel\Atributo.cs" />
+    <Compile Include="Alto Nivel\Clase.cs" />
+    <Compile Include="Alto Nivel\Procedimiento.cs" />
     <Compile Include="Analisis\AnalizadorOLC++.cs" />
     <Compile Include="Analisis\AnalizadorTree.cs" />
     <Compile Include="Analisis\AST.cs" />
+    <Compile Include="Analisis\InterpreteOLC.cs" />
+    <Compile Include="Analisis\InterpreteTree.cs" />
+    <Compile Include="Estructuras\Simbolo.cs" />
+    <Compile Include="Estructuras\TablaSimbolos.cs" />
+    <Compile Include="Generacion C3D\C3D.cs" />
     <Compile Include="GUI\Menu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -57,6 +68,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reportes\Error.cs" />
+    <Compile Include="Reportes\Errores.cs" />
+    <Compile Include="Reportes\Reporte.cs" />
     <EmbeddedResource Include="GUI\Menu.resx">
       <DependentUpon>Menu.cs</DependentUpon>
     </EmbeddedResource>
@@ -82,7 +96,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Optimizacion C3D\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
