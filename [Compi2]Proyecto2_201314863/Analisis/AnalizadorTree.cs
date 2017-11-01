@@ -83,10 +83,10 @@ namespace _Compi2_Proyecto2_201314863
             var caso = ToTerm("caso");
             var defecto = ToTerm("defecto");
             var para = ToTerm("para");
-            var hacer = ToTerm("do");
-            var mientras = ToTerm("while");
-            var repetir = ToTerm("repeat");
-            var hasta = ToTerm("until");
+            var hacer = ToTerm("hacer");
+            var mientras = ToTerm("mientras");
+            var repetir = ToTerm("repetir");
+            var hasta = ToTerm("hasta");
             var loop = ToTerm("loop");
             var nuevo = ToTerm("nuevo");
             var retornar = ToTerm("return");
