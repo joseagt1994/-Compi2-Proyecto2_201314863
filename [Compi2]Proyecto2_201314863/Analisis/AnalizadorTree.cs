@@ -12,7 +12,7 @@ namespace _Compi2_Proyecto2_201314863
     public class AnalizadorTree : Grammar
     {
         public AnalizadorTree()
-            : base(caseSensitive:true)
+            : base(caseSensitive:false)
         {
             //Comentarios
             CommentTerminal COMENTARIO_SIMPLE = new CommentTerminal("comentario_simple", "##", "\n", "\r\n");
@@ -127,6 +127,7 @@ namespace _Compi2_Proyecto2_201314863
             var A = new NonTerminal("A");
             var CLASES = new NonTerminal("CLASES");
             var CLASE = new NonTerminal("CLASE");
+            var BCUERPO = new NonTerminal("BCUERPO");
             var CUERPO = new NonTerminal("CUERPO");
             var METODO = new NonTerminal("METODO");
             var VISIBILIDAD = new NonTerminal("VISIBILIDAD");
@@ -145,6 +146,7 @@ namespace _Compi2_Proyecto2_201314863
             var IF5 = new NonTerminal("IF5");
             var SWITCH = new NonTerminal("SWITCH");
             var CASOS = new NonTerminal("CASOS");
+            var BCASO = new NonTerminal("BCASO");
             var CASO = new NonTerminal("CASO");
             var ECASO = new NonTerminal("ECASO");
             var DEFECTO = new NonTerminal("DEFECTO");
@@ -202,7 +204,7 @@ namespace _Compi2_Proyecto2_201314863
 
             IMPORTACIONES.Rule = MakeStarRule(IMPORTACIONES, IMPORTAR);
 
-            IMPORTAR.Rule = importar + LISTA_ARCHIVOS;
+            IMPORTAR.Rule = importar + LISTA_ARCHIVOS + Eos;
 
             LISTA_ARCHIVOS.Rule = LISTA_ARCHIVOS + coma + ARCHIVO
                 | ARCHIVO;
@@ -215,21 +217,23 @@ namespace _Compi2_Proyecto2_201314863
 
             CLASES.Rule = MakeStarRule(CLASES, CLASE);
 
-            CLASE.Rule = clase + id + acor + id + ccor + dosp + CUERPOS
-                       | clase + id + acor + ccor + dosp + CUERPOS;
+            CLASE.Rule = clase + id + acor + id + ccor + dosp + Eos + BCUERPO
+                       | clase + id + acor + ccor + dosp + Eos + BCUERPO;
+
+            BCUERPO.Rule = Indent + CUERPOS + Dedent;
 
             CUERPOS.Rule = MakeStarRule(CUERPOS, CUERPO);
 
-            CUERPO.Rule = VISIBILIDAD + DECLARACION
+            CUERPO.Rule = VISIBILIDAD + DECLARACION + Eos
                         | METODO 
-                        | constructor + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
-                        | DECLARACION
-                        | ASIGNACION;
+                        | constructor + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
+                        | DECLARACION + Eos
+                        | ASIGNACION + Eos;
 
-            METODO.Rule = sobreescribir + VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
-                        | VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
-                        | sobreescribir + TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
-                        | TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos;
+            METODO.Rule = sobreescribir + Eos + VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
+                        | VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
+                        | sobreescribir + Eos + TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
+                        | TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE;
 
             VISIBILIDAD.Rule = publico
                              | privado
@@ -306,38 +310,40 @@ namespace _Compi2_Proyecto2_201314863
                          | LOOP
                          | REPEAT;
 
-            IF1.Rule = si + EXP + dosp + BLOQUE + Eos;
+            IF1.Rule = si + EXP + dosp + Eos + BLOQUE;
 
-            IF2.Rule = si + EXP + dosp + BLOQUE + Eos + sino + dosp + BLOQUE + Eos;
+            IF2.Rule = si + EXP + dosp + Eos + BLOQUE + sino + dosp + Eos + BLOQUE;
 
-            IF3.Rule = si + EXP + dosp + BLOQUE + Eos + IF4;
+            IF3.Rule = si + EXP + dosp + Eos + BLOQUE + IF4;
 
-            IF5.Rule = si + EXP + dosp + BLOQUE + Eos + IF4 + sino + dosp + BLOQUE + Eos;
+            IF5.Rule = si + EXP + dosp + Eos + BLOQUE + IF4 + sino + dosp + Eos + BLOQUE;
 
-            IF4.Rule = IF4 + sinosi + EXP + dosp + BLOQUE + Eos
-                | sinosi + EXP + dosp + BLOQUE + Eos;
+            IF4.Rule = IF4 + sinosi + EXP + dosp + Eos + BLOQUE
+                | sinosi + EXP + dosp + Eos + BLOQUE;
 
-            SWITCH.Rule = selector + caso + EXP + dosp + CASOS + DEFECTO
-                | selector + caso + EXP + dosp + CASOS;
+            SWITCH.Rule = selector + caso + EXP + dosp + Eos + BCASO;
 
-            CASO.Rule = MakeStarRule(CASOS, CASO);
+            BCASO.Rule = Indent + CASOS + DEFECTO + Dedent
+                | Indent + CASOS + Dedent;
 
-            CASO.Rule = EXP + dosp + BLOQUE + Eos;
+            CASOS.Rule = MakeStarRule(CASOS, CASO);
+
+            CASO.Rule = EXP + dosp + Eos + BLOQUE;
             
-            DEFECTO.Rule = defecto + dosp + BLOQUE + Eos;
+            DEFECTO.Rule = defecto + dosp + Eos + BLOQUE;
 
-            WHILE.Rule = mientras + EXP + dosp + BLOQUE + Eos;
+            WHILE.Rule = mientras + EXP + dosp + Eos + BLOQUE;
 
-            DO_WHILE.Rule = hacer + dosp + BLOQUE + Eos + mientras + EXP + Eos;
+            DO_WHILE.Rule = hacer + dosp + Eos + BLOQUE + mientras + EXP + Eos;
 
-            REPEAT.Rule = repetir + dosp + BLOQUE + Eos + hasta + EXP + Eos;
+            REPEAT.Rule = repetir + dosp + Eos + BLOQUE + hasta + EXP + Eos;
 
             Fasignar.Rule = DECLARACION
                          | ASIGNACION;
 
-            FOR.Rule = para + acor + Fasignar + dosp + EXP + dosp + EXP + ccor + dosp + BLOQUE + Eos;
+            FOR.Rule = para + acor + Fasignar + dosp + EXP + dosp + EXP + ccor + dosp + Eos + BLOQUE;
 
-            LOOP.Rule = loop + dosp + BLOQUE + Eos;
+            LOOP.Rule = loop + dosp + Eos + BLOQUE;
 
             TPROC.Rule = metodo + TIPOS
                        | funcion;
