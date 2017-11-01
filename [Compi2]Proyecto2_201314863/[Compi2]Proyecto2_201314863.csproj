@@ -55,6 +55,7 @@
     <Compile Include="Analisis\AnalizadorOLC++.cs" />
     <Compile Include="Analisis\AnalizadorTree.cs" />
     <Compile Include="Analisis\AST.cs" />
+    <Compile Include="Analisis\Compilador.cs" />
     <Compile Include="Analisis\InterpreteOLC.cs" />
     <Compile Include="Analisis\InterpreteTree.cs" />
     <Compile Include="Estructuras\Simbolo.cs" />

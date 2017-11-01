@@ -132,6 +132,7 @@ namespace _Compi2_Proyecto2_201314863
             var VISIBILIDAD = new NonTerminal("VISIBILIDAD");
             var DECLARACIONES = new NonTerminal("DECLARACIONES");
             var LISTA_IDS = new NonTerminal("IDS");
+            var BLOQUE = new NonTerminal("BLOQUE");
             var LISTA_SENTENCIAS = new NonTerminal("SENTENCIAS");
             var SENTENCIA = new NonTerminal("SENTENCIA");
             var DECLARAR = new NonTerminal("DECLARAR");
@@ -221,14 +222,14 @@ namespace _Compi2_Proyecto2_201314863
 
             CUERPO.Rule = VISIBILIDAD + DECLARACION
                         | METODO 
-                        | constructor + acor + LISTA_PARAMETROS + dosp + LISTA_SENTENCIAS
+                        | constructor + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
                         | DECLARACION
                         | ASIGNACION;
 
-            METODO.Rule = sobreescribir + VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + LISTA_SENTENCIAS
-                        | VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + LISTA_SENTENCIAS
-                        | sobreescribir + TPROC + id + acor + LISTA_PARAMETROS + dosp + LISTA_SENTENCIAS
-                        | TPROC + id + acor + LISTA_PARAMETROS + dosp + LISTA_SENTENCIAS;
+            METODO.Rule = sobreescribir + VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
+                        | VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
+                        | sobreescribir + TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos
+                        | TPROC + id + acor + LISTA_PARAMETROS + dosp + BLOQUE + Eos;
 
             VISIBILIDAD.Rule = publico
                              | privado
@@ -259,17 +260,19 @@ namespace _Compi2_Proyecto2_201314863
             LISTA_IDS.Rule = LISTA_IDS + coma + id
                            | id;
 
+            BLOQUE.Rule = Indent + LISTA_SENTENCIAS + Dedent;
+
             LISTA_SENTENCIAS.Rule = MakeStarRule(LISTA_SENTENCIAS, SENTENCIA);
 
-            SENTENCIA.Rule = DECLARACION
-                | ASIGNACION 
+            SENTENCIA.Rule = DECLARACION + Eos
+                | ASIGNACION + Eos
                 | CONTROL
-                | LLAMADA
-                | INTERRUMPIR
-                | CONTINUAR
-                | RETORNO
-                | NATIVAS
-                | IMPRIMIR;
+                | LLAMADA + Eos
+                | INTERRUMPIR + Eos
+                | CONTINUAR + Eos
+                | RETORNO + Eos
+                | NATIVAS + Eos
+                | IMPRIMIR + Eos;
 
             IMPRIMIR.Rule = mostrar + acor + EXP + ccor
                           | outStr + acor + EXP + ccor
@@ -303,38 +306,38 @@ namespace _Compi2_Proyecto2_201314863
                          | LOOP
                          | REPEAT;
 
-            IF1.Rule = si + EXP + dosp + LISTA_SENTENCIAS;
+            IF1.Rule = si + EXP + dosp + BLOQUE + Eos;
 
-            IF2.Rule = si + EXP + dosp + LISTA_SENTENCIAS + sino + dosp + LISTA_SENTENCIAS;
+            IF2.Rule = si + EXP + dosp + BLOQUE + Eos + sino + dosp + BLOQUE + Eos;
 
-            IF3.Rule = si + EXP + dosp + LISTA_SENTENCIAS + IF4;
+            IF3.Rule = si + EXP + dosp + BLOQUE + Eos + IF4;
 
-            IF5.Rule = si + EXP + dosp + LISTA_SENTENCIAS + IF4 + sino + dosp + LISTA_SENTENCIAS;
+            IF5.Rule = si + EXP + dosp + BLOQUE + Eos + IF4 + sino + dosp + BLOQUE + Eos;
 
-            IF4.Rule = IF4 + sinosi + EXP + dosp + LISTA_SENTENCIAS
-                | sinosi + EXP + dosp + LISTA_SENTENCIAS;
+            IF4.Rule = IF4 + sinosi + EXP + dosp + BLOQUE + Eos
+                | sinosi + EXP + dosp + BLOQUE + Eos;
 
             SWITCH.Rule = selector + caso + EXP + dosp + CASOS + DEFECTO
                 | selector + caso + EXP + dosp + CASOS;
 
             CASO.Rule = MakeStarRule(CASOS, CASO);
 
-            CASO.Rule = EXP + dosp + LISTA_SENTENCIAS;
+            CASO.Rule = EXP + dosp + BLOQUE + Eos;
             
-            DEFECTO.Rule = defecto + dosp + LISTA_SENTENCIAS;
+            DEFECTO.Rule = defecto + dosp + BLOQUE + Eos;
 
-            WHILE.Rule = mientras + EXP + dosp + LISTA_SENTENCIAS;
+            WHILE.Rule = mientras + EXP + dosp + BLOQUE + Eos;
 
-            DO_WHILE.Rule = hacer + dosp + LISTA_SENTENCIAS + mientras + EXP;
+            DO_WHILE.Rule = hacer + dosp + BLOQUE + Eos + mientras + EXP + Eos;
 
-            REPEAT.Rule = repetir + dosp + LISTA_SENTENCIAS + hasta + EXP;
+            REPEAT.Rule = repetir + dosp + BLOQUE + Eos + hasta + EXP + Eos;
 
             Fasignar.Rule = DECLARACION
                          | ASIGNACION;
 
-            FOR.Rule = para + acor + Fasignar + dosp + EXP + dosp + EXP + ccor + dosp + LISTA_SENTENCIAS;
+            FOR.Rule = para + acor + Fasignar + dosp + EXP + dosp + EXP + ccor + dosp + BLOQUE + Eos;
 
-            LOOP.Rule = loop + dosp + LISTA_SENTENCIAS;
+            LOOP.Rule = loop + dosp + BLOQUE + Eos;
 
             TPROC.Rule = metodo + TIPOS
                        | funcion;
@@ -431,5 +434,14 @@ namespace _Compi2_Proyecto2_201314863
             this.MarkTransient(AID, SENTENCIA, DIM, CONTROL, Fasignar, TIPO, LISTA_PARAMETROS);
 
         }
+
+        public override void CreateTokenFilters(LanguageData language, TokenFilterList filters)
+        {
+            var outlineFilter = new CodeOutlineFilter(language.GrammarData,
+                OutlineOptions.ProduceIndents | OutlineOptions.CheckBraces,
+                ToTerm(@"\"));
+            filters.Add(outlineFilter);
+        }
+
     }
 }

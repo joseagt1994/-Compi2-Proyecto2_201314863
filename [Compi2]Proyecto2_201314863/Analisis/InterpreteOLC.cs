@@ -18,7 +18,7 @@ namespace _Compi2_Proyecto2_201314863
         #endregion
 
         #region "Interprete"
-        public List<C3D> analizar(String entrada, RichTextBox txtCodigo)
+        public List<Clase> analizar(String entrada, RichTextBox txtCodigo)
         {
             tablaSimbolos = TablaSimbolos.getInstance;
             AnalizadorOLC gramatica = new AnalizadorOLC();
