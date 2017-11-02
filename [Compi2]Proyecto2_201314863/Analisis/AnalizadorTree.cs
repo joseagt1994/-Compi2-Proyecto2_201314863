@@ -396,7 +396,7 @@ namespace _Compi2_Proyecto2_201314863
 
             ACCESO.Rule = MakeStarRule(ACCESO, punto, id);
 
-            DIM.Rule = acor + EXP + ccor;
+            DIM.Rule = acor + numero + ccor;
 
             LEXPS.Rule = ccor
                        | EXPS + ccor;

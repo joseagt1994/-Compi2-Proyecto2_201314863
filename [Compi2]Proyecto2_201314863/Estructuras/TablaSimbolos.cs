@@ -30,7 +30,13 @@ namespace _Compi2_Proyecto2_201314863
         #endregion
 
         #region "Insertar"
-        
+        public void insertarLista(LinkedList<Simbolo> simbolos)
+        {
+            foreach(Simbolo simbolo in simbolos)
+            {
+                this.Add(simbolo);
+            }
+        }
         #endregion
     }
 }

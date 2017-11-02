@@ -148,31 +148,33 @@ namespace _Compi2_Proyecto2_201314863
                 else if (cuerpo.ChildNodes.ElementAt(0).Term.Name.Equals("DECLARACION"))
                 {
                     ParseTreeNode declara = cuerpo.ChildNodes[0];
-                    if (declara.Term.Name.Equals("DECLARACION"))
+                    /* DECLARACION -> TIPO + LISTA_IDS + asignarR
+                                    | TIPO + LISTA_IDS
+                                    | TIPO + id + INDICES */
+                    int tipo = Simbolo.getTipo(declara.ChildNodes[0].Token.Text);
+                    ParseTreeNode ids = declara.ChildNodes[1];
+                    if (ids.Term.Name.Equals("id"))
                     {
-                        /* DECLARACION -> TIPO + LISTA_IDS + asignarR
-                                        | TIPO + LISTA_IDS
-                                        | TIPO + id + INDICES */
-                        int tipo = Simbolo.getTipo(declara.ChildNodes[0].Token.Text);
-                        ParseTreeNode ids = declara.ChildNodes[1];
-                        if (declara.ChildNodes.Count == 3 && ids.Term.Name.Equals("id"))
+                        Atributo variable = new Atributo(ids.Token.Text, tipo,
+                                ids.Token.Location.Line, ids.Token.Location.Column);
+                        variable.asignarArreglo(declara.ChildNodes[2]);
+                        if(tipo == (int)Simbolo.Tipo.CLASE)
                         {
-                            nueva.agregarAtributo(new Atributo(ids.Token.Text, tipo, 
-                                declara.ChildNodes[2], ids.Token.Location.Line, 
-                                ids.Token.Location.Column));
+                            variable.asignarClase(declara.ChildNodes[0].ChildNodes[0].Token.Text);
                         }
-                        else
+                        nueva.agregarAtributo(variable);
+                    }
+                    else
+                    {
+                        foreach (ParseTreeNode var in ids.ChildNodes)
                         {
-                            foreach (ParseTreeNode var in ids.ChildNodes)
+                            Atributo a = new Atributo(var.Token.Text, tipo,
+                                var.Token.Location.Line, var.Token.Location.Column);
+                            if (declara.ChildNodes.Count == 3)
                             {
-                                Atributo a = new Atributo(var.Token.Text, tipo, null,
-                                    var.Token.Location.Line, var.Token.Location.Column);
-                                if (declara.ChildNodes.Count == 3)
-                                {
-                                    a.asignarValor(declara.ChildNodes[2]);
-                                }
-                                nueva.agregarAtributo(a);
+                                a.asignarValor(declara.ChildNodes[2]);
                             }
+                            nueva.agregarAtributo(a);
                         }
                     }
                 }
@@ -180,28 +182,30 @@ namespace _Compi2_Proyecto2_201314863
                 {
                     int vis = Simbolo.getVisibilidad(cuerpo.ChildNodes[0].ChildNodes[0].Token.Text);
                     ParseTreeNode declara = cuerpo.ChildNodes[1];
-                    if (declara.Term.Name.Equals("DECLARACION"))
+                    int tipo = Simbolo.getTipo(declara.ChildNodes[0].Token.Text);
+                    ParseTreeNode ids = declara.ChildNodes[1];
+                    if (ids.Term.Name.Equals("id"))
                     {
-                        int tipo = Simbolo.getTipo(declara.ChildNodes[0].Token.Text);
-                        ParseTreeNode ids = declara.ChildNodes[1];
-                        if (declara.ChildNodes.Count == 4 && ids.Term.Name.Equals("id"))
+                        Atributo variable = new Atributo(ids.Token.Text, tipo,
+                                ids.Token.Location.Line, ids.Token.Location.Column);
+                        variable.asignarArreglo(declara.ChildNodes[2]);
+                        if (tipo == (int)Simbolo.Tipo.CLASE)
                         {
-                            nueva.agregarAtributo(new Atributo(ids.Token.Text, tipo, 
-                                declara.ChildNodes[2], ids.Token.Location.Line, 
-                                ids.Token.Location.Column));
+                            variable.asignarClase(declara.ChildNodes[0].ChildNodes[0].Token.Text);
                         }
-                        else
+                        nueva.agregarAtributo(variable);
+                    }
+                    else
+                    {
+                        foreach (ParseTreeNode var in ids.ChildNodes)
                         {
-                            foreach (ParseTreeNode var in ids.ChildNodes)
+                            Atributo a = new Atributo(var.Token.Text, tipo,
+                                var.Token.Location.Line, var.Token.Location.Column);
+                            if (declara.ChildNodes.Count == 3)
                             {
-                                Atributo a = new Atributo(var.Token.Text, tipo, null,
-                                    var.Token.Location.Line, var.Token.Location.Column);
-                                if (declara.ChildNodes.Count == 4)
-                                {
-                                    a.asignarValor(declara.ChildNodes[2]);
-                                }
-                                nueva.agregarAtributo(a);
+                                a.asignarValor(declara.ChildNodes[2]);
                             }
+                            nueva.agregarAtributo(a);
                         }
                     }
                 }
@@ -336,9 +340,18 @@ namespace _Compi2_Proyecto2_201314863
             {
                 // PARAMETRO -> TIPO id INDICES
                 int tipo = Simbolo.getTipo(pa.ChildNodes[0].Token.Text);
-                parametros.Add(new Atributo(pa.ChildNodes[1].Token.Text, tipo, 
-                    pa.ChildNodes[2], pa.ChildNodes[1].Token.Location.Line,
-                    pa.ChildNodes[1].Token.Location.Column));
+                Atributo parametro = new Atributo(pa.ChildNodes[1].Token.Text, tipo,
+                    pa.ChildNodes[1].Token.Location.Line,
+                    pa.ChildNodes[1].Token.Location.Column);
+                if(tipo == (int)Simbolo.Tipo.CLASE)
+                {
+                    parametro.asignarClase(pa.ChildNodes[0].ChildNodes[0].Token.Text);
+                }
+                if (pa.ChildNodes[2].ChildNodes.Count > 0)
+                {
+                    parametro.asignarArreglo(pa.ChildNodes[2]);
+                }
+                parametros.Add(parametro);
             }
             return parametros;
         }

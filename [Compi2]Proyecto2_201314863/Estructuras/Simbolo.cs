@@ -20,11 +20,10 @@ namespace _Compi2_Proyecto2_201314863
         }
 
         //ATRIBUTOS DE SIMBOLO
-        public String nombre, padre, estructura;
-        public int ambito, tipo, rol, pos, tam, acceso, dims;
-        public int fila, columna;
-        //public List<Dimension> dimensiones;
-        //public ParseTreeNode sentencias;
+        public String nombre, padre, clase;
+        public int ambito, tipo, rol, pos, tam;
+        //public int fila, columna;
+        public List<int> dimensiones;
         //public C3D instruccion;
 
         public Simbolo()
@@ -60,7 +59,7 @@ namespace _Compi2_Proyecto2_201314863
                 case "cadena":
                     return (int)Tipo.CADENA;
                 default:
-                    return (int)Tipo.VACIO;
+                    return (int)Tipo.CLASE;
             }
         }
 
