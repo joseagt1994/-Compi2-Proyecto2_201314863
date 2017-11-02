@@ -11,7 +11,7 @@ namespace _Compi2_Proyecto2_201314863
         public enum Tipo : int
         {
             GLOBAL, LOCAL, VARIABLE, METODO, FUNCION, PARAMETRO, RETORNO, NUMERO,
-            DECIMAL, CARACTER, CADENA, BOOLEAN, VACIO, ETIQUETA, CLASE
+            DECIMAL, CARACTER, CADENA, BOOLEAN, VACIO, ETIQUETA, CLASE, CONSTRUCTOR
         }
 
         public enum Visibilidad : int
@@ -32,7 +32,39 @@ namespace _Compi2_Proyecto2_201314863
 
         }
 
-        public String getValor(int val)
+        public static int getVisibilidad(String vis)
+        {
+            switch (vis)
+            {
+                case "publico":
+                    return (int)Visibilidad.PUBLICO;
+                case "privado":
+                    return (int)Visibilidad.PRIVADO;
+                default:
+                    return (int)Visibilidad.PROTEGIDO;
+            }
+        }
+
+        public static int getTipo(String tipo)
+        {
+            switch (tipo)
+            {
+                case "entero":
+                    return (int)Tipo.NUMERO;
+                case "decimal":
+                    return (int)Tipo.DECIMAL;
+                case "booleano":
+                    return (int)Tipo.BOOLEAN;
+                case "caracter":
+                    return (int)Tipo.CARACTER;
+                case "cadena":
+                    return (int)Tipo.CADENA;
+                default:
+                    return (int)Tipo.VACIO;
+            }
+        }
+
+        public static String getValor(int val)
         {
             switch (val)
             {
@@ -64,8 +96,11 @@ namespace _Compi2_Proyecto2_201314863
                     return "Vacio";
                 case (int)Tipo.RETORNO:
                     return "Retorno";
+                case (int)Tipo.CONSTRUCTOR:
+                    return "Constructor";
             }
             return "--------";
         }
+
     }
 }

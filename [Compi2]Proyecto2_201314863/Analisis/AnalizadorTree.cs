@@ -124,7 +124,6 @@ namespace _Compi2_Proyecto2_201314863
             var IMPORTAR = new NonTerminal("IMPORTAR");
             var LISTA_ARCHIVOS = new NonTerminal("LISTA_ARCHIVOS");
             var ARCHIVO = new NonTerminal("ARCHIVO");
-            var A = new NonTerminal("A");
             var CLASES = new NonTerminal("CLASES");
             var CLASE = new NonTerminal("CLASE");
             var BCUERPO = new NonTerminal("BCUERPO");
@@ -169,13 +168,11 @@ namespace _Compi2_Proyecto2_201314863
             var RETORNO = new NonTerminal("RETORNO");
             var INTERRUMPIR = new NonTerminal("INTERRUMPIR");
             var CONTINUAR = new NonTerminal("CONTINUAR");
-            var PARAMETROS = new NonTerminal("PARAMETROS");
             var LISTA_PARAMETROS = new NonTerminal("LISTA_PARAMETROS");
             var PARAMETRO = new NonTerminal("PARAMETRO");
             var PARAM = new NonTerminal("PARAM");
             var DECLARACION = new NonTerminal("DECLARACION");
             var ASIGNACION = new NonTerminal("ASIGNACION");
-            var ARR = new NonTerminal("ARR");
             var DIMENSION = new NonTerminal("DIMENSION");
             var NATIVAS = new NonTerminal("NATIVAS");
             var CADENA = new NonTerminal("CADENA");
@@ -188,8 +185,13 @@ namespace _Compi2_Proyecto2_201314863
             var AID = new NonTerminal("AID");
             var Tasignar = new NonTerminal("EXP");
             var CRECE = new NonTerminal("EXP");
+            var ARR = new NonTerminal("ARR");
+            var A = new NonTerminal("A");
 
             //Terminales Expresiones Regulares
+            RegexBasedTerminal archivo = new RegexBasedTerminal("archivo", "[a-zA-Z][0-9a-zA-Z]*.(tree|olc)");
+            RegexBasedTerminal ruta = new RegexBasedTerminal("ruta", "C://([a-zA-Z][0-9a-zA-Z]*/)*[a-zA-Z][0-9a-zA-Z]*.(tree|olc)");
+            RegexBasedTerminal url = new RegexBasedTerminal("url", "http://([a-zA-Z][0-9a-zA-Z]*/)*[a-zA-Z][0-9a-zA-Z]*.(tree|olc)");
             NumberLiteral numero = TerminalFactory.CreateCSharpNumber("numero");
             IdentifierTerminal id = TerminalFactory.CreateCSharpIdentifier("id");
             var tstring = new StringLiteral("cadena", "\"", StringOptions.AllowsDoubledQuote);
@@ -206,14 +208,11 @@ namespace _Compi2_Proyecto2_201314863
 
             IMPORTAR.Rule = importar + LISTA_ARCHIVOS + Eos;
 
-            LISTA_ARCHIVOS.Rule = LISTA_ARCHIVOS + coma + ARCHIVO
-                | ARCHIVO;
+            LISTA_ARCHIVOS.Rule = MakeStarRule(LISTA_ARCHIVOS, coma, ARCHIVO);
 
-            ARCHIVO.Rule = A + punto + id;
-
-            A.Rule = A + ToTerm("/") + id
-                | id + ToTerm("://") + id
-                | id;
+            ARCHIVO.Rule = ruta
+                | archivo
+                | url;
 
             CLASES.Rule = MakeStarRule(CLASES, CLASE);
 
@@ -226,43 +225,41 @@ namespace _Compi2_Proyecto2_201314863
 
             CUERPO.Rule = VISIBILIDAD + DECLARACION + Eos
                         | METODO 
-                        | constructor + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
+                        | constructor + acor + LISTA_PARAMETROS + ccor + dosp + Eos + BLOQUE
                         | DECLARACION + Eos
                         | ASIGNACION + Eos;
 
-            METODO.Rule = sobreescribir + Eos + VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
-                        | VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
-                        | sobreescribir + Eos + TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE
-                        | TPROC + id + acor + LISTA_PARAMETROS + dosp + Eos + BLOQUE;
+            METODO.Rule = sobreescribir + Eos + VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + ccor + dosp + Eos + BLOQUE
+                        | VISIBILIDAD + TPROC + id + acor + LISTA_PARAMETROS + ccor + dosp + Eos + BLOQUE
+                        | sobreescribir + Eos + TPROC + id + acor + LISTA_PARAMETROS + ccor + dosp + Eos + BLOQUE
+                        | TPROC + id + acor + LISTA_PARAMETROS + ccor + dosp + Eos + BLOQUE;
 
             VISIBILIDAD.Rule = publico
                              | privado
                              | protegido;
 
-            LISTA_PARAMETROS.Rule = ccor
-                                  | PARAMETROS + ccor;
-
-            PARAMETROS.Rule = PARAMETROS + coma + PARAMETRO
-                            | PARAMETRO;
+            LISTA_PARAMETROS.Rule = MakeStarRule(LISTA_PARAMETROS, coma, PARAMETRO);
 
             PARAMETRO.Rule = TIPO + id + ARR;
 
+            ARR.Rule = MakeStarRule(ARR, A);
+
+            A.Rule = acor + ccor;
+
             DECLARACION.Rule = TIPO + LISTA_IDS + asignarR
                              | TIPO + LISTA_IDS
-                             | TIPO + id + ARR;
+                             | TIPO + id + INDICES;
 
             asignarR.Rule = asignar + EXP;
 
             ASIGNACION.Rule = Tasignar + asignar + EXP;
 
-            Tasignar.Rule = id + ACCESO
+            Tasignar.Rule = ACCESO
                          | id + INDICES;
 
-            INDICES.Rule = INDICES + acor + EXP + ccor
-                         | acor + EXP + ccor;
+            INDICES.Rule = MakeStarRule(INDICES, DIM);
 
-            LISTA_IDS.Rule = LISTA_IDS + coma + id
-                           | id;
+            LISTA_IDS.Rule = MakeStarRule(LISTA_IDS, coma, id);
 
             BLOQUE.Rule = Indent + LISTA_SENTENCIAS + Dedent;
 
@@ -345,8 +342,8 @@ namespace _Compi2_Proyecto2_201314863
 
             LOOP.Rule = loop + dosp + Eos + BLOQUE;
 
-            TPROC.Rule = metodo + TIPOS
-                       | funcion;
+            TPROC.Rule = funcion + TIPOS
+                       | metodo;
 
             TIPOS.Rule = TIPO + CORCHETES
                       | TIPO;
@@ -383,11 +380,11 @@ namespace _Compi2_Proyecto2_201314863
                 | nuevo + acor + LEXPS
                 | LLAMADA
                 | NATIVAS
-                | super + punto + id + ACCESO
+                | super + punto + ACCESO
                 | super + punto + id + INDICES
-                | self + punto + id + ACCESO
+                | self + punto + ACCESO
                 | self + punto + id + INDICES
-                | id + ACCESO
+                | ACCESO
                 | id + INDICES
                 | numero
                 | tstring
@@ -397,22 +394,14 @@ namespace _Compi2_Proyecto2_201314863
             BANDERA.Rule = falso
                          | verdadero;
 
-            ACCESO.Rule = MakeStarRule(ACCESO, AID);
+            ACCESO.Rule = MakeStarRule(ACCESO, punto, id);
 
-            AID.Rule = punto + id;
-
-            ARR.Rule = MakeStarRule(ARR, DIM);
-
-            DIM.Rule = acor + DIMENSION + ccor;
-
-            DIMENSION.Rule = numero
-                           | numero + punto + punto + numero;
+            DIM.Rule = acor + EXP + ccor;
 
             LEXPS.Rule = ccor
                        | EXPS + ccor;
 
-            EXPS.Rule = EXPS + coma + EXP
-                      | EXP;
+            EXPS.Rule = MakeStarRule(EXPS, coma, EXP);
 
             CRECE.Rule = EXP + ToTerm("++")
                 | EXP + ToTerm("--");
@@ -435,9 +424,9 @@ namespace _Compi2_Proyecto2_201314863
             CASOS.ErrorRule = SyntaxError + CASO;
 
             //Eliminacion de caracters, no terminales que son estorbos
-            this.MarkPunctuation("(", ")", ":", "=>", ",", ".", "[", "]");
-            this.MarkPunctuation("si", "si_no_si", "si_no", "elegir", "caso", "defecto", "hacer", "mientras", "loop", "repetir", "para", "return", "continuar", "salir");
-            this.MarkTransient(AID, SENTENCIA, DIM, CONTROL, Fasignar, TIPO, LISTA_PARAMETROS);
+            this.MarkPunctuation("(", ")", ":", "=>", ",", ".", "[", "]", "://", "/");
+            this.MarkPunctuation("clase", "si", "si_no_si", "si_no", "elegir", "caso", "defecto", "hacer", "mientras", "loop", "repetir", "para", "return", "continuar", "salir");
+            this.MarkTransient(AID, IMPORTACIONES, IMPORTAR, ARCHIVO, SENTENCIA, DIM, CONTROL, Fasignar, TIPO);
 
         }
 

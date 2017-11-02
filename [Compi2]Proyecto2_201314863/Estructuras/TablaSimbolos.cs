@@ -8,6 +8,7 @@ namespace _Compi2_Proyecto2_201314863
 {
     public class TablaSimbolos : List<Simbolo>
     {
+        #region "TS"
         private static TablaSimbolos instance;
 
         private TablaSimbolos()
@@ -26,5 +27,10 @@ namespace _Compi2_Proyecto2_201314863
                 return instance;
             }
         }
+        #endregion
+
+        #region "Insertar"
+        
+        #endregion
     }
 }

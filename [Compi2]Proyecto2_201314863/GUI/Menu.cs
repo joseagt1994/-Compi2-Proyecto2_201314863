@@ -20,10 +20,8 @@ namespace _Compi2_Proyecto2_201314863
         private void button5_Click(object sender, EventArgs e)
         {
             // Compilar
-            InterpreteTree analiza = new InterpreteTree();
-            analiza.analizar(txtCuerpo.Text, txtConsola);
-            //InterpreteOLC analizaO = new InterpreteOLC();
-            //analizaO.analizar(txtCuerpo.Text, txtConsola);
+            Compilador compilador = new Compilador();
+            compilador.compilar(txtCuerpo.Text, txtConsola, false);
         }
     }
 }

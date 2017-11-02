@@ -27,6 +27,8 @@ namespace _Compi2_Proyecto2_201314863
             else
             {
                 // Tree
+                InterpreteTree itree = new InterpreteTree();
+                clases = itree.analizar(texto);
             }
             return null;
         }

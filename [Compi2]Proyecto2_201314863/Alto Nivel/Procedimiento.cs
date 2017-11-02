@@ -20,9 +20,20 @@ namespace _Compi2_Proyecto2_201314863
         #endregion
 
         #region "Constructores"
+        // Crear Constructor
+        public Procedimiento(String nombre, int tipo, List<Atributo> parametros,
+            ParseTreeNode sentencias)
+        {
+            this.nombre = nombre;
+            this.tipo = tipo;
+            this.visibilidad = (int)Simbolo.Visibilidad.PUBLICO;
+            this.parametros = parametros;
+            this.sentencias = sentencias;
+        }
+
         // Crear procedimiento con nombre, tipo, parametros y sentencias
-        public Procedimiento(String nombre,int tipo,List<Atributo> parametros,
-            ParseTreeNode sentencias,bool escritura)
+        public Procedimiento(String nombre, int tipo, List<Atributo> parametros,
+            ParseTreeNode sentencias, bool escritura)
         {
             this.nombre = nombre;
             this.tipo = tipo;
