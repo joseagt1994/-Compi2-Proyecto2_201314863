@@ -12,23 +12,28 @@ namespace _Compi2_Proyecto2_201314863
         public List<Atributo> atributos;
         public List<Procedimiento> constructores;
         public List<Procedimiento> procedimientos;
+        public int linea, columna;
 
-        public Clase(String nombre, String padre)
+        public Clase(String nombre, String padre, int l, int c)
         {
             this.nombre = nombre;
             this.padre = padre;
             this.atributos = new List<Atributo>();
             this.constructores = new List<Procedimiento>();
             this.procedimientos = new List<Procedimiento>();
+            this.linea = l;
+            this.columna = c;
         }
 
-        public Clase(String nombre)
+        public Clase(String nombre, int l, int c)
         {
             this.nombre = nombre;
             this.padre = null;
             this.atributos = new List<Atributo>();
             this.constructores = new List<Procedimiento>();
             this.procedimientos = new List<Procedimiento>();
+            this.linea = l;
+            this.columna = c;
         }
 
         public void agregarAtributo(Atributo nuevo)
@@ -45,6 +50,9 @@ namespace _Compi2_Proyecto2_201314863
             {
                 if (atr.nombre.Equals(nuevo.nombre))
                 {
+                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                        "La variable global "+atr.nombre+" ya existe en la clase "+nombre, 
+                        atr.linea, atr.columna));
                     return true;
                 }
             }
@@ -63,10 +71,13 @@ namespace _Compi2_Proyecto2_201314863
         {
             foreach(Procedimiento constructor in constructores)
             {
-                String n1 = getNombreProcedimiento(nuevo);
-                String n2 = getNombreProcedimiento(constructor);
+                String n1 = nuevo.completo;
+                String n2 = constructor.completo;
                 if (n1.Equals(n2))
                 {
+                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                        "El constructor " + n1 + " ya existe en la clase " + nombre,
+                        nuevo.linea, nuevo.columna));
                     return true;
                 }
             }
@@ -85,27 +96,18 @@ namespace _Compi2_Proyecto2_201314863
         {
             foreach (Procedimiento proc in procedimientos)
             {
-                String n1 = getNombreProcedimiento(nuevo);
-                String n2 = getNombreProcedimiento(proc);
+                String n1 = nuevo.completo;
+                String n2 = proc.completo;
                 if (n1.Equals(n2))
                 {
+                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                        "El procedimiento " + n1 + " ya existe en la clase " + nombre,
+                        nuevo.linea, nuevo.columna));
                     return true;
                 }
             }
             return false;
         }
-
-        public static String getNombreProcedimiento(Procedimiento proc)
-        {
-            String nombre = proc.nombre;
-            if(proc.parametros.Count > 0)
-            {
-                foreach(Atributo p in proc.parametros)
-                {
-                    nombre += "_" + Simbolo.getValor(p.tipo);
-                }
-            }
-            return nombre;
-        }
+        
     }
 }

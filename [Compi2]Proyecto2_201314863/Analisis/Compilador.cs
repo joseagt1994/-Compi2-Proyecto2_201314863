@@ -20,6 +20,7 @@ namespace _Compi2_Proyecto2_201314863
 
         public List<C3D> compilar(String texto, RichTextBox consola, bool lenguaje)
         {
+            // ****************** FASE 1 Analisis Alto Nivel ********************//
             if (lenguaje)
             {
                 // OLC++
@@ -30,6 +31,8 @@ namespace _Compi2_Proyecto2_201314863
                 InterpreteTree itree = new InterpreteTree();
                 clases = itree.analizar(texto);
             }
+            // **************** FASE 2 Llenar Tabla de Simbolos *****************//
+
             return null;
         }
     }

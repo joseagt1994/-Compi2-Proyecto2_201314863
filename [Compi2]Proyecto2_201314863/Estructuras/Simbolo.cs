@@ -87,7 +87,7 @@ namespace _Compi2_Proyecto2_201314863
                 case (int)Tipo.CARACTER:
                     return "Caracter";
                 case (int)Tipo.NUMERO:
-                    return "Numero";
+                    return "Entero";
                 case (int)Tipo.CADENA:
                     return "Cadena";
                 case (int)Tipo.BOOLEAN:

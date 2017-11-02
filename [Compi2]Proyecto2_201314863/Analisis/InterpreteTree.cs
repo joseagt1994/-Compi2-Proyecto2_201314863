@@ -91,8 +91,27 @@ namespace _Compi2_Proyecto2_201314863
             // CLASES -> Lista de CLASE
             foreach(ParseTreeNode clase in nodo.ChildNodes)
             {
-                clases.Add(guardarClase(clase));
+                Clase nueva = guardarClase(clase);
+                if (!existeClase(nueva))
+                {
+                    clases.Add(nueva);
+                }
             }
+        }
+
+        public bool existeClase(Clase nueva)
+        {
+            foreach(Clase c in clases)
+            {
+                if (c.nombre.Equals(nueva.nombre))
+                {
+                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                        "La clase "+nueva.nombre+ " ya existe", nueva.linea, 
+                        nueva.columna));
+                    return true;
+                }
+            }
+            return false;
         }
 
         public Clase guardarClase(ParseTreeNode clase)
@@ -103,13 +122,15 @@ namespace _Compi2_Proyecto2_201314863
             int pos = 1;
             if (clase.ChildNodes.Count == 2)
             {
-                nueva = new Clase(nombre_clase);
+                nueva = new Clase(nombre_clase, clase.ChildNodes[0].Token.Location.Line,
+                    clase.ChildNodes[0].Token.Location.Line);
             }
             else
             {
                 // Tiene padre
                 String padre = clase.ChildNodes.ElementAt(1).Token.Value.ToString();
-                nueva = new Clase(nombre_clase, padre);
+                nueva = new Clase(nombre_clase, padre, clase.ChildNodes[0].Token.Location.Line,
+                    clase.ChildNodes[0].Token.Location.Line);
                 pos++;
             }
             // Recorrer atributos, constructores y procedimientos
@@ -136,13 +157,16 @@ namespace _Compi2_Proyecto2_201314863
                         ParseTreeNode ids = declara.ChildNodes[1];
                         if (declara.ChildNodes.Count == 3 && ids.Term.Name.Equals("id"))
                         {
-                            nueva.agregarAtributo(new Atributo(ids.Token.Text, tipo, declara.ChildNodes[2]));
+                            nueva.agregarAtributo(new Atributo(ids.Token.Text, tipo, 
+                                declara.ChildNodes[2], ids.Token.Location.Line, 
+                                ids.Token.Location.Column));
                         }
                         else
                         {
                             foreach (ParseTreeNode var in ids.ChildNodes)
                             {
-                                Atributo a = new Atributo(var.Token.Text, tipo, null);
+                                Atributo a = new Atributo(var.Token.Text, tipo, null,
+                                    var.Token.Location.Line, var.Token.Location.Column);
                                 if (declara.ChildNodes.Count == 3)
                                 {
                                     a.asignarValor(declara.ChildNodes[2]);
@@ -162,13 +186,16 @@ namespace _Compi2_Proyecto2_201314863
                         ParseTreeNode ids = declara.ChildNodes[1];
                         if (declara.ChildNodes.Count == 4 && ids.Term.Name.Equals("id"))
                         {
-                            nueva.agregarAtributo(new Atributo(ids.Token.Text, tipo, declara.ChildNodes[2]));
+                            nueva.agregarAtributo(new Atributo(ids.Token.Text, tipo, 
+                                declara.ChildNodes[2], ids.Token.Location.Line, 
+                                ids.Token.Location.Column));
                         }
                         else
                         {
                             foreach (ParseTreeNode var in ids.ChildNodes)
                             {
-                                Atributo a = new Atributo(var.Token.Text, tipo, null);
+                                Atributo a = new Atributo(var.Token.Text, tipo, null,
+                                    var.Token.Location.Line, var.Token.Location.Column);
                                 if (declara.ChildNodes.Count == 4)
                                 {
                                     a.asignarValor(declara.ChildNodes[2]);
@@ -201,12 +228,16 @@ namespace _Compi2_Proyecto2_201314863
                 {
                     return new Procedimiento(id, 
                         Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text), vis, 
-                        parametros, nodo.ChildNodes[5].ChildNodes[0], true);
+                        parametros, nodo.ChildNodes[5].ChildNodes[0], true,
+                        nodo.ChildNodes[3].Token.Location.Line,
+                        nodo.ChildNodes[3].Token.Location.Column);
                 }
                 else
                 {
                     return new Procedimiento(id, (int)Simbolo.Tipo.VACIO, vis, parametros, 
-                        nodo.ChildNodes[5].ChildNodes[0], true);
+                        nodo.ChildNodes[5].ChildNodes[0], true,
+                        nodo.ChildNodes[3].Token.Location.Line,
+                        nodo.ChildNodes[3].Token.Location.Column);
                 }
             }
             else if(nodo.ChildNodes.Count == 5)
@@ -224,12 +255,16 @@ namespace _Compi2_Proyecto2_201314863
                     {
                         return new Procedimiento(id,
                             Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text), vis,
-                            parametros, nodo.ChildNodes[4].ChildNodes[0], false);
+                            parametros, nodo.ChildNodes[4].ChildNodes[0], false,
+                            nodo.ChildNodes[2].Token.Location.Line,
+                            nodo.ChildNodes[2].Token.Location.Column);
                     }
                     else
                     {
                         return new Procedimiento(id, (int)Simbolo.Tipo.VACIO, vis, parametros,
-                            nodo.ChildNodes[4].ChildNodes[0], false);
+                            nodo.ChildNodes[4].ChildNodes[0], false,
+                            nodo.ChildNodes[2].Token.Location.Line,
+                            nodo.ChildNodes[2].Token.Location.Column);
                     }
                 }
                 else
@@ -238,12 +273,16 @@ namespace _Compi2_Proyecto2_201314863
                     {
                         return new Procedimiento(id,
                             Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text),
-                            parametros, nodo.ChildNodes[4].ChildNodes[0], true);
+                            parametros, nodo.ChildNodes[4].ChildNodes[0], true,
+                            nodo.ChildNodes[2].Token.Location.Line,
+                            nodo.ChildNodes[2].Token.Location.Column);
                     }
                     else
                     {
                         return new Procedimiento(id, (int)Simbolo.Tipo.VACIO, parametros,
-                            nodo.ChildNodes[4].ChildNodes[0], true);
+                            nodo.ChildNodes[4].ChildNodes[0], true,
+                            nodo.ChildNodes[2].Token.Location.Line,
+                            nodo.ChildNodes[2].Token.Location.Column);
                     }
                 }
             }
@@ -256,12 +295,16 @@ namespace _Compi2_Proyecto2_201314863
                 {
                     return new Procedimiento(id,
                         Simbolo.getTipo(nodo.ChildNodes[0].ChildNodes[1].Token.Text),
-                        parametros, nodo.ChildNodes[3].ChildNodes[0], false);
+                        parametros, nodo.ChildNodes[3].ChildNodes[0], false,
+                        nodo.ChildNodes[1].Token.Location.Line,
+                            nodo.ChildNodes[1].Token.Location.Column);
                 }
                 else
                 {
                     return new Procedimiento(id, (int)Simbolo.Tipo.VACIO, parametros,
-                        nodo.ChildNodes[3].ChildNodes[0], false);
+                        nodo.ChildNodes[3].ChildNodes[0], false,
+                        nodo.ChildNodes[1].Token.Location.Line,
+                            nodo.ChildNodes[1].Token.Location.Column);
                 }
             }
         }
@@ -274,13 +317,15 @@ namespace _Compi2_Proyecto2_201314863
                 // Con parametros
                 List<Atributo> parametros = guardarParametros(nodo.ChildNodes[1]);
                 return new Procedimiento("constructor", (int)Simbolo.Tipo.CONSTRUCTOR,
-                    parametros, nodo.ChildNodes[1]);
+                    parametros, nodo.ChildNodes[1], nodo.ChildNodes[0].Token.Location.Line,
+                            nodo.ChildNodes[0].Token.Location.Column);
             }
             else
             {
                 // Sin parametros
                 return new Procedimiento("constructor", (int)Simbolo.Tipo.CONSTRUCTOR, 
-                    new List<Atributo>(), nodo.ChildNodes[1]);
+                    new List<Atributo>(), nodo.ChildNodes[1], nodo.ChildNodes[0].Token.Location.Line,
+                            nodo.ChildNodes[0].Token.Location.Column);
             }
         }
 
@@ -291,7 +336,9 @@ namespace _Compi2_Proyecto2_201314863
             {
                 // PARAMETRO -> TIPO id INDICES
                 int tipo = Simbolo.getTipo(pa.ChildNodes[0].Token.Text);
-                parametros.Add(new Atributo(pa.ChildNodes[1].Token.Text, tipo, pa.ChildNodes[2]));
+                parametros.Add(new Atributo(pa.ChildNodes[1].Token.Text, tipo, 
+                    pa.ChildNodes[2], pa.ChildNodes[1].Token.Location.Line,
+                    pa.ChildNodes[1].Token.Location.Column));
             }
             return parametros;
         }
