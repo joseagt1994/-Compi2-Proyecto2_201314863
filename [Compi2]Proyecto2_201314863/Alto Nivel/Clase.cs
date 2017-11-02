@@ -75,10 +75,24 @@ namespace _Compi2_Proyecto2_201314863
 
         public void agregarProcedimiento(Procedimiento nuevo)
         {
-            if (!existeConstructor(nuevo))
+            if (!existeProcedimiento(nuevo))
             {
                 procedimientos.Add(nuevo);
             }
+        }
+
+        public bool existeProcedimiento(Procedimiento nuevo)
+        {
+            foreach (Procedimiento proc in procedimientos)
+            {
+                String n1 = getNombreProcedimiento(nuevo);
+                String n2 = getNombreProcedimiento(proc);
+                if (n1.Equals(n2))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static String getNombreProcedimiento(Procedimiento proc)
