@@ -160,7 +160,6 @@ namespace _Compi2_Proyecto2_201314863
             var LEXPS = new NonTerminal("LEXPS");
             var ACCESO = new NonTerminal("ACCESO");
             var TIPO = new NonTerminal("TIPO");
-            var TIPOS = new NonTerminal("TIPOS");
             var LLAMADA = new NonTerminal("LLAMADA");
             var TPROC = new NonTerminal("TPROC");
             var CUERPOS = new NonTerminal("CUERPOS");
@@ -180,7 +179,6 @@ namespace _Compi2_Proyecto2_201314863
             var EXCEPTION = new NonTerminal("EXCEPTION");
             var Fasignar = new NonTerminal("Fasignar");
             var DIM = new NonTerminal("DIM");
-            var CORCHETES = new NonTerminal("CORCHETES");
             var INDICES = new NonTerminal("INDICES");
             var AID = new NonTerminal("AID");
             var Tasignar = new NonTerminal("EXP");
@@ -342,13 +340,8 @@ namespace _Compi2_Proyecto2_201314863
 
             LOOP.Rule = loop + dosp + Eos + BLOQUE;
 
-            TPROC.Rule = funcion + TIPOS
+            TPROC.Rule = funcion + TIPO + ARR
                        | metodo;
-
-            TIPOS.Rule = TIPO + CORCHETES
-                      | TIPO;
-
-            CORCHETES.Rule = MakeStarRule(CORCHETES, acor + ccor);
 
             TIPO.Rule = vacio
                       | num

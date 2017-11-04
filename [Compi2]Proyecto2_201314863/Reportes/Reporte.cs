@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace _Compi2_Proyecto2_201314863.Reportes
+namespace _Compi2_Proyecto2_201314863
 {
-    class Reporte
+    public class Reporte
     {
+
     }
 }

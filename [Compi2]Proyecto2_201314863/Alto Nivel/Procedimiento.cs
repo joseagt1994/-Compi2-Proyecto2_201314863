@@ -10,12 +10,13 @@ namespace _Compi2_Proyecto2_201314863
     public class Procedimiento
     {
         #region Atributos del procedimiento
-        public String nombre, completo;
+        public String nombre, completo, clase;
         public int tipo, visibilidad, linea, columna;
         public bool sobreescrito;
 
         public List<Atributo> parametros;
         public ParseTreeNode sentencias;
+        public List<int> dimensiones;
 
         #endregion
 
@@ -69,17 +70,55 @@ namespace _Compi2_Proyecto2_201314863
             this.completo = getNombreProcedimiento(this);
         }
 
+        public void agregarClase(String clase)
+        {
+            this.clase = clase;
+        }
+
+        public void agregarArreglo(ParseTreeNode dims)
+        {
+            if (dims != null)
+            {
+                this.dimensiones = new List<int>();
+                foreach (ParseTreeNode dim in dims.ChildNodes)
+                {
+                    this.dimensiones.Add(-1);
+                }
+            }
+        }
+
         public static String getNombreProcedimiento(Procedimiento proc)
         {
             String nombre = proc.nombre;
-            if (proc.parametros.Count > 0)
+            if(proc.parametros != null)
             {
-                foreach (Atributo p in proc.parametros)
+                if (proc.parametros.Count > 0)
                 {
-                    nombre += "_" + Simbolo.getValor(p.tipo);
+                    foreach (Atributo p in proc.parametros)
+                    {
+                        nombre += "_" + Simbolo.getValor(p.tipo);
+                    }
                 }
             }
             return nombre;
+        }
+
+        public String getValor()
+        {
+            String val = "";
+            switch (visibilidad)
+            {
+                case (int)Simbolo.Visibilidad.PUBLICO:
+                    val = "+ " + nombre;
+                    break;
+                case (int)Simbolo.Visibilidad.PRIVADO:
+                    val = "- " + nombre;
+                    break;
+                default:
+                    val = "# " + nombre;
+                    break;
+            }
+            return val + "() : " + Simbolo.getValor(tipo);
         }
         #endregion
     }

@@ -23,5 +23,11 @@ namespace _Compi2_Proyecto2_201314863
             Compilador compilador = new Compilador();
             compilador.compilar(txtCuerpo.Text, txtConsola, false);
         }
+
+        private void generarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UML nuevo = new UML();
+            nuevo.Show();
+        }
     }
 }

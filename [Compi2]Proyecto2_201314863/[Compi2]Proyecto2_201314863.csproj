@@ -61,19 +61,46 @@
     <Compile Include="Estructuras\Simbolo.cs" />
     <Compile Include="Estructuras\TablaSimbolos.cs" />
     <Compile Include="Generacion C3D\C3D.cs" />
+    <Compile Include="GUI\EditorClase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\EditorClase.Designer.cs">
+      <DependentUpon>EditorClase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\EditorRelacion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\EditorRelacion.Designer.cs">
+      <DependentUpon>EditorRelacion.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Menu.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUI\Menu.Designer.cs">
       <DependentUpon>Menu.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\UML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\UML.Designer.cs">
+      <DependentUpon>UML.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reportes\Error.cs" />
     <Compile Include="Reportes\Errores.cs" />
     <Compile Include="Reportes\Reporte.cs" />
+    <EmbeddedResource Include="GUI\EditorClase.resx">
+      <DependentUpon>EditorClase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\EditorRelacion.resx">
+      <DependentUpon>EditorRelacion.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Menu.resx">
       <DependentUpon>Menu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\UML.resx">
+      <DependentUpon>UML.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

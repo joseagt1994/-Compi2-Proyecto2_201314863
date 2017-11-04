@@ -228,13 +228,22 @@ namespace _Compi2_Proyecto2_201314863
                 parametros = guardarParametros(nodo.ChildNodes[4]);
                 String id = nodo.ChildNodes[3].Token.Text;
                 int vis = Simbolo.getVisibilidad(nodo.ChildNodes[1].ChildNodes[0].Token.Text);
-                if(nodo.ChildNodes[2].ChildNodes.Count == 2)
+                if(nodo.ChildNodes[2].ChildNodes.Count == 3)
                 {
-                    return new Procedimiento(id, 
-                        Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text), vis, 
+                    int tipo = Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text);
+                    Procedimiento proc = new Procedimiento(id, tipo, vis, 
                         parametros, nodo.ChildNodes[5].ChildNodes[0], true,
                         nodo.ChildNodes[3].Token.Location.Line,
                         nodo.ChildNodes[3].Token.Location.Column);
+                    if(tipo == (int)Simbolo.Tipo.CLASE)
+                    {
+                        proc.agregarClase(nodo.ChildNodes[2].ChildNodes[1].Token.Text);
+                    }
+                    if(nodo.ChildNodes[2].ChildNodes[2].ChildNodes.Count > 0)
+                    {
+                        proc.agregarArreglo(nodo.ChildNodes[2].ChildNodes[2]);
+                    }
+                    return proc;
                 }
                 else
                 {
@@ -255,13 +264,22 @@ namespace _Compi2_Proyecto2_201314863
                 if (nodo.ChildNodes[0].Term.Name.Equals("VISIBILIDAD"))
                 {
                     int vis = Simbolo.getVisibilidad(nodo.ChildNodes[0].ChildNodes[0].Token.Text);
-                    if (nodo.ChildNodes[2].ChildNodes.Count == 2)
+                    if (nodo.ChildNodes[2].ChildNodes.Count == 3)
                     {
-                        return new Procedimiento(id,
-                            Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text), vis,
+                        int tipo = Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text);
+                        Procedimiento proc = new Procedimiento(id, tipo, vis,
                             parametros, nodo.ChildNodes[4].ChildNodes[0], false,
                             nodo.ChildNodes[2].Token.Location.Line,
                             nodo.ChildNodes[2].Token.Location.Column);
+                        if(tipo == (int)Simbolo.Tipo.CLASE)
+                        {
+                            proc.agregarClase(nodo.ChildNodes[2].ChildNodes[1].Token.Text);
+                        }
+                        if (nodo.ChildNodes[2].ChildNodes[2].ChildNodes.Count > 0)
+                        {
+                            proc.agregarArreglo(nodo.ChildNodes[2].ChildNodes[2]);
+                        }
+                        return proc;
                     }
                     else
                     {
@@ -273,13 +291,22 @@ namespace _Compi2_Proyecto2_201314863
                 }
                 else
                 {
-                    if (nodo.ChildNodes[2].ChildNodes.Count == 2)
+                    if (nodo.ChildNodes[2].ChildNodes.Count == 3)
                     {
-                        return new Procedimiento(id,
-                            Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text),
+                        int tipo = Simbolo.getTipo(nodo.ChildNodes[2].ChildNodes[1].Token.Text);
+                        Procedimiento proc = new Procedimiento(id, tipo,
                             parametros, nodo.ChildNodes[4].ChildNodes[0], true,
                             nodo.ChildNodes[2].Token.Location.Line,
                             nodo.ChildNodes[2].Token.Location.Column);
+                        if (tipo == (int)Simbolo.Tipo.CLASE)
+                        {
+                            proc.agregarClase(nodo.ChildNodes[2].ChildNodes[1].Token.Text);
+                        }
+                        if (nodo.ChildNodes[2].ChildNodes[2].ChildNodes.Count > 0)
+                        {
+                            proc.agregarArreglo(nodo.ChildNodes[2].ChildNodes[2]);
+                        }
+                        return proc;
                     }
                     else
                     {
@@ -295,13 +322,22 @@ namespace _Compi2_Proyecto2_201314863
                 // METODO -> TPROC id LISTA_PARAMETROS BLOQUE
                 parametros = guardarParametros(nodo.ChildNodes[2]);
                 String id = nodo.ChildNodes[1].Token.Text;
-                if (nodo.ChildNodes[0].ChildNodes.Count == 2)
+                if (nodo.ChildNodes[0].ChildNodes.Count == 3)
                 {
-                    return new Procedimiento(id,
-                        Simbolo.getTipo(nodo.ChildNodes[0].ChildNodes[1].Token.Text),
+                    int tipo = Simbolo.getTipo(nodo.ChildNodes[0].ChildNodes[1].Token.Text);
+                    Procedimiento proc = new Procedimiento(id, tipo,
                         parametros, nodo.ChildNodes[3].ChildNodes[0], false,
                         nodo.ChildNodes[1].Token.Location.Line,
                             nodo.ChildNodes[1].Token.Location.Column);
+                    if(tipo == (int)Simbolo.Tipo.CLASE)
+                    {
+                        proc.agregarClase(nodo.ChildNodes[0].ChildNodes[1].Token.Text);
+                    }
+                    if (nodo.ChildNodes[0].ChildNodes[2].ChildNodes.Count > 0)
+                    {
+                        proc.agregarArreglo(nodo.ChildNodes[2].ChildNodes[2]);
+                    }
+                    return proc;
                 }
                 else
                 {

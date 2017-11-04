@@ -38,6 +38,7 @@ namespace _Compi2_Proyecto2_201314863
             }
             // **************** FASE 2 Llenar Tabla de Simbolos *****************//
             llenarTablaSimbolos();
+            
             return null;
         }
         #endregion
@@ -91,7 +92,7 @@ namespace _Compi2_Proyecto2_201314863
             sprocedimiento.ambito = (int)Simbolo.Tipo.GLOBAL;
             if (procedimiento.tipo == (int)Simbolo.Tipo.CLASE)
             {
-                
+                sprocedimiento.clase = procedimiento.clase;
             }
             return sprocedimiento;
         }
@@ -116,6 +117,10 @@ namespace _Compi2_Proyecto2_201314863
             Simbolo sparametro = new Simbolo();
             sparametro.ambito = (int)Simbolo.Tipo.LOCAL;
             sparametro.clase = "";
+            if(parametro.tipo == (int)Simbolo.Tipo.CLASE)
+            {
+                sparametro.clase = parametro.clase;
+            }
             sparametro.dimensiones = parametro.dimensiones;
             sparametro.nombre = parametro.nombre;
             sparametro.padre = padre;
@@ -151,6 +156,11 @@ namespace _Compi2_Proyecto2_201314863
             sglobal.rol = (int)Simbolo.Tipo.VARIABLE;
             sglobal.tam = 1;
             sglobal.tipo = atributo.tipo;
+            if(atributo.tipo == (int)Simbolo.Tipo.CLASE)
+            {
+                sglobal.clase = atributo.clase;
+            }
+            sglobal.dimensiones = atributo.dimensiones;
             return sglobal;
         }
         #endregion

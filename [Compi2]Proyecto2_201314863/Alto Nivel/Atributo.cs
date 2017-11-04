@@ -41,7 +41,14 @@ namespace _Compi2_Proyecto2_201314863
                 this.dimensiones = new List<int>();
                 foreach(ParseTreeNode dim in dims.ChildNodes)
                 {
-                    this.dimensiones.Add(Convert.ToInt32(dim.Token.Text));
+                    if (dim.Term.Name.Equals("A"))
+                    {
+                        this.dimensiones.Add(-1);
+                    }
+                    else
+                    {
+                        this.dimensiones.Add(Convert.ToInt32(dim.Token.Text));
+                    }
                 }
             }
         }
@@ -55,6 +62,24 @@ namespace _Compi2_Proyecto2_201314863
         public void asignarValor(ParseTreeNode valor)
         {
             this.valor = valor;
+        }
+
+        public String getValor()
+        {
+            String val = "";
+            switch (visibilidad)
+            {
+                case (int)Simbolo.Visibilidad.PUBLICO:
+                    val = "+ " + nombre;
+                    break;
+                case (int)Simbolo.Visibilidad.PRIVADO:
+                    val = "- " + nombre;
+                    break;
+                default:
+                    val = "# " + nombre;
+                    break;
+            }
+            return val + " : " + Simbolo.getValor(tipo);
         }
     }
 }
