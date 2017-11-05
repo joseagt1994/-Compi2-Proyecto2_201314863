@@ -447,9 +447,107 @@ namespace _Compi2_Proyecto2_201314863
             // Recorrer clases
             foreach(Clase clase in clases)
             {
-
+                if(clase.padre != null)
+                {
+                    // HERENCIA
+                    relaciones.Add(new Relacion(clase.nombre, clase.padre, 
+                        (int)Relacion.Tipo.HERENCIA));
+                }
+                // Verificar si hay una declaracion global de tipo Clase
+                List<Atributo> atributos = getAtributoClase(clase);
+                if(atributos.Count > 0)
+                {
+                    foreach (Atributo a in atributos)
+                    {
+                        // Verificar si hay un contructor con parametro con esa Clase y nombre
+                        if (getConstructorClase(clase, a.clase, a.nombre))
+                        {
+                            relaciones.Add(new Relacion(clase.nombre, a.clase, (int)Relacion.Tipo.COMPOSICION));
+                        }
+                        // Sino Verificar si hay un metodo con parametro con esa Clase y nombre
+                        else if (getProcedimientoClase(clase, a.clase, a.nombre))
+                        {
+                            relaciones.Add(new Relacion(clase.nombre, a.clase, (int)Relacion.Tipo.AGREGACION));
+                        }
+                        // Sino solo es Asociacion
+                        else
+                        {
+                            relaciones.Add(new Relacion(a.clase,clase.nombre,(int)Relacion.Tipo.ASOCIACION));
+                        }
+                    }
+                }
+                else
+                {
+                    // Sino Verificar si hay algun metodo con parametro de tipo Clase
+                    List<String> clases = getClaseProcedimiento(clase);
+                    foreach(String c in clases)
+                    {
+                        relaciones.Add(new Relacion(clase.nombre, c, (int)Relacion.Tipo.DEPENDENCIA));
+                    }
+                }
             }
         }
+
+        public List<String> getClaseProcedimiento(Clase clase)
+        {
+            List<String> clases = new List<String>();
+            foreach(Procedimiento p in clase.procedimientos)
+            {
+                foreach(Atributo a in p.parametros)
+                {
+                    if(a.tipo == (int)Simbolo.Tipo.CLASE && a.clase != clase.nombre)
+                    {
+                        clases.Add(a.clase);
+                    }
+                }
+            }
+            return clases;
+        }
+
+        public bool getProcedimientoClase(Clase clase, String nclase, String id)
+        {
+            foreach (Procedimiento c in clase.procedimientos)
+            {
+                foreach (Atributo parametro in c.parametros)
+                {
+                    if (parametro.nombre == id && parametro.clase == nclase)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool getConstructorClase(Clase clase, String nclase, String id)
+        {
+            foreach(Procedimiento c in clase.constructores)
+            {
+                foreach(Atributo parametro in c.parametros)
+                {
+                    if(parametro.nombre == id && parametro.clase == nclase)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public List<Atributo> getAtributoClase(Clase clase)
+        {
+            List<Atributo> atributos = new List<Atributo>();
+            foreach(Atributo a in clase.atributos)
+            {
+                if(a.tipo == (int)Simbolo.Tipo.CLASE)
+                {
+                    atributos.Add(a);
+                }
+            }
+            return atributos;
+        }
+
+
 
         #endregion
 
