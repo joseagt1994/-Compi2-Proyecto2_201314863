@@ -64,11 +64,70 @@ namespace _Compi2_Proyecto2_201314863
         private void btnConvertirImg_Click(object sender, EventArgs e)
         {
             // Convertir imagen a codigo
+            codigo = "";
+            resetearClases();
+            generarCodigoRelaciones();
+            foreach(Clase clase in clases)
+            {
+                if (clase.padre != null)
+                {
+                    // Herencia
+                    if(tipoArchivo.SelectedIndex == 0)
+                    {
+                        codigo += "clase " + clase.nombre + " hereda_de " + clase.padre + "{\n\n";
+                    }
+                    else if(tipoArchivo.SelectedIndex == 1)
+                    {
+                        codigo += "clase " + clase.nombre + "[" + clase.padre + "]:\n\n";
+                    }
+                }else
+                {
+                    // Sin Herencia
+                    if (tipoArchivo.SelectedIndex == 0)
+                    {
+                        codigo += "clase " + clase.nombre + "{\n\n";
+                    }
+                    else if (tipoArchivo.SelectedIndex == 1)
+                    {
+                        codigo += "clase " + clase.nombre + "[]:\n\n";
+                    }
+                }
+                codigo += generarCodigoAtributos(clase);
+                codigo += clase.textoAtributos;
+                // Constructor
+                if (tipoArchivo.SelectedIndex == 0)
+                {
+                    codigo += "\t" + clase.nombre + "(){\n\n\t}\n\n";
+                }
+                else if (tipoArchivo.SelectedIndex == 1)
+                {
+                    codigo += "\t" + clase.nombre + "[]:\n\n";
+                }
+                codigo += clase.textoProcedimientos;
+                codigo += generarCodigoProcedimientos(clase);
+                // Final
+                if (tipoArchivo.SelectedIndex == 0)
+                {
+                    codigo += "}\n\n";
+                }
+            }
+            txtCodigo.Text = codigo;
         }
 
         private void btnConvertirCodigo_Click(object sender, EventArgs e)
         {
             // Convertir codigo a imagen
+            InterpreteTree interprete = new InterpreteTree();
+            clases = interprete.analizar(txtCodigo.Text);
+            relaciones = new List<Relacion>();
+            // Recorrer clases para buscar relaciones necesarias
+            generarRelacionesUML();
+            repintar();
+            ejecutarGraphviz();
+            Thread.Sleep(1000);
+            File.Delete(@"C:\Graphviz\Imagenes\imagen" + contadorImgs + ".txt");
+            this.imgDiagrama.Image = new System.Drawing.Bitmap(@"C:\Graphviz\Imagenes\nueva" + contadorImgs + ".png");
+            contadorImgs++;
         }
 
         public void agregarClase()
@@ -219,7 +278,181 @@ namespace _Compi2_Proyecto2_201314863
             }
         }
         #endregion
+
+        #region "Generar codigo del Diagrama UML"
+
+        public void resetearClases()
+        {
+            foreach(Clase clase in clases)
+            {
+                clase.textoAtributos = "";
+                clase.textoProcedimientos = "";
+            }
+        }
+
+        public void generarCodigoRelaciones()
+        {
+            int tipo = tipoArchivo.SelectedIndex;
+            foreach(Clase clase in clases)
+            {
+                // Llenar las relaciones en cada una de las clases
+                foreach(Relacion relacion in relaciones)
+                {
+                    if (relacion.clase_1.Equals(clase.nombre))
+                    {
+                        // HERENCIA, DEPENDENCIA, COMPOSICION, AGREGACION
+                        switch (relacion.relacion)
+                        {
+                            case (int)Relacion.Tipo.HERENCIA:
+                                clase.padre = relacion.clase_2;
+                                break;
+                            case (int)Relacion.Tipo.DEPENDENCIA:
+                                if(tipo == 0)
+                                {
+                                    // OLC++
+                                    clase.textoProcedimientos += "\tpublico void usar(" + relacion.clase_2 + " objeto){\n\n\t}\n\n";
+                                }
+                                else if(tipo == 1)
+                                {
+                                    // Tree
+                                    clase.textoProcedimientos += "\tpublico metodo usar[" + relacion.clase_2 + " objeto]:\n\n";
+                                }
+                                break;
+                            case (int)Relacion.Tipo.COMPOSICION:
+                                if(tipo == 0)
+                                {
+                                    // OLC++
+                                    clase.textoAtributos += "\tpublico " + relacion.clase_2 + " objeto;\n\n";
+                                    clase.textoAtributos += "\t" + clase.nombre + "(" + relacion.clase_2 + " objeto){\n";
+                                    clase.textoAtributos += "\t\teste.objeto = objeto;\n\n\t}\n\n";
+                                }
+                                else if(tipo == 1)
+                                {
+                                    // Tree
+                                    clase.textoAtributos += "\tpublico " + relacion.clase_2 + " objeto\n\n";
+                                    clase.textoAtributos += "\t" + clase.nombre + "[" + relacion.clase_2 + " objeto]:\n";
+                                    clase.textoAtributos += "\t\tself.objeto = objeto\n\n";
+                                }
+                                break;
+                            case (int)Relacion.Tipo.AGREGACION:
+                                /*
+                                 * publico void agregar(Clase2 objeto):
+		                            self.objeto = objeto
+                                */
+                                if(tipo == 0)
+                                {
+                                    // OLC++
+                                    clase.textoAtributos += "\tpublico " + relacion.clase_2 + " objeto;\n\n";
+                                    clase.textoProcedimientos += "\tpublico void agregar(" + relacion.clase_2 + " objeto){\n";
+                                    clase.textoProcedimientos += "\t\teste.objeto = objeto;\n\n\t}\n\n";
+                                }
+                                else if(tipo == 1)
+                                {
+                                    // Tree
+                                    clase.textoAtributos += "\tpublico " + relacion.clase_2 + " objeto\n\n";
+                                    clase.textoProcedimientos += "\tpublico metodo agregar[" + relacion.clase_2 + " objeto]:\n";
+                                    clase.textoProcedimientos += "\t\tself.objeto = objeto\n\n";
+                                }
+                                break;
+                        }
+                    }
+                    else if (relacion.clase_2.Equals(clase.nombre))
+                    {
+                        // ASOCIACION
+                        if(relacion.relacion == (int)Relacion.Tipo.ASOCIACION)
+                        {
+                            if(tipo == 0)
+                            {
+                                // OLC++
+                                clase.textoAtributos += "\tpublico " + relacion.clase_1 + " objeto;\n\n";
+                            }
+                            else if(tipo == 1)
+                            {
+                                // Tree
+                                clase.textoAtributos += "\tpublico " + relacion.clase_1 + " objeto\n\n";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public String generarCodigoAtributos(Clase clase)
+        {
+            String cadena = "";
+            foreach(Atributo a in clase.atributos)
+            {
+                if(tipoArchivo.SelectedIndex == 0)
+                {
+                    // OLC++
+                    cadena += "\t" + getVisibilidad(a.visibilidad) + " " + Simbolo.getValor(a.tipo) + " "
+                    + a.nombre + ";\n";
+                }
+                else if(tipoArchivo.SelectedIndex == 1)
+                {
+                    // Tree
+                    cadena += "\t" + getVisibilidad(a.visibilidad) + " " + Simbolo.getValor(a.tipo) + " "
+                    + a.nombre + "\n";
+                }
+            }
+            return cadena;
+        }
+
+        public String generarCodigoProcedimientos(Clase clase)
+        {
+            String cadena = "";
+            foreach (Procedimiento a in clase.procedimientos)
+            {
+                if (tipoArchivo.SelectedIndex == 0)
+                {
+                    // OLC++
+                    cadena += "\t" + getVisibilidad(a.visibilidad) + " " + Simbolo.getValor(a.tipo) + " "
+                    + a.nombre + "(){\n\n\t}\n\n";
+                }
+                else if (tipoArchivo.SelectedIndex == 1)
+                {
+                    // Tree
+                    if(a.tipo == (int)Simbolo.Tipo.VACIO)
+                    {
+                        cadena += "\t" + getVisibilidad(a.visibilidad) + " metodo " + a.nombre + "():\n\n";
+                    }
+                    else
+                    {
+                        cadena += "\t" + getVisibilidad(a.visibilidad) + " funcion " + Simbolo.getValor(a.tipo) +" "+ a.nombre + "():\n\n";
+                    }
+                }
+            }
+            return cadena;
+        }
         
+        public String getVisibilidad(int tipo)
+        {
+            switch (tipo)
+            {
+                case (int)Simbolo.Visibilidad.PUBLICO:
+                    return "publico";
+                case (int)Simbolo.Visibilidad.PRIVADO:
+                    return "privado";
+                default:
+                    return "protegido";
+            }
+        }
+
+        #endregion
+
+        #region "Generar Diagrama UML del codigo"
+        
+        public void generarRelacionesUML()
+        {
+            // Recorrer clases
+            foreach(Clase clase in clases)
+            {
+
+            }
+        }
+
+        #endregion
+
         public class Relacion
         {
             public String clase_1, clase_2;
@@ -255,5 +488,6 @@ namespace _Compi2_Proyecto2_201314863
             }
 
         }
+        
     }
 }

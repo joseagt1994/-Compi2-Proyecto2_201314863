@@ -51,7 +51,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.imgDiagrama = new System.Windows.Forms.PictureBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.tipoArchivo = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtCodigo = new System.Windows.Forms.RichTextBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
@@ -205,26 +205,26 @@
             this.editarToolStripMenuItem1,
             this.eliminarToolStripMenuItem});
             this.editarClaseToolStripMenuItem.Name = "editarClaseToolStripMenuItem";
-            this.editarClaseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editarClaseToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.editarClaseToolStripMenuItem.Text = "Clase";
             // 
             // agregarToolStripMenuItem
             // 
             this.agregarToolStripMenuItem.Name = "agregarToolStripMenuItem";
-            this.agregarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.agregarToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.agregarToolStripMenuItem.Text = "Agregar";
             this.agregarToolStripMenuItem.Click += new System.EventHandler(this.agregarToolStripMenuItem_Click);
             // 
             // editarToolStripMenuItem1
             // 
             this.editarToolStripMenuItem1.Name = "editarToolStripMenuItem1";
-            this.editarToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.editarToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.editarToolStripMenuItem1.Text = "Editar";
             // 
             // eliminarToolStripMenuItem
             // 
             this.eliminarToolStripMenuItem.Name = "eliminarToolStripMenuItem";
-            this.eliminarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.eliminarToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.eliminarToolStripMenuItem.Text = "Eliminar";
             // 
             // editarRelacionToolStripMenuItem
@@ -232,13 +232,13 @@
             this.editarRelacionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.eliminarToolStripMenuItem1});
             this.editarRelacionToolStripMenuItem.Name = "editarRelacionToolStripMenuItem";
-            this.editarRelacionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editarRelacionToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.editarRelacionToolStripMenuItem.Text = "Relacion";
             // 
             // eliminarToolStripMenuItem1
             // 
             this.eliminarToolStripMenuItem1.Name = "eliminarToolStripMenuItem1";
-            this.eliminarToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.eliminarToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.eliminarToolStripMenuItem1.Text = "Eliminar";
             // 
             // groupBox1
@@ -269,16 +269,16 @@
             this.imgDiagrama.TabIndex = 0;
             this.imgDiagrama.TabStop = false;
             // 
-            // comboBox1
+            // tipoArchivo
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.tipoArchivo.FormattingEnabled = true;
+            this.tipoArchivo.Items.AddRange(new object[] {
             "OLC++",
             "Tree"});
-            this.comboBox1.Location = new System.Drawing.Point(716, 27);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 3;
+            this.tipoArchivo.Location = new System.Drawing.Point(716, 27);
+            this.tipoArchivo.Name = "tipoArchivo";
+            this.tipoArchivo.Size = new System.Drawing.Size(121, 21);
+            this.tipoArchivo.TabIndex = 3;
             // 
             // groupBox2
             // 
@@ -350,7 +350,7 @@
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.flowLayoutPanel2);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.tipoArchivo);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.menuStrip1);
@@ -386,7 +386,7 @@
         private System.Windows.Forms.ToolStripMenuItem archivoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editarToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox tipoArchivo;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button btnConvertirImg;

@@ -14,6 +14,9 @@ namespace _Compi2_Proyecto2_201314863
         public List<Procedimiento> procedimientos;
         public int linea, columna;
 
+        // Variables para generacion de codigo: inicio, atributos, procedimientos
+        public String textoAtributos = "", textoProcedimientos = "";
+
         public Clase(String nombre, String padre, int l, int c)
         {
             this.nombre = nombre;
