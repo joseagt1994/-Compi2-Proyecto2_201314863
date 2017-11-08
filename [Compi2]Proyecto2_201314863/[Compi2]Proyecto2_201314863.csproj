@@ -61,6 +61,12 @@
     <Compile Include="Estructuras\Simbolo.cs" />
     <Compile Include="Estructuras\TablaSimbolos.cs" />
     <Compile Include="Generacion C3D\C3D.cs" />
+    <Compile Include="Generacion C3D\Expresion\Aritmetica.cs" />
+    <Compile Include="Generacion C3D\Expresion\Expresion.cs" />
+    <Compile Include="Generacion C3D\Expresion\Logica.cs" />
+    <Compile Include="Generacion C3D\Expresion\Relacional.cs" />
+    <Compile Include="Generacion C3D\GeneradorC3D.cs" />
+    <Compile Include="Generacion C3D\Nodo.cs" />
     <Compile Include="GUI\EditorClase.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,8 +143,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Generacion C3D\Control\" />
-    <Folder Include="Generacion C3D\Expresion\" />
     <Folder Include="Optimizacion C3D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
