@@ -12,7 +12,7 @@ namespace _Compi2_Proyecto2_201314863
     public class AnalizadorOLC : Grammar
     {
         public AnalizadorOLC()
-            : base(caseSensitive:false)
+            : base(caseSensitive: false)
         {
             //Comentarios
             CommentTerminal COMENTARIO_SIMPLE = new CommentTerminal("comentario_simple", "//", "\n", "\r\n");
@@ -49,12 +49,6 @@ namespace _Compi2_Proyecto2_201314863
             MarkReservedWords("caracter");
             MarkReservedWords("cadena");
             MarkReservedWords("booleano");
-            MarkReservedWords("out_String");
-            MarkReservedWords("parseInt");
-            MarkReservedWords("parseDouble");
-            MarkReservedWords("intToStr");
-            MarkReservedWords("doubleToStr");
-            MarkReservedWords("doubleToInt");
             MarkReservedWords("imprimir");
 
             //Palabras reservadas
@@ -89,7 +83,7 @@ namespace _Compi2_Proyecto2_201314863
             var mostrar = ToTerm("imprimir");
 
             //Signos
-            var asignar = ToTerm("=>");
+            var asignar = ToTerm("=");
             var alla = ToTerm("{");
             var clla = ToTerm("}");
             var apar = ToTerm("(");
@@ -104,11 +98,13 @@ namespace _Compi2_Proyecto2_201314863
             var INICIO = new NonTerminal("INICIO");
             var IMPORTACIONES = new NonTerminal("IMPORTACIONES");
             var LLAMAR = new NonTerminal("LLAMAR");
-            var LISTA_ARCHIVOS = new NonTerminal("LISTA_ARCHIVOS");
-            var ARCHIVO = new NonTerminal("ARCHIVO");
             var CLASES = new NonTerminal("CLASES");
             var CLASE = new NonTerminal("CLASE");
             var CUERPO = new NonTerminal("CUERPO");
+            var TCUERPO = new NonTerminal("TCUERPO");
+            var CMETODO = new NonTerminal("CMETODO");
+            var PRINCIPAL = new NonTerminal("PRINCIPAL");
+            var CONSTRUCTOR = new NonTerminal("CONSTRUCTOR");
             var METODO = new NonTerminal("METODO");
             var VISIBILIDAD = new NonTerminal("VISIBILIDAD");
             var DECLARACIONES = new NonTerminal("DECLARACIONES");
@@ -165,11 +161,11 @@ namespace _Compi2_Proyecto2_201314863
             var CRECE = new NonTerminal("EXP");
             var ARR = new NonTerminal("ARR");
             var A = new NonTerminal("A");
+            var ARREGLO = new NonTerminal("ARREGLO");
+            var TARREGLO = new NonTerminal("TARREGLO");
+            var DARREGLO = new NonTerminal("DARREGLO");
 
             //Terminales Expresiones Regulares
-            RegexBasedTerminal archivo = new RegexBasedTerminal("archivo", "[a-zA-Z][0-9a-zA-Z]*.(tree|olc)");
-            RegexBasedTerminal ruta = new RegexBasedTerminal("ruta", "C://([a-zA-Z][0-9a-zA-Z]*/)*[a-zA-Z][0-9a-zA-Z]*.(tree|olc)");
-            RegexBasedTerminal url = new RegexBasedTerminal("url", "http://([a-zA-Z][0-9a-zA-Z]*/)*[a-zA-Z][0-9a-zA-Z]*.(tree|olc)");
             NumberLiteral numero = TerminalFactory.CreateCSharpNumber("numero");
             IdentifierTerminal id = TerminalFactory.CreateCSharpIdentifier("id");
             var tstring = new StringLiteral("cadena", "\"", StringOptions.AllowsDoubledQuote);
@@ -184,8 +180,8 @@ namespace _Compi2_Proyecto2_201314863
 
             IMPORTACIONES.Rule = MakeStarRule(IMPORTACIONES, LLAMAR);
 
-            LLAMAR.Rule = importar + apar + str + cpar + fin
-                | llamar + apar + str + cpar + fin;
+            LLAMAR.Rule = importar + apar + tstring + cpar + fin
+                | llamar + apar + tstring + cpar + fin;
 
             CLASES.Rule = MakeStarRule(CLASES, CLASE);
 
@@ -194,16 +190,27 @@ namespace _Compi2_Proyecto2_201314863
 
             CUERPOS.Rule = MakeStarRule(CUERPOS, CUERPO);
 
-            CUERPO.Rule = VISIBILIDAD + DECLARACION + fin
-                        | METODO
-                        | id + apar + LISTA_PARAMETROS + cpar + alla + LISTA_SENTENCIAS + clla
-                        | DECLARACION + fin
+            CUERPO.Rule = VISIBILIDAD + TPROC + id + TCUERPO
+                        | TPROC + id + TCUERPO
+                        | sobreescribir + METODO
+                        | PRINCIPAL
+                        | VISIBILIDAD + CONSTRUCTOR
+                        | CONSTRUCTOR
                         | ASIGNACION + fin;
 
-            METODO.Rule = sobreescribir + VISIBILIDAD + TPROC + id + apar + LISTA_PARAMETROS + cpar + alla + LISTA_SENTENCIAS + clla
-                        | VISIBILIDAD + TPROC + id + apar + LISTA_PARAMETROS + cpar + alla + LISTA_SENTENCIAS + clla
-                        | sobreescribir + TPROC + id + apar + LISTA_PARAMETROS + cpar + alla + LISTA_SENTENCIAS + clla
-                        | TPROC + id + apar + LISTA_PARAMETROS + cpar + alla + LISTA_SENTENCIAS + clla;
+            CONSTRUCTOR.Rule = id + CMETODO;
+
+            PRINCIPAL.Rule = main + apar + cpar + alla + LISTA_SENTENCIAS + clla;
+
+            TCUERPO.Rule = asignarR + fin
+                         | DARREGLO + fin
+                         | fin
+                         | CMETODO;
+
+            METODO.Rule = VISIBILIDAD + TPROC + id + CMETODO
+                        | TPROC + id + CMETODO;
+
+            CMETODO.Rule = apar + LISTA_PARAMETROS + cpar + alla + LISTA_SENTENCIAS + clla;
 
             VISIBILIDAD.Rule = publico
                              | privado
@@ -218,8 +225,13 @@ namespace _Compi2_Proyecto2_201314863
             A.Rule = acor + ccor;
 
             DECLARACION.Rule = TIPO + LISTA_IDS + asignarR
-                             | TIPO + LISTA_IDS
-                             | TIPO + id + INDICES;
+                             | TIPO + LISTA_IDS + DARREGLO
+                             | TIPO + LISTA_IDS;
+
+            DARREGLO.Rule = INDICES + asignar + alla + ARREGLO + clla
+                   | INDICES;
+
+            LISTA_IDS.Rule = MakeStarRule(LISTA_IDS, coma, id);
 
             asignarR.Rule = asignar + EXP;
 
@@ -229,8 +241,6 @@ namespace _Compi2_Proyecto2_201314863
                          | id + INDICES;
 
             INDICES.Rule = MakeStarRule(INDICES, DIM);
-
-            LISTA_IDS.Rule = MakeStarRule(LISTA_IDS, coma, id);
 
             LISTA_SENTENCIAS.Rule = MakeStarRule(LISTA_SENTENCIAS, SENTENCIA);
 
@@ -252,11 +262,9 @@ namespace _Compi2_Proyecto2_201314863
                          | IF2
                          | IF3
                          | IF5
-                         | SWITCH
                          | WHILE
                          | DO_WHILE
                          | FOR
-                         | LOOP
                          | REPEAT;
 
             IF1.Rule = si + EXP + alla + LISTA_SENTENCIAS + clla;
@@ -281,7 +289,8 @@ namespace _Compi2_Proyecto2_201314863
 
             FOR.Rule = para + apar + Fasignar + fin + EXP + fin + EXP + cpar + alla + LISTA_SENTENCIAS + clla;
 
-            TPROC.Rule = TIPO + ARR;
+            TPROC.Rule = TIPO + ARR
+                | TIPO;
 
             TIPO.Rule = vacio
                       | num
@@ -311,7 +320,6 @@ namespace _Compi2_Proyecto2_201314863
                 | CRECE
                 | nuevo + acor + LEXPS
                 | LLAMADA
-                | NATIVAS
                 | self + punto + ACCESO
                 | self + punto + id + INDICES
                 | ACCESO
@@ -320,6 +328,11 @@ namespace _Compi2_Proyecto2_201314863
                 | tstring
                 | tchar
                 | BANDERA;
+
+            ARREGLO.Rule = MakeStarRule(ARREGLO, coma, TARREGLO);
+
+            TARREGLO.Rule = alla + ARREGLO + clla
+                | EXP;
 
             BANDERA.Rule = falso
                          | verdadero;
@@ -337,15 +350,15 @@ namespace _Compi2_Proyecto2_201314863
                 | EXP + ToTerm("--");
 
             //Definir Asociatividad
-            RegisterOperators(1, Associativity.Left, "or");                       //OR,NOR
-            RegisterOperators(2, Associativity.Left, "and");                        //AND,NAND
-            RegisterOperators(3, Associativity.Left, "xor");                             //XOR
-            RegisterOperators(4, Associativity.Right, "not");                             //NOT
+            RegisterOperators(1, Associativity.Left, "||");                       //OR,NOR
+            RegisterOperators(2, Associativity.Left, "&&");                        //AND,NAND
+            RegisterOperators(3, Associativity.Left, "??");                             //XOR
+            RegisterOperators(4, Associativity.Right, "!");                             //NOT
             RegisterOperators(5, Associativity.Left, "==", "!=", ">", "<", ">=", "<="); //MAYORQUES,MENORQUES,IGUAL,DIFERENTE
             RegisterOperators(6, Associativity.Left, "+", "-");                         //MAS,MENOS
             RegisterOperators(7, Associativity.Left, "*", "/");                    //POR,DIVIDIR,MOD
             RegisterOperators(8, Associativity.Right, "-");                             //UNARIO
-            RegisterOperators(9, Associativity.Left, "pow");                              //POTENCIA
+            RegisterOperators(9, Associativity.Left, "^");                              //POTENCIA
             RegisterOperators(10, Associativity.Left, "++", "--");
 
             //Manejo de Errores Lexicos y Sintacticos
@@ -354,9 +367,9 @@ namespace _Compi2_Proyecto2_201314863
             CASOS.ErrorRule = SyntaxError + CASO;
 
             //Eliminacion de caracters, no terminales que son estorbos
-            this.MarkPunctuation("(", ")", ":", "=>", ",", ".", "[", "]", "://", "/");
-            this.MarkPunctuation("clase", "si", "sino", "hacer", "mientras", "repetir", "para", "retornar");
-            this.MarkTransient(AID, IMPORTACIONES, LLAMAR, ARCHIVO, SENTENCIA, DIM, CONTROL, Fasignar, TIPO);
+            this.MarkPunctuation("(", ")", ":", "=", ",", ".", "[", "]", "{", "}", ";");
+            this.MarkPunctuation("clase", "hereda_de", "principal", "si", "sino", "hacer", "mientras", "repetir", "para", "retornar");
+            this.MarkTransient(AID, IMPORTACIONES, SENTENCIA, asignarR, DIM, CONTROL, Fasignar, TIPO, TCUERPO, TARREGLO);
 
         }
     }

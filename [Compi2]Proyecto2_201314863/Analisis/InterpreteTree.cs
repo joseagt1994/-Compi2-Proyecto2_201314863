@@ -21,7 +21,7 @@ namespace _Compi2_Proyecto2_201314863
             clases = new List<Clase>();
         }
 
-        public List<Clase> analizar(String entrada)
+        public List<Clase> analizarTree(String entrada)
         {
             AnalizadorTree gramatica = new AnalizadorTree();
             Parser parser = new Parser(gramatica);
@@ -42,7 +42,6 @@ namespace _Compi2_Proyecto2_201314863
                 }
             }
             //Guardar metodos,funciones y variables; y ver donde empieza el main
-            //listaMetodos = new Dictionary<string, Cuerpo>();
             if (raiz != null)
             {
                 guardar(raiz);
@@ -53,8 +52,15 @@ namespace _Compi2_Proyecto2_201314863
         public void guardar(ParseTreeNode nodo)
         {
             // INICIO -> IMPORTACIONES CLASES
-            guardarImportaciones(nodo.ChildNodes.ElementAt(0));
-            guardarClases(nodo.ChildNodes.ElementAt(1));
+            if(nodo.ChildNodes.Count == 2)
+            {
+                guardarImportaciones(nodo.ChildNodes.ElementAt(0));
+                guardarClases(nodo.ChildNodes.ElementAt(1));
+            }
+            else
+            {
+                guardarClases(nodo.ChildNodes.ElementAt(0));
+            }
         }
         #endregion
 
@@ -79,7 +85,7 @@ namespace _Compi2_Proyecto2_201314863
                     // El archivo se encuentra en el repositorio
                 }
                 InterpreteTree ntree = new InterpreteTree();
-                return ntree.analizar(texto);
+                return ntree.analizarTree(texto);
             }
             return null;
         }

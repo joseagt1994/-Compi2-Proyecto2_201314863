@@ -79,6 +79,15 @@
     <Compile Include="GUI\Menu.Designer.cs">
       <DependentUpon>Menu.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\Opciones.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Opciones.Designer.cs">
+      <DependentUpon>Opciones.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Pagina.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="GUI\UML.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +107,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Menu.resx">
       <DependentUpon>Menu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Opciones.resx">
+      <DependentUpon>Opciones.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\UML.resx">
       <DependentUpon>UML.cs</DependentUpon>
@@ -125,6 +137,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Generacion C3D\Control\" />
+    <Folder Include="Generacion C3D\Expresion\" />
     <Folder Include="Optimizacion C3D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

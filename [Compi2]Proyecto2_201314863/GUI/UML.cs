@@ -118,7 +118,21 @@ namespace _Compi2_Proyecto2_201314863
         {
             // Convertir codigo a imagen
             InterpreteTree interprete = new InterpreteTree();
-            clases = interprete.analizar(txtCodigo.Text);
+            if(tipoArchivo.SelectedIndex == 0)
+            {
+                // OLC
+                //clases = interprete.analizarOLC(txtCodigo.Text);
+            }
+            else if(tipoArchivo.SelectedIndex == 1)
+            {
+                // Tree
+                clases = interprete.analizarTree(txtCodigo.Text);
+            }
+            else
+            {
+                MessageBox.Show("Seleccione un lenguaje!");
+                return;
+            }
             relaciones = new List<Relacion>();
             // Recorrer clases para buscar relaciones necesarias
             generarRelacionesUML();

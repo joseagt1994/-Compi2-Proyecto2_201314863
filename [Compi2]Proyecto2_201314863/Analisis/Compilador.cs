@@ -23,22 +23,28 @@ namespace _Compi2_Proyecto2_201314863
         #endregion
 
         #region "Fases del Compilador"
-        public List<C3D> compilar(String texto, RichTextBox consola, bool lenguaje)
+        public List<C3D> compilar(String texto, RichTextBox consola, int lenguaje)
         {
+            
             // ****************** FASE 1 Analisis Alto Nivel ********************//
-            if (lenguaje)
+            if (lenguaje == (int)Pagina.Lenguaje.OLC)
             {
                 // OLC++
+                InterpreteOLC interprete = new InterpreteOLC();
+                clases = interprete.analizarOLC(texto);
             }
             else
             {
                 // Tree
-                InterpreteTree itree = new InterpreteTree();
-                clases = itree.analizar(texto);
+                InterpreteTree interprete = new InterpreteTree();
+                clases = interprete.analizarTree(texto);
             }
             // **************** FASE 2 Llenar Tabla de Simbolos *****************//
             llenarTablaSimbolos();
             
+            // **************** FASE 3 Analisis Semantico y Codigo Intermedio ***//
+
+
             return null;
         }
         #endregion
