@@ -11,6 +11,11 @@ namespace _Compi2_Proyecto2_201314863
         #region "TS"
         private static TablaSimbolos instance;
 
+        public static void reiniciar()
+        {
+            instance = null;
+        }
+
         private TablaSimbolos()
         {
 

@@ -7,7 +7,7 @@ using Irony.Parsing;
 
 namespace _Compi2_Proyecto2_201314863
 {
-    public class Procedimiento
+    public class Procedimiento : Auxiliar
     {
         #region Atributos del procedimiento
         public String nombre, completo, clase;
@@ -69,7 +69,7 @@ namespace _Compi2_Proyecto2_201314863
         {
             this.completo = getNombreProcedimiento(this);
         }
-
+        
         public void agregarClase(String clase)
         {
             this.clase = clase;

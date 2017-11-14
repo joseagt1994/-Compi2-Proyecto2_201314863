@@ -145,11 +145,15 @@ namespace _Compi2_Proyecto2_201314863
             {
                 if (cuerpo.ChildNodes.ElementAt(0).Term.Name.Equals("METODO"))
                 {
-                    nueva.agregarProcedimiento(guardarProcedimiento(cuerpo.ChildNodes[0]));
+                    Procedimiento proc = guardarProcedimiento(cuerpo.ChildNodes[0]);
+                    proc.llenarDeclaraciones(proc.sentencias, nueva.atributos);
+                    nueva.agregarProcedimiento(proc);
                 }
                 else if (cuerpo.ChildNodes.ElementAt(0).Term.Name.Equals("__constructor"))
                 {
-                    nueva.agregarConstructor(guardarConstructor(cuerpo));
+                    Procedimiento cons = guardarConstructor(cuerpo);
+                    cons.llenarDeclaraciones(cons.sentencias, nueva.atributos);
+                    nueva.agregarConstructor(cons);
                 }
                 else if (cuerpo.ChildNodes.ElementAt(0).Term.Name.Equals("DECLARACION"))
                 {
@@ -363,7 +367,7 @@ namespace _Compi2_Proyecto2_201314863
                 // Con parametros
                 List<Atributo> parametros = guardarParametros(nodo.ChildNodes[1]);
                 return new Procedimiento("constructor", (int)Simbolo.Tipo.CONSTRUCTOR,
-                    parametros, nodo.ChildNodes[1], nodo.ChildNodes[0].Token.Location.Line,
+                    parametros, nodo.ChildNodes[2], nodo.ChildNodes[0].Token.Location.Line,
                             nodo.ChildNodes[0].Token.Location.Column);
             }
             else

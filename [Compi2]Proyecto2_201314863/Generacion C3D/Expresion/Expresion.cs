@@ -8,17 +8,85 @@ using Irony.Parsing;
 namespace _Compi2_Proyecto2_201314863
 {
     public class Expresion
-    {
+    {/*
         public static Nodo expresionC3D(ParseTreeNode nodo)
         {
             switch (nodo.ChildNodes.Count)
             {
+                #region "3 hijos"
                 case 3:
-                    break;
+                    //EXP -> 3 hijos
+                    String operador = nodo.ChildNodes.ElementAt(1).Token.Value.ToString();
+                    if (operador.Equals("+") || operador.Equals("-") || operador.Equals("*") || operador.Equals("/") || operador.Equals("pow") || operador.Equals("^"))
+                    {
+                        //ARITMETICAS!
+                        Nodo aritmetica = Aritmetica.generarC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
+                        if (aritmetica != null)
+                        {
+                            aritmetica.referencia = "error";
+                        }
+                        return aritmetica;
+                    }
+                    else if (operador.Equals("==") || operador.Equals("!=") || operador.Equals(">") || operador.Equals(">=") || operador.Equals("<") || operador.Equals("<="))
+                    {
+                        //RELACIONALES!
+                        Nodo relacional = relacionalC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
+                        if (relacional != null)
+                        {
+                            relacional.referencia = "error";
+                        }
+                        return relacional;
+                    }
+                    else
+                    {
+                        //LOGICAS!
+                        Nodo logica = logicaC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
+                        if (logica != null)
+                        {
+                            logica.referencia = "error";
+                        }
+                        return logica;
+                    }
+                #endregion
+                #region "2 hijos"
                 case 2:
                     break;
+                #endregion
+                #region "1 hijo"
                 default:
-                    break;
+                    //EXP -> 1 hijo
+                    String tipo = nodo.ChildNodes.ElementAt(0).Term.Name;
+                    Nodo nval = new Nodo();
+                    switch (tipo)
+                    {
+                        case "LLAMADA":
+                            // Generar codigo 3D de llamada a metodo!
+                            return generarC3DMetodo(nodo.ChildNodes.ElementAt(0), true);
+                        case "NATIVAS":
+                            // getBool, getNum, getRandom, getLength(str), getLength(str id,num)
+                            return generarC3DNativas(nodo.ChildNodes.ElementAt(0));
+                        case "numero":
+                            nval.tipo = (int)Simbolo.Tipo.NUMERO;
+                            nval.cadena = nodo.ChildNodes.ElementAt(0).Token.Value.ToString();
+                            if (nval.cadena.Contains("."))
+                            {
+                                nval.tipo = (int)Simbolo.Tipo.DECIMAL;
+                            }
+                            return nval;
+                        case "ACCESO":
+                            return null;
+                        case "CRECE":
+                            return null;
+                        case "cadena":
+                            return guardarCadenaC3D(nodo.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0).Token.Value.ToString());
+                        case "caracter":
+                            return null;
+                        case "BANDERA":
+                            return banderaC3D(nodo.ChildNodes.ElementAt(0));
+                        default:
+                            return expresionC3D(nodo.ChildNodes.ElementAt(0));
+                    }
+                    #endregion
             }
             return null;
         }
@@ -228,482 +296,7 @@ namespace _Compi2_Proyecto2_201314863
         }
 
         */
-        public Nodo relacionalC3D(ParseTreeNode izq, String operador, ParseTreeNode der)
-        {
-            switch (operador)
-            {
-                case "==":
-                    return generarIgualC3D(izq, der);
-                case "!=":
-                    return generarNoIgualC3D(izq, der);
-                case ">=":
-                    return generarMayorIgualC3D(izq, der);
-                case ">":
-                    return generarMayorC3D(izq, der);
-                case "<=":
-                    return generarMenorIgualC3D(izq, der);
-                default:
-                    //<
-                    return generarMenorC3D(izq, der);
-            }
-        }
-
-        public Nodo generarIgualC3D(ParseTreeNode izq, ParseTreeNode der)
-        {
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
-            if (nizq == null || nder == null)
-            {
-                return null;
-            }
-            Nodo nodo = new Nodo();
-            nodo.tipo = (int)Simbolo.Tipo.BOOLEAN;
-            nodo.etqVerdadera = getEtiqueta();
-            nodo.etqFalsa = getEtiqueta();
-            if (nizq.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                // NULL == DER
-                if (nder.tipo == (int)Simbolo.Tipo.NUMERO || nder.tipo == (int)Simbolo.Tipo.CADENA
-                    || nder.tipo == (int)Simbolo.Tipo.ESTRUCTURA)
-                {
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si es NULL"));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "==", nder.cadena));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                    return nodo;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            if (nder.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                // IZQ == NULL
-                if (nizq.tipo == (int)Simbolo.Tipo.NUMERO || nizq.tipo == (int)Simbolo.Tipo.CADENA
-                    || nizq.tipo == (int)Simbolo.Tipo.ESTRUCTURA)
-                {
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si es NULL"));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "==", nder.cadena));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                    return nodo;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            switch (nizq.tipo)
-            {
-                case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si los dos numeros son iguales"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "==", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.BOOLEAN:
-                    if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
-                    {
-                        nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                    }
-                    if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
-                        {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si los dos bools son iguales"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "==", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.CADENA:
-                    if (nder.tipo == (int)Simbolo.Tipo.CADENA)
-                    {
-
-                        String temp1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar los punteros a Heap de las cadenas"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp1, nizq.cadena));
-                        String temp2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp2, nder.cadena));
-                        String taux = getTemporal();
-                        String eInicio = getEtiqueta();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Iniciar un contador en 0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, "0", "", ""));
-                        generarEtiquetas((eInicio));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 1"));
-                        String tpos1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos1, temp1, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 1"));
-                        String tval1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval1, tpos1));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 2"));
-                        String tpos2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos2, temp2, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 2"));
-                        String tval2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval2, tpos2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqFalsa, tval1, "!=", tval2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, tval1, "==", "0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, taux, "+", "1"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eInicio));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.VACIO:
-                    // Si es NULL
-                    break;
-            }
-            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede comparar si son iguales el " + getTipo(nizq.tipo) + " con " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
-            return null;
-        }
-
-        public Nodo generarNoIgualC3D(ParseTreeNode izq, ParseTreeNode der)
-        {
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
-            if (nizq == null || nder == null)
-            {
-                return null;
-            }
-            Nodo nodo = new Nodo();
-            nodo.tipo = (int)Simbolo.Tipo.BOOLEAN;
-            nodo.etqVerdadera = getEtiqueta();
-            nodo.etqFalsa = getEtiqueta();
-            if (nizq.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                // NULL != DER
-                if (nder.tipo == (int)Simbolo.Tipo.NUMERO || nder.tipo == (int)Simbolo.Tipo.CADENA
-                    || nder.tipo == (int)Simbolo.Tipo.ESTRUCTURA)
-                {
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si no es NULL"));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "!=", nder.cadena));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                    return nodo;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            if (nder.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                // IZQ != NULL
-                if (nder.tipo == (int)Simbolo.Tipo.NUMERO || nder.tipo == (int)Simbolo.Tipo.CADENA
-                    || nder.tipo == (int)Simbolo.Tipo.ESTRUCTURA)
-                {
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si no es NULL"));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "!=", nder.cadena));
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                    return nodo;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            switch (nizq.tipo)
-            {
-                case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si los dos numeros son desiguales"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "!=", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.BOOLEAN:
-                    if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
-                    {
-                        nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                    }
-                    if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
-                        {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si los dos bools son desiguales"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "!=", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.CADENA:
-                    if (nder.tipo == (int)Simbolo.Tipo.CADENA)
-                    {
-
-                        String temp1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar los punteros a Heap de las cadenas"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp1, nizq.cadena));
-                        String temp2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp2, nder.cadena));
-                        String taux = getTemporal();
-                        String eInicio = getEtiqueta();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Iniciar un contador en 0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, "0", "", ""));
-                        generarEtiquetas((eInicio));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 1"));
-                        String tpos1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos1, temp1, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 1"));
-                        String tval1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval1, tpos1));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 2"));
-                        String tpos2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos2, temp2, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 2"));
-                        String tval2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval2, tpos2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, tval1, "!=", tval2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqFalsa, tval1, "==", "0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, taux, "+", "1"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eInicio));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.VACIO:
-                    // Si es NULL
-                    break;
-            }
-            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede comparar si son desiguales el " + getTipo(nizq.tipo) + " con " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
-            return null;
-        }
-
-        public Nodo generarMayorC3D(ParseTreeNode izq, ParseTreeNode der)
-        {
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
-            if (nizq == null || nder == null)
-            {
-                return null;
-            }
-            if (nizq.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            if (nder.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            Nodo nodo = new Nodo();
-            nodo.tipo = (int)Simbolo.Tipo.BOOLEAN;
-            nodo.etqVerdadera = getEtiqueta();
-            nodo.etqFalsa = getEtiqueta();
-            switch (nizq.tipo)
-            {
-                case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si num > num"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, ">", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.CADENA:
-                    if (nder.tipo == (int)Simbolo.Tipo.CADENA)
-                    {
-
-                        String temp1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar los punteros a Heap de las cadenas"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp1, nizq.cadena));
-                        String temp2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp2, nder.cadena));
-                        String taux = getTemporal();
-                        String eInicio = getEtiqueta();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Iniciar un contador en 0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, "0", "", ""));
-                        generarEtiquetas((eInicio));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 1"));
-                        String tpos1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos1, temp1, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 1"));
-                        String tval1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval1, tpos1));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 2"));
-                        String tpos2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos2, temp2, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 2"));
-                        String tval2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval2, tpos2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, tval1, ">", tval2));
-                        String e2 = getEtiqueta();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, e2, tval1, "==", tval2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        generarEtiquetas((e2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqFalsa, tval1, "==", "0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, taux, "+", "1"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eInicio));
-                        return nodo;
-                    }
-                    break;
-            }
-            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede comparar si el " + getTipo(nizq.tipo) + " es mayor a " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
-            return null;
-        }
-
-        public Nodo generarMenorC3D(ParseTreeNode izq, ParseTreeNode der)
-        {
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
-            if (nizq == null || nder == null)
-            {
-                return null;
-            }
-            if (nizq.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            if (nder.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            Nodo nodo = new Nodo();
-            nodo.tipo = (int)Simbolo.Tipo.BOOLEAN;
-            nodo.etqVerdadera = getEtiqueta();
-            nodo.etqFalsa = getEtiqueta();
-            switch (nizq.tipo)
-            {
-                case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si num < num"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "<", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.CADENA:
-                    if (nder.tipo == (int)Simbolo.Tipo.CADENA)
-                    {
-
-                        String temp1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar los punteros a Heap de las cadenas"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp1, nizq.cadena));
-                        String temp2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", temp2, nder.cadena));
-                        String taux = getTemporal();
-                        String eInicio = getEtiqueta();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Iniciar un contador en 0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, "0", "", ""));
-                        generarEtiquetas((eInicio));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 1"));
-                        String tpos1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos1, temp1, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 1"));
-                        String tval1 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval1, tpos1));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion de la cadena 2"));
-                        String tpos2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, tpos2, temp2, "+", taux));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor Pool[posicion] de cadena 2"));
-                        String tval2 = getTemporal();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval2, tpos2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, tval1, "<", tval2));
-                        String e2 = getEtiqueta();
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, e2, tval1, "==", tval2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        generarEtiquetas((e2));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqFalsa, tval1, "==", "0"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, taux, "+", "1"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eInicio));
-                        return nodo;
-                    }
-                    break;
-            }
-            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede comparar si el " + getTipo(nizq.tipo) + " es menor a " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
-            return null;
-        }
-
-        public Nodo generarMayorIgualC3D(ParseTreeNode izq, ParseTreeNode der)
-        {
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
-            if (nizq == null || nder == null)
-            {
-                return null;
-            }
-            if (nizq.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            if (nder.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            Nodo nodo = new Nodo();
-            nodo.tipo = (int)Simbolo.Tipo.BOOLEAN;
-            nodo.etqVerdadera = getEtiqueta();
-            nodo.etqFalsa = getEtiqueta();
-            switch (nizq.tipo)
-            {
-                case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si num >= num"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, ">", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-            }
-            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede comparar si el " + getTipo(nizq.tipo) + " es mayor o igual a " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
-            return null;
-        }
-
-        public Nodo generarMenorIgualC3D(ParseTreeNode izq, ParseTreeNode der)
-        {
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
-            if (nizq == null || nder == null)
-            {
-                return null;
-            }
-            if (nizq.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            if (nder.tipo == (int)Simbolo.Tipo.VACIO)
-            {
-                //Error: NullPointerException
-            }
-            Nodo nodo = new Nodo();
-            nodo.tipo = (int)Simbolo.Tipo.BOOLEAN;
-            nodo.etqVerdadera = getEtiqueta();
-            nodo.etqFalsa = getEtiqueta();
-            switch (nizq.tipo)
-            {
-                case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Comparar si num <= num"));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nodo.etqVerdadera, nizq.cadena, "<=", nder.cadena));
-                        instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nodo.etqFalsa));
-                        return nodo;
-                    }
-                    break;
-            }
-            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede comparar si el " + getTipo(nizq.tipo) + " es menor o igual a " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
-            return null;
-        }
-
+        /*
         public Nodo logicaC3D(ParseTreeNode izq, String operador, ParseTreeNode der)
         {
             Nodo nodo = new Nodo();
@@ -1541,7 +1134,7 @@ namespace _Compi2_Proyecto2_201314863
                         }
                 }
             }
-        }
+        }*/
 
     }
 }

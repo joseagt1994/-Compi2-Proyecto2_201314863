@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alto Nivel\Atributo.cs" />
+    <Compile Include="Alto Nivel\Auxiliar.cs" />
     <Compile Include="Alto Nivel\Clase.cs" />
     <Compile Include="Alto Nivel\Procedimiento.cs" />
     <Compile Include="Analisis\AnalizadorOLC++.cs" />
@@ -94,6 +95,12 @@
     <Compile Include="GUI\Pagina.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="GUI\Reportes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\Reportes.Designer.cs">
+      <DependentUpon>Reportes.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\UML.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +123,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Opciones.resx">
       <DependentUpon>Opciones.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Reportes.resx">
+      <DependentUpon>Reportes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\UML.resx">
       <DependentUpon>UML.cs</DependentUpon>

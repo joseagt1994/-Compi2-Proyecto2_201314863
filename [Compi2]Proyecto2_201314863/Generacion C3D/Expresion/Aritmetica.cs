@@ -8,8 +8,8 @@ using Irony.Parsing;
 namespace _Compi2_Proyecto2_201314863
 {
     public class Aritmetica
-    {
-        public static Nodo aritmeticaC3D(ParseTreeNode izq, String operador, ParseTreeNode der)
+    {/*
+        public static Nodo generarC3D(ParseTreeNode izq, String operador, ParseTreeNode der)
         {
             switch (operador)
             {
@@ -25,9 +25,9 @@ namespace _Compi2_Proyecto2_201314863
                     // '^' Potencia
                     return generarPotenciaC3D(izq, der);
             }
-        }
+        }*/
 
-        public static Nodo generarSumaC3D(ParseTreeNode izq, ParseTreeNode der)
+     /*   public static Nodo generarSumaC3D(ParseTreeNode izq, ParseTreeNode der)
         {
             Nodo nodo = new Nodo();
             Nodo nizq = Expresion.expresionC3D(izq);
@@ -539,7 +539,7 @@ namespace _Compi2_Proyecto2_201314863
                     GeneradorC3D.generarEtiquetas((eFin));
                     break;
             }
-        }
+        }*/
 
     }
 }

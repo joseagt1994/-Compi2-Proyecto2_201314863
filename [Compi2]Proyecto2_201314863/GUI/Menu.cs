@@ -29,6 +29,8 @@ namespace _Compi2_Proyecto2_201314863
         private void button5_Click(object sender, EventArgs e)
         {
             // Compilar
+            // Reiniciar TS
+            TablaSimbolos.reiniciar();
             int actual = paginas.SelectedIndex;
             if(actual >= 0)
             {
@@ -55,6 +57,14 @@ namespace _Compi2_Proyecto2_201314863
             Pagina nueva = new Pagina((int)tipoArchivo, "nuevo");
             paginas.Controls.Add(nueva);
             MessageBox.Show(tipoArchivo.ToString());
+        }
+
+        private void tablaDeSimbolosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Ver el reporte de Simbolos
+            Reportes rpts = new Reportes();
+            rpts.setReporteTS(TablaSimbolos.getInstance);
+            rpts.Show();
         }
     }
 }

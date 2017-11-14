@@ -164,6 +164,7 @@ namespace _Compi2_Proyecto2_201314863
             var ARREGLO = new NonTerminal("ARREGLO");
             var TARREGLO = new NonTerminal("TARREGLO");
             var DARREGLO = new NonTerminal("DARREGLO");
+            var X = new NonTerminal("X");
 
             //Terminales Expresiones Regulares
             NumberLiteral numero = TerminalFactory.CreateCSharpNumber("numero");
@@ -265,7 +266,10 @@ namespace _Compi2_Proyecto2_201314863
                          | WHILE
                          | DO_WHILE
                          | FOR
-                         | REPEAT;
+                         | REPEAT
+                         | X;
+
+            X.Rule = x + apar + EXP + coma + EXP + cpar + alla + LISTA_SENTENCIAS + clla;
 
             IF1.Rule = si + EXP + alla + LISTA_SENTENCIAS + clla;
 

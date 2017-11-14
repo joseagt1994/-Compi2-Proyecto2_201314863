@@ -265,6 +265,7 @@
             this.tablaDeSimbolosToolStripMenuItem.Name = "tablaDeSimbolosToolStripMenuItem";
             this.tablaDeSimbolosToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.tablaDeSimbolosToolStripMenuItem.Text = "Tabla de Simbolos";
+            this.tablaDeSimbolosToolStripMenuItem.Click += new System.EventHandler(this.tablaDeSimbolosToolStripMenuItem_Click);
             // 
             // gramaticaToolStripMenuItem
             // 

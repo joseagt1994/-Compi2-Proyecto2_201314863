@@ -142,16 +142,21 @@ namespace _Compi2_Proyecto2_201314863
                         // CONSTRUCTOR o PRINCIPAL
                         if (cuerpo.ChildNodes[0].Term.Name.Equals("CONSTRUCTOR"))
                         {
-                            nueva.agregarConstructor(guardarConstructor(cuerpo.ChildNodes[0], 
-                                (int)Simbolo.Visibilidad.PUBLICO));
+                            Procedimiento cons = guardarConstructor(cuerpo.ChildNodes[0],
+                                (int)Simbolo.Visibilidad.PUBLICO);
+                            cons.llenarDeclaraciones(cons.sentencias, nueva.atributos);
+                            nueva.agregarConstructor(cons);
                         }
                         else if (cuerpo.ChildNodes[0].Term.Name.Equals("PRINCIPAL"))
                         {
-                            nueva.agregarProcedimiento(new Procedimiento("main", 
+
+                            Procedimiento proc = new Procedimiento("main", 
                                 (int)Simbolo.Tipo.VACIO, new List<Atributo>(),
                                 cuerpo.ChildNodes[0].ChildNodes[1], 
                                 cuerpo.ChildNodes[0].ChildNodes[0].Token.Location.Line,
-                                cuerpo.ChildNodes[0].ChildNodes[0].Token.Location.Column));
+                                cuerpo.ChildNodes[0].ChildNodes[0].Token.Location.Column);
+                            proc.llenarDeclaraciones(proc.sentencias, nueva.atributos);
+                            nueva.agregarProcedimiento(proc);
                         }
                         break;
                     case 2:
@@ -160,12 +165,16 @@ namespace _Compi2_Proyecto2_201314863
                         if (cuerpo.ChildNodes[1].Term.Name.Equals("CONSTRUCTOR"))
                         {
                             int vis = Simbolo.getVisibilidad(cuerpo.ChildNodes[0].ChildNodes[0].Token.Text);
-                            nueva.agregarConstructor(guardarConstructor(cuerpo.ChildNodes[0], vis));
+                            Procedimiento cons = guardarConstructor(cuerpo.ChildNodes[0], vis);
+                            cons.llenarDeclaraciones(cons.sentencias, nueva.atributos);
+                            nueva.agregarConstructor(cons);
                         }
                         else if (cuerpo.ChildNodes[1].Term.Name.Equals("METODO"))
                         {
-                            nueva.agregarProcedimiento(guardarProcedimiento
-                                (cuerpo.ChildNodes[1], true));
+                            Procedimiento proc = guardarProcedimiento
+                                (cuerpo.ChildNodes[1], true);
+                            proc.llenarDeclaraciones(proc.sentencias, nueva.atributos);
+                            nueva.agregarProcedimiento(proc);
                         }
                         else
                         {
@@ -187,8 +196,10 @@ namespace _Compi2_Proyecto2_201314863
                             if (cuerpo.ChildNodes[2].Term.Name.Equals("CMETODO"))
                             {
                                 // Es procedimiento
-                                nueva.agregarProcedimiento(guardarProcedimiento
-                                (cuerpo, true));
+                                Procedimiento proc = guardarProcedimiento
+                                (cuerpo, true);
+                                proc.llenarDeclaraciones(proc.sentencias, nueva.atributos);
+                                nueva.agregarProcedimiento(proc);
                             }
                             else
                             {
@@ -248,7 +259,9 @@ namespace _Compi2_Proyecto2_201314863
                         if (cuerpo.ChildNodes[3].Term.Name.Equals("CMETODO"))
                         {
                             // Es procedimiento
-                            nueva.agregarProcedimiento(guardarProcedimiento(cuerpo, false));
+                            Procedimiento proc = guardarProcedimiento(cuerpo, false);
+                            proc.llenarDeclaraciones(proc.sentencias, nueva.atributos);
+                            nueva.agregarProcedimiento(proc);
                         }
                         else 
                         {

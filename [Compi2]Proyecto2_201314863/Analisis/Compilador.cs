@@ -26,7 +26,7 @@ namespace _Compi2_Proyecto2_201314863
         public List<C3D> compilar(String texto, RichTextBox consola, int lenguaje)
         {
             
-            // ****************** FASE 1 Analisis Alto Nivel ********************//
+            // *************** FASE 1 Analisis Lexico y Sintactico **************//
             if (lenguaje == (int)Pagina.Lenguaje.OLC)
             {
                 // OLC++
@@ -43,9 +43,8 @@ namespace _Compi2_Proyecto2_201314863
             llenarTablaSimbolos();
             
             // **************** FASE 3 Analisis Semantico y Codigo Intermedio ***//
-
-
             return null;
+
         }
         #endregion
 
@@ -61,7 +60,6 @@ namespace _Compi2_Proyecto2_201314863
                 foreach(Atributo atributo in clase.atributos)
                 {
                     simbolos.AddLast(guardarSimboloVariable(clase.nombre, atributo, true));
-                    tamanio++;
                 }
                 // Agregar clase a la TS
                 simbolos.AddFirst(guardarSimboloClase(clase));
@@ -69,33 +67,82 @@ namespace _Compi2_Proyecto2_201314863
                 // Recorrer constructores -> parametros -> declaraciones
                 foreach(Procedimiento constructor in clase.constructores)
                 {
-                    guardarConstructor(clase.nombre, constructor);
+                    tablaSimbolos.insertarLista(guardarConstructor(clase.nombre, constructor));
                 }
                 // Recorrer procedimientos -> parametros -> declaraciones
                 foreach (Procedimiento procedimiento in clase.procedimientos)
                 {
-
+                    tablaSimbolos.insertarLista(guardarProcedimiento(clase.nombre, procedimiento));
                 }
             }
         }
 
-        public void guardarConstructor(String clase, Procedimiento constructor)
+        public LinkedList<Simbolo> guardarConstructor(String clase, Procedimiento constructor)
         {
             simbolos = new LinkedList<Simbolo>();
-            tamanio = 0;
+            // Agregar this y super a la lista de simbolos
+            simbolos.AddLast(guardarEste(constructor.completo));
+            simbolos.AddLast(guardarSuper(constructor.completo));
+            tamanio = 2;
             // Recorrer parametros
             foreach(Atributo parametro in constructor.parametros)
             {
                 simbolos.AddLast(guardarSimboloParametro(constructor.completo, parametro));
             }
             // Recorrer sentencias en busca de declaraciones
+            foreach(Atributo variable in constructor.declaraciones)
+            {
+                simbolos.AddLast(guardarSimboloVariable(constructor.completo, variable, false));
+            }
+            // Recorrer al inicio el constructor
+            simbolos.AddFirst(guardarSimboloConstructor(clase, constructor));
+            return simbolos;
+        }
 
+        public LinkedList<Simbolo> guardarProcedimiento(String clase, Procedimiento procedimiento)
+        {
+            simbolos = new LinkedList<Simbolo>();
+            // Agregar this y super a la lista de simbolos
+            simbolos.AddLast(guardarEste(procedimiento.completo));
+            simbolos.AddLast(guardarSuper(procedimiento.completo));
+            tamanio = 2;
+            // Ver si es funcion o no
+            if(procedimiento.tipo != (int)Simbolo.Tipo.VACIO)
+            {
+                Atributo retorno = new Atributo("retorno", procedimiento.tipo, procedimiento.linea, procedimiento.columna);
+                simbolos.AddLast(guardarSimboloRetorno(procedimiento.completo, retorno));
+            }
+            // Recorrer parametros
+            foreach (Atributo parametro in procedimiento.parametros)
+            {
+                simbolos.AddLast(guardarSimboloParametro(procedimiento.completo, parametro));
+            }
+            // Recorrer sentencias en busca de declaraciones
+            foreach (Atributo variable in procedimiento.declaraciones)
+            {
+                simbolos.AddLast(guardarSimboloVariable(procedimiento.completo, variable, false));
+            }
+            // Recorrer al inicio el procedimiento
+            simbolos.AddFirst(guardarSimboloProcedimiento(clase, procedimiento));
+            return simbolos;
         }
 
         public Simbolo guardarSimboloProcedimiento(String padre, Procedimiento procedimiento)
         {
             Simbolo sprocedimiento = new Simbolo();
             sprocedimiento.ambito = (int)Simbolo.Tipo.GLOBAL;
+            sprocedimiento.clase = "";
+            sprocedimiento.dimensiones = null;
+            sprocedimiento.nombre = procedimiento.completo;
+            sprocedimiento.padre = padre;
+            sprocedimiento.pos = tamanio;
+            sprocedimiento.tam = 2;
+            sprocedimiento.tipo = procedimiento.tipo;
+            sprocedimiento.rol = (int)Simbolo.Tipo.FUNCION;
+            if (procedimiento.tipo == (int)Simbolo.Tipo.VACIO)
+            {
+                sprocedimiento.rol = (int)Simbolo.Tipo.METODO;
+            }
             if (procedimiento.tipo == (int)Simbolo.Tipo.CLASE)
             {
                 sprocedimiento.clase = procedimiento.clase;
@@ -109,13 +156,33 @@ namespace _Compi2_Proyecto2_201314863
             sconstructor.ambito = (int)Simbolo.Tipo.GLOBAL;
             sconstructor.clase = "";
             sconstructor.dimensiones = null;
-            sconstructor.nombre = constructor.nombre;
+            sconstructor.nombre = constructor.completo;
             sconstructor.padre = padre;
             sconstructor.pos = tamanio;
             sconstructor.rol = (int)Simbolo.Tipo.CONSTRUCTOR;
             sconstructor.tam = 1;
             sconstructor.tipo = -1;
             return sconstructor;
+        }
+
+        public Simbolo guardarSimboloRetorno(String padre, Atributo retorno)
+        {
+            Simbolo sparametro = new Simbolo();
+            sparametro.ambito = (int)Simbolo.Tipo.LOCAL;
+            sparametro.clase = "";
+            if (retorno.tipo == (int)Simbolo.Tipo.CLASE)
+            {
+                sparametro.clase = retorno.clase;
+            }
+            sparametro.dimensiones = retorno.dimensiones;
+            sparametro.nombre = retorno.nombre;
+            sparametro.padre = padre;
+            sparametro.pos = tamanio;
+            tamanio++;
+            sparametro.rol = (int)Simbolo.Tipo.RETORNO;
+            sparametro.tam = 1;
+            sparametro.tipo = retorno.tipo;
+            return sparametro;
         }
 
         public Simbolo guardarSimboloParametro(String padre, Atributo parametro)
@@ -131,6 +198,7 @@ namespace _Compi2_Proyecto2_201314863
             sparametro.nombre = parametro.nombre;
             sparametro.padre = padre;
             sparametro.pos = tamanio;
+            tamanio++;
             sparametro.rol = (int)Simbolo.Tipo.PARAMETRO;
             sparametro.tam = 1;
             sparametro.tipo = parametro.tipo;
@@ -159,6 +227,7 @@ namespace _Compi2_Proyecto2_201314863
             sglobal.nombre = atributo.nombre;
             sglobal.padre = padre;
             sglobal.pos = tamanio;
+            tamanio++;
             sglobal.rol = (int)Simbolo.Tipo.VARIABLE;
             sglobal.tam = 1;
             sglobal.tipo = atributo.tipo;
@@ -168,6 +237,36 @@ namespace _Compi2_Proyecto2_201314863
             }
             sglobal.dimensiones = atributo.dimensiones;
             return sglobal;
+        }
+
+        public Simbolo guardarEste(String padre)
+        {
+            Simbolo seste = new Simbolo();
+            seste.ambito = (int)Simbolo.Tipo.LOCAL;
+            seste.clase = "";
+            seste.nombre = "this";
+            seste.padre = padre;
+            seste.pos = 0;
+            seste.rol = (int)Simbolo.Tipo.PARAMETRO;
+            seste.tam = 1;
+            seste.tipo = -1;
+            seste.dimensiones = null;
+            return seste;
+        }
+
+        public Simbolo guardarSuper(String padre)
+        {
+            Simbolo seste = new Simbolo();
+            seste.ambito = (int)Simbolo.Tipo.LOCAL;
+            seste.clase = "";
+            seste.nombre = "super";
+            seste.padre = padre;
+            seste.pos = 1;
+            seste.rol = (int)Simbolo.Tipo.PARAMETRO;
+            seste.tam = 1;
+            seste.tipo = -1;
+            seste.dimensiones = null;
+            return seste;
         }
         #endregion
     }
