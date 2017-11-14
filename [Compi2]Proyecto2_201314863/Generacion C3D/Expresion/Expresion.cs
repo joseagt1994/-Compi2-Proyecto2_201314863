@@ -8,7 +8,7 @@ using Irony.Parsing;
 namespace _Compi2_Proyecto2_201314863
 {
     public class Expresion
-    {/*
+    {
         public static Nodo expresionC3D(ParseTreeNode nodo)
         {
             switch (nodo.ChildNodes.Count)
@@ -16,11 +16,21 @@ namespace _Compi2_Proyecto2_201314863
                 #region "3 hijos"
                 case 3:
                     //EXP -> 3 hijos
-                    String operador = nodo.ChildNodes.ElementAt(1).Token.Value.ToString();
+                    ParseTreeNode nder = nodo.ChildNodes[1];
+                    String operador;
+                    if (nder.Term.Name.Equals("EXP"))
+                    {
+                        operador = nodo.ChildNodes[2].Token.Value.ToString();
+                    }
+                    else
+                    {
+                        operador = nodo.ChildNodes[1].Token.Value.ToString();
+                        nder = nodo.ChildNodes[2];
+                    }
                     if (operador.Equals("+") || operador.Equals("-") || operador.Equals("*") || operador.Equals("/") || operador.Equals("pow") || operador.Equals("^"))
                     {
                         //ARITMETICAS!
-                        Nodo aritmetica = Aritmetica.generarC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
+                        Nodo aritmetica = Aritmetica.generarC3D(nodo.ChildNodes.ElementAt(0), operador, nder);
                         if (aritmetica != null)
                         {
                             aritmetica.referencia = "error";
@@ -30,7 +40,7 @@ namespace _Compi2_Proyecto2_201314863
                     else if (operador.Equals("==") || operador.Equals("!=") || operador.Equals(">") || operador.Equals(">=") || operador.Equals("<") || operador.Equals("<="))
                     {
                         //RELACIONALES!
-                        Nodo relacional = relacionalC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
+                        Nodo relacional = Relacional.generarC3D(nodo.ChildNodes.ElementAt(0), operador, nder);
                         if (relacional != null)
                         {
                             relacional.referencia = "error";
@@ -40,7 +50,7 @@ namespace _Compi2_Proyecto2_201314863
                     else
                     {
                         //LOGICAS!
-                        Nodo logica = logicaC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
+                        Nodo logica = Logica.generarC3D(nodo.ChildNodes.ElementAt(0), operador, nder);
                         if (logica != null)
                         {
                             logica.referencia = "error";
@@ -61,10 +71,10 @@ namespace _Compi2_Proyecto2_201314863
                     {
                         case "LLAMADA":
                             // Generar codigo 3D de llamada a metodo!
-                            return generarC3DMetodo(nodo.ChildNodes.ElementAt(0), true);
+                            //return generarC3DMetodo(nodo.ChildNodes.ElementAt(0), true);
                         case "NATIVAS":
                             // getBool, getNum, getRandom, getLength(str), getLength(str id,num)
-                            return generarC3DNativas(nodo.ChildNodes.ElementAt(0));
+                            //return generarC3DNativas(nodo.ChildNodes.ElementAt(0));
                         case "numero":
                             nval.tipo = (int)Simbolo.Tipo.NUMERO;
                             nval.cadena = nodo.ChildNodes.ElementAt(0).Token.Value.ToString();
@@ -80,9 +90,13 @@ namespace _Compi2_Proyecto2_201314863
                         case "cadena":
                             return guardarCadenaC3D(nodo.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0).Token.Value.ToString());
                         case "caracter":
-                            return null;
+                            nval.tipo = (int)Simbolo.Tipo.CARACTER;
+                            String cadena = nodo.ChildNodes.ElementAt(0).Token.Value.ToString().Replace("'", "");
+                            int val = (int)cadena.ElementAt(0);
+                            nval.cadena = Convert.ToString(val);
+                            return nval;
                         case "BANDERA":
-                            return banderaC3D(nodo.ChildNodes.ElementAt(0));
+                            return Logica.banderaC3D(nodo.ChildNodes.ElementAt(0));
                         default:
                             return expresionC3D(nodo.ChildNodes.ElementAt(0));
                     }
@@ -90,511 +104,29 @@ namespace _Compi2_Proyecto2_201314863
             }
             return null;
         }
-
-        //GENERAR CODIGO 3D DE EXPRESION!
-        /*public Nodo expresionC3D(ParseTreeNode nodo)
-        {
-            switch (nodo.ChildNodes.Count)
-            {
-                case 3:
-                    //EXP -> 3 hijos
-                    String operador = nodo.ChildNodes.ElementAt(1).Token.Value.ToString();
-                    if (operador.Equals("+") || operador.Equals("-") || operador.Equals("*") || operador.Equals("/") || operador.Equals("%") || operador.Equals("^"))
-                    {
-                        //ARITMETICAS!
-                        Nodo aritmetica = aritmeticaC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
-                        if (aritmetica != null)
-                        {
-                            aritmetica.referencia = "error";
-                        }
-                        return aritmetica;
-                    }
-                    else if (operador.Equals("==") || operador.Equals("!=") || operador.Equals(">") || operador.Equals(">=") || operador.Equals("<") || operador.Equals("<="))
-                    {
-                        //RELACIONALES!
-                        Nodo relacional = relacionalC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
-                        if (relacional != null)
-                        {
-                            relacional.referencia = "error";
-                        }
-                        return relacional;
-                    }
-                    else
-                    {
-                        //LOGICAS!
-                        Nodo logica = logicaC3D(nodo.ChildNodes.ElementAt(0), operador, nodo.ChildNodes.ElementAt(2));
-                        if (logica != null)
-                        {
-                            logica.referencia = "error";
-                        }
-                        return logica;
-                    }
-                case 2:
-                    //EXP -> 2 hijos
-                    String valor = nodo.ChildNodes.ElementAt(0).Term.Name;
-                    switch (valor)
-                    {
-                        case "-":
-                            Nodo nexpu = expresionC3D(nodo.ChildNodes.ElementAt(1));
-                            if (nexpu.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                            {
-                                if (nexpu.etqFalsa != null && nexpu.etqVerdadera != null)
-                                {
-                                    nexpu = castearC3D((int)Simbolo.Tipo.NUMERO, nexpu,
-                                        nodo.ChildNodes.ElementAt(0).Span.Location.Line,
-                                        nodo.ChildNodes.ElementAt(0).Span.Location.Column);
-                                }
-                            }
-                            else if (nexpu.tipo == (int)Simbolo.Tipo.CADENA)
-                            {
-                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                    "No de puede operar negacion a str", nodo.ChildNodes.ElementAt(0).Span.Location.Line,
-                                    nodo.ChildNodes.ElementAt(0).Span.Location.Column));
-                                return null;
-                            }
-                            Nodo una = new Nodo();
-                            una.cadena = getTemporal();
-                            una.referencia = "error";
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, una.cadena, "-1", "*", nexpu.cadena));
-                            return una;
-                        case "!":
-                            Nodo nuevo = new Nodo();
-                            Nodo nexp = expresionC3D(nodo.ChildNodes.ElementAt(1));
-                            if (nexp.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                            {
-                                if (nexp.etqFalsa == null && nexp.etqVerdadera == null)
-                                {
-                                    nexp.tipo = (int)Simbolo.Tipo.NUMERO;
-                                }
-                            }
-                            else if (nexp.tipo == (int)Simbolo.Tipo.NUMERO)
-                            {
-                                nexp = castearC3D((int)Simbolo.Tipo.BOOLEAN, nexp, nodo.ChildNodes.ElementAt(1).Span.Location.Line, nodo.ChildNodes.ElementAt(0).Span.Location.Column);
-                            }
-                            else
-                            {
-                                // Error! No puede ser de tipo cadena!
-                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                    "No de puede operar NOT a str", nodo.ChildNodes.ElementAt(0).Span.Location.Line,
-                                    nodo.ChildNodes.ElementAt(0).Span.Location.Column));
-                                return null;
-                            }
-                            nuevo.etqFalsa = nexp.etqVerdadera;
-                            nuevo.etqVerdadera = nexp.etqFalsa;
-                            nuevo.referencia = "error";
-                            return nuevo;
-                        case "id":
-                            // EXP ->  id INDICES
-                            if (nodo.ChildNodes.ElementAt(1).Term.Name.Equals("ACCESO"))
-                            {
-                                return getIDC3D(nodo);
-                            }
-                            else
-                            {
-                                Simbolo arreglo = tablaSimbolos.buscarVariable(nodo.ChildNodes.ElementAt(0).
-                                Token.Value.ToString(), nombreMetodo);
-                                if (arreglo == null)
-                                {
-                                    arreglo = tablaSimbolos.buscarGlobal(nodo.ChildNodes.ElementAt(0).Token.Value.ToString());
-                                    if (arreglo == null)
-                                    {
-                                        Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                            "El arreglo " + nodo.ChildNodes.ElementAt(0).Token.Value.ToString() +
-                                            " no ha sido declarado!", nodo.ChildNodes.ElementAt(0).Token.Location.Line,
-                                            nodo.ChildNodes.ElementAt(0).Token.Location.Column));
-                                        return null;
-                                    }
-                                }
-                                if (arreglo.dims == -1)
-                                {
-                                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                        "La variable " + nodo.ChildNodes.ElementAt(0).Token.Value.ToString() +
-                                        " no es de tipo areglo!", nodo.ChildNodes.ElementAt(0).Token.Location.Line,
-                                        nodo.ChildNodes.ElementAt(0).Token.Location.Column));
-                                    return null;
-                                }
-                                String eError = getEtiqueta();
-                                String eSal = getEtiqueta();
-                                Nodo narr = guardarArregloC3D(arreglo, nodo.ChildNodes.ElementAt(1), eError);
-                                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor en " + narr.cadena));
-                                String temp = getTemporal();
-                                String temp2 = getTemporal();
-                                if (arreglo.ambito == (int)Simbolo.Tipo.GLOBAL)
-                                {
-                                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Posicion del arreglo global " + arreglo.nombre));
-                                    instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, "0", "+", arreglo.pos.ToString()));
-                                    instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp2, temp, "+", narr.cadena));
-                                }
-                                else
-                                {
-                                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Posicion del arreglo local " + arreglo.nombre));
-                                    instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, "P", "+", arreglo.pos.ToString()));
-                                    instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp2, temp, "+", narr.cadena));
-                                }
-                                String temp3 = getTemporal();
-                                instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Stack", temp3, temp2));
-                                narr.cadena = temp3;
-                                narr.tipo = arreglo.tipo;
-                                narr.posicion = temp2;
-                                narr.pila = "Stack";
-                                generarEtiquetas((eError));
-                                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Error en arreglo"));
-                                generarEtiquetas((eSal));
-                                return narr;
-                            }
-                        default:
-                            //NUEVO.. EXP -> create id
-                            Nodo instancia = new Nodo();
-                            instancia.cadena = nodo.ChildNodes.ElementAt(1).Token.Value.ToString();
-                            Simbolo estructura = tablaSimbolos.buscarEstructura(instancia.cadena, "");
-                            if (estructura == null)
-                            {
-                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                    "No se puede instanciar, no existe la estructura " + instancia.cadena,
-                                    nodo.ChildNodes.ElementAt(1).Token.Location.Line,
-                                    nodo.ChildNodes.ElementAt(1).Token.Location.Column));
-                                return null;
-                            }
-                            instancia.tipo = (int)Simbolo.Tipo.ESTRUCTURA;
-                            instancia.padre = "instancia";
-                            return instancia;
-                    }
-                case 1:
-                    //EXP -> 1 hijo
-                    String tipo = nodo.ChildNodes.ElementAt(0).Term.Name;
-                    Nodo nval = new Nodo();
-                    switch (tipo)
-                    {
-                        case "LLAMADA":
-                            // Generar codigo 3D de llamada a metodo!
-                            return generarC3DMetodo(nodo.ChildNodes.ElementAt(0), true);
-                        case "NATIVAS":
-                            // getBool, getNum, getRandom, getLength(str), getLength(str id,num)
-                            return generarC3DNativas(nodo.ChildNodes.ElementAt(0));
-                        case "numero":
-                            nval.tipo = (int)Simbolo.Tipo.NUMERO;
-                            nval.cadena = nodo.ChildNodes.ElementAt(0).Token.Value.ToString();
-                            nval.referencia = "error";
-                            return nval;
-                        case "CADENA":
-                            return guardarCadenaC3D(nodo.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0).Token.Value.ToString());
-                        case "BANDERA":
-                            Nodo b = banderaC3D(nodo.ChildNodes.ElementAt(0));
-                            b.referencia = "error";
-                            return b;
-                        case "NULL":
-                            nval.tipo = (int)Simbolo.Tipo.VACIO;
-                            nval.cadena = "-201314863.241094";
-                            nval.referencia = "error";
-                            return nval;
-                        default:
-                            return expresionC3D(nodo.ChildNodes.ElementAt(0));
-                    }
-                    break;
-            }
-            return null;
-        }
-
-        */
-        /*
-        public Nodo logicaC3D(ParseTreeNode izq, String operador, ParseTreeNode der)
-        {
-            Nodo nodo = new Nodo();
-            nodo.cadena = getEtiqueta();
-            nodo.tipo = (int)Simbolo.Tipo.BOOLEAN;
-            generarEtiquetas((nodo.cadena));
-            if (operador.Equals("||"))
-            {
-                Nodo nizq = expresionC3D(izq);
-                if (nizq == null)
-                {
-                    return null;
-                }
-                if (nizq.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                {
-                    if (nizq.etqVerdadera == null && nizq.etqFalsa == null)
-                    {
-                        nizq.tipo = (int)Simbolo.Tipo.NUMERO;
-                    }
-                }
-                nizq = castearC3D((int)Simbolo.Tipo.BOOLEAN, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                if (nizq != null)
-                {
-                    generarEtiquetas((nizq.etqFalsa));
-                    Nodo nder = expresionC3D(der);
-                    if (nder == null)
-                    {
-                        return null;
-                    }
-                    if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera == null && nder.etqFalsa == null)
-                        {
-                            nder.tipo = (int)Simbolo.Tipo.NUMERO;
-                        }
-                    }
-                    nder = castearC3D((int)Simbolo.Tipo.BOOLEAN, nder, der.Span.Location.Line, der.Span.Location.Column);
-                    if (nder != null)
-                    {
-                        nodo.etqVerdadera = nizq.etqVerdadera + "," + nder.etqVerdadera;
-                        nodo.etqFalsa = nder.etqFalsa;
-                    }
-                    else
-                    {
-                        //Ocurrio Error!
-                        return null;
-                    }
-                }
-                else
-                {
-                    //Ocurrio Error!
-                    return null;
-                }
-            }
-            else if (operador.Equals("&&"))
-            {
-                Nodo nizq = expresionC3D(izq);
-                if (nizq == null)
-                {
-                    return null;
-                }
-                if (nizq.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                {
-                    if (nizq.etqVerdadera == null && nizq.etqFalsa == null)
-                    {
-                        nizq.tipo = (int)Simbolo.Tipo.NUMERO;
-                    }
-                }
-                nizq = castearC3D((int)Simbolo.Tipo.BOOLEAN, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                if (nizq != null)
-                {
-                    generarEtiquetas((nizq.etqVerdadera));
-                    Nodo nder = expresionC3D(der);
-                    if (nder == null)
-                    {
-                        return null;
-                    }
-                    if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera == null && nder.etqFalsa == null)
-                        {
-                            nder.tipo = (int)Simbolo.Tipo.NUMERO;
-                        }
-                    }
-                    nder = castearC3D((int)Simbolo.Tipo.BOOLEAN, nder, der.Span.Location.Line, der.Span.Location.Column);
-                    if (nder != null)
-                    {
-                        nodo.etqVerdadera = nder.etqVerdadera;
-                        nodo.etqFalsa = nizq.etqFalsa + "," + nder.etqFalsa;
-                    }
-                    else
-                    {
-                        //Ocurrio un error!
-                        return null;
-                    }
-                }
-                else
-                {
-                    //Ocurrio un Error!
-                    return null;
-                }
-            }
-            else if (operador.Equals("|&"))
-            {
-                Nodo nizq = expresionC3D(izq);
-                if (nizq == null)
-                {
-                    return null;
-                }
-                if (nizq.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                {
-                    if (nizq.etqVerdadera == null && nizq.etqFalsa == null)
-                    {
-                        nizq.tipo = (int)Simbolo.Tipo.NUMERO;
-                    }
-                }
-                nizq = castearC3D((int)Simbolo.Tipo.BOOLEAN, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                if (nizq != null)
-                {
-                    generarEtiquetas((nizq.etqVerdadera));
-                    Nodo nder = expresionC3D(der);
-                    if (nder == null)
-                    {
-                        return null;
-                    }
-                    if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera == null && nder.etqFalsa == null)
-                        {
-                            nder.tipo = (int)Simbolo.Tipo.NUMERO;
-                        }
-                    }
-                    nder = castearC3D((int)Simbolo.Tipo.BOOLEAN, nder, der.Span.Location.Line, der.Span.Location.Column);
-                    if (nder != null)
-                    {
-                        generarEtiquetas((nizq.etqFalsa));
-                        Nodo n3 = expresionC3D(der);
-                        nodo.etqFalsa = nder.etqVerdadera + "," + n3.etqFalsa;
-                        nodo.etqVerdadera = nder.etqFalsa + "," + n3.etqVerdadera;
-                    }
-                    else
-                    {
-                        //Ocurrio un error!
-                        return null;
-                    }
-                }
-                else
-                {
-                    //Ocurrio un error!
-                    return null;
-                }
-            }
-            else if (operador.Equals("&?"))
-            {
-                Nodo nizq = expresionC3D(izq);
-                if (nizq == null)
-                {
-                    return null;
-                }
-                if (nizq.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                {
-                    if (nizq.etqVerdadera == null && nizq.etqFalsa == null)
-                    {
-                        nizq.tipo = (int)Simbolo.Tipo.NUMERO;
-                    }
-                }
-                nizq = castearC3D((int)Simbolo.Tipo.BOOLEAN, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                if (nizq != null)
-                {
-                    generarEtiquetas((nizq.etqVerdadera));
-                    Nodo nder = expresionC3D(der);
-                    if (nder == null)
-                    {
-                        return null;
-                    }
-                    if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera == null && nder.etqFalsa == null)
-                        {
-                            nder.tipo = (int)Simbolo.Tipo.NUMERO;
-                        }
-                    }
-                    nder = castearC3D((int)Simbolo.Tipo.BOOLEAN, nder, der.Span.Location.Line, der.Span.Location.Column);
-                    if (nder != null)
-                    {
-                        nodo.etqVerdadera = nizq.etqFalsa + "," + nder.etqFalsa;
-                        nodo.etqFalsa = nder.etqVerdadera;
-                    }
-                    else
-                    {
-                        //Ocurrio un error!
-                        return null;
-                    }
-                }
-                else
-                {
-                    //Ocurrio un error!
-                    return null;
-                }
-            }
-            else
-            {
-                //|?
-                Nodo nizq = expresionC3D(izq);
-                if (nizq == null)
-                {
-                    return null;
-                }
-                if (nizq.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                {
-                    if (nizq.etqVerdadera == null && nizq.etqFalsa == null)
-                    {
-                        nizq.tipo = (int)Simbolo.Tipo.NUMERO;
-                    }
-                }
-                nizq = castearC3D((int)Simbolo.Tipo.BOOLEAN, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                if (nizq != null)
-                {
-                    generarEtiquetas((nizq.etqFalsa));
-                    Nodo nder = expresionC3D(der);
-                    if (nder == null)
-                    {
-                        return null;
-                    }
-                    if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera == null && nder.etqFalsa == null)
-                        {
-                            nder.tipo = (int)Simbolo.Tipo.NUMERO;
-                        }
-                    }
-                    nder = castearC3D((int)Simbolo.Tipo.BOOLEAN, nder, der.Span.Location.Line, der.Span.Location.Column);
-                    if (nder != null)
-                    {
-                        nodo.etqVerdadera = nder.etqFalsa;
-                        nodo.etqFalsa = nizq.etqVerdadera + "," + nder.etqVerdadera;
-                    }
-                    else
-                    {
-                        //Ocurrio un error!
-                        return null;
-                    }
-                }
-                else
-                {
-                    //Ocurrio un error!
-                    return null;
-                }
-            }
-            return nodo;
-        }
-
-        public Nodo banderaC3D(ParseTreeNode bandera)
-        {
-            Nodo nuevo = new Nodo();
-            nuevo.tipo = (int)Simbolo.Tipo.BOOLEAN; //BOOLEAN
-            //nuevo.cadena = getEtiqueta();
-            //generarEtiquetas((nuevo.cadena));
-            //nuevo.etqVerdadera = getEtiqueta();
-            //nuevo.etqFalsa = getEtiqueta();
-            if (bandera.ChildNodes.ElementAt(0).Token.Value.ToString().Equals("true"))
-            {
-                nuevo.cadena = "1";
-                //instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nuevo.etqVerdadera, "1", "==", "1"));
-            }
-            else
-            {
-                nuevo.cadena = "0";
-                //instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nuevo.etqVerdadera, "1", "==", "0"));
-            }
-            //instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nuevo.etqFalsa));
-            return nuevo;
-        }
-
+        
         //GENERAR CADENAS!
-        public Nodo guardarCadenaC3D(String cadena)
+        public static Nodo guardarCadenaC3D(String cadena)
         {
             //CADENA -> tchar | tstring
             Nodo nuevo = new Nodo();
             nuevo.tipo = (int)Simbolo.Tipo.CADENA;
-            nuevo.cadena = getTemporal();
-            instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nuevo.cadena, "H", "+", "0"));
-            aumentarHeap("1");
-            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nuevo.cadena, "S"));
+            nuevo.cadena = GeneradorC3D.getTemporal();
+            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nuevo.cadena, "H", "+", "0"));
+            GeneradorC3D.aumentarHeap("1");
             foreach (char c in cadena)
             {
-                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar " + c));
-                instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", Convert.ToString((int)c)));
-                aumentarPool();
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar " + c));
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", Convert.ToString((int)c)));
+                GeneradorC3D.aumentarHeap("1");
             }
-            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-            aumentarPool();
+            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
+            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "0"));
+            GeneradorC3D.aumentarHeap("1");
             return nuevo;
         }
 
-        //ARREGLOS!
+       /* //ARREGLOS!
         public Nodo guardarArregloC3D(Simbolo arr, ParseTreeNode indices, String eError)
         {
             // INDICES -> INDICES INDICE
@@ -1021,7 +553,7 @@ namespace _Compi2_Proyecto2_201314863
 
             return retorno;
         }
-
+        */
         //CASTEO DE EXPRESIONES!
         public Nodo castearC3D(int tipo, Nodo nodo, int f, int c)
         {
@@ -1129,12 +661,12 @@ namespace _Compi2_Proyecto2_201314863
                         {
                             // CADENA
                             Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                "No se puede castear implicitamente str a bool", f, c));
+                                "No se puede castear implicitamente cadena a bool", f, c));
                             return null;
                         }
                 }
             }
-        }*/
+        }
 
     }
 }

@@ -8,7 +8,7 @@ using Irony.Parsing;
 namespace _Compi2_Proyecto2_201314863
 {
     public class Aritmetica
-    {/*
+    {
         public static Nodo generarC3D(ParseTreeNode izq, String operador, ParseTreeNode der)
         {
             switch (operador)
@@ -25,9 +25,9 @@ namespace _Compi2_Proyecto2_201314863
                     // '^' Potencia
                     return generarPotenciaC3D(izq, der);
             }
-        }*/
+        }
 
-     /*   public static Nodo generarSumaC3D(ParseTreeNode izq, ParseTreeNode der)
+        public static Nodo generarSumaC3D(ParseTreeNode izq, ParseTreeNode der)
         {
             Nodo nodo = new Nodo();
             Nodo nizq = Expresion.expresionC3D(izq);
@@ -47,27 +47,22 @@ namespace _Compi2_Proyecto2_201314863
             switch (nizq.tipo)
             {
                 case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO || 
+                        nder.tipo == (int)Simbolo.Tipo.CARACTER ||
+                        nder.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
                         String temp = GeneradorC3D.getTemporal();
                         // temp = nizq.cad operador nder.der
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar dos temporales, num + num"));
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "+", nder.cadena));
                         nodo.cadena = temp;
-                        nodo.tipo = nder.tipo;
-                    }
-                    else if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
+                        nodo.tipo = nizq.tipo;
+                        if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                         {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
+                            nodo.tipo = nder.tipo;
                         }
-                        String temp = GeneradorC3D.getTemporal();
-                        // temp = nizq.cad operador nder.der
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar , num + bool"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "+", nder.cadena));
-                        nodo.cadena = temp;
-                        nodo.tipo = nder.tipo;
+                        return nodo;
                     }
                     else if (nder.tipo == (int)Simbolo.Tipo.CADENA)
                     {
@@ -76,128 +71,116 @@ namespace _Compi2_Proyecto2_201314863
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , num + str"));
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, "H", "+", "0"));
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-                        GeneradorC3D.aumentarHeap("1");
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nodo.cadena, "S"));
                         concatenar(nizq.tipo, nizq.cadena);
                         concatenar(nder.tipo, nder.cadena);
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-                        aumentarPool();
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "0"));
+                        GeneradorC3D.aumentarHeap("1");
+                        return nodo;
                     }
                     break;
-                case (int)Simbolo.Tipo.BOOLEAN:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                case (int)Simbolo.Tipo.DECIMAL:
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.CARACTER ||
+                        nder.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
-                        if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
-                        {
-                            nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                        }
                         String temp = GeneradorC3D.getTemporal();
                         // temp = nizq.cad operador nder.der
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar , bool + num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar dos temporales, decimal + num"));
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "+", nder.cadena));
                         nodo.cadena = temp;
-                        nodo.tipo = nder.tipo;
-                    }
-                    else if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
-                        {
-                            nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                        }
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
-                        {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
-                        String temp = GeneradorC3D.getTemporal();
-                        // temp = nizq.cad operador nder.der
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar , bool + bool"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "+", nder.cadena));
-                        nodo.cadena = temp;
-                        nodo.tipo = (int)Simbolo.Tipo.NUMERO;
+                        nodo.tipo = nizq.tipo;
+                        return nodo;
                     }
                     else if (nder.tipo == (int)Simbolo.Tipo.CADENA)
                     {
-                        if (nizq.etqVerdadera == null && nizq.etqFalsa == null)
-                        {
-                            nizq.tipo = (int)Simbolo.Tipo.NUMERO;
-                            nizq = castearC3D((int)Simbolo.Tipo.BOOLEAN, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                        }
                         nodo.cadena = GeneradorC3D.getTemporal();
                         nodo.tipo = nder.tipo;
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , bool + str"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , decimal + str"));
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, "H", "+", "0"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-                        GeneradorC3D.aumentarHeap("1");
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nodo.cadena, "S"));
-                        // GENERAR CADENA DE BOOL!
-                        String eSal = GeneradorC3D.getEtiqueta();
-                        GeneradorC3D.generarEtiquetas((nizq.etqVerdadera));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar palabra true"));
-                        Nodo ncad = guardarCadenaC3D("true");
-                        concatenar(ncad.tipo, ncad.cadena);
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSal));
-                        GeneradorC3D.generarEtiquetas((nizq.etqFalsa));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar palabra false"));
-                        Nodo ncad2 = guardarCadenaC3D("false");
-                        concatenar(ncad2.tipo, ncad2.cadena);
-                        GeneradorC3D.generarEtiquetas((eSal));
-                        concatenar(nder.tipo, nder.cadena);
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-                        aumentarPool();
-                    }
-                    break;
-                case (int)Simbolo.Tipo.CADENA:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        nodo.cadena = GeneradorC3D.getTemporal();
-                        nodo.tipo = nizq.tipo;
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , str + num"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, "H", "+", "0"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-                        GeneradorC3D.aumentarHeap("1");
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nodo.cadena, "S"));
                         concatenar(nizq.tipo, nizq.cadena);
                         concatenar(nder.tipo, nder.cadena);
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-                        aumentarPool();
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "0"));
+                        GeneradorC3D.aumentarHeap("1");
+                        return nodo;
+                    }
+                    break;
+                case (int)Simbolo.Tipo.CARACTER:
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                    {
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar dos temporales, caracter + num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "+", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nder.tipo;
+                        return nodo;
+                    }
+                    else if (nder.tipo == (int)Simbolo.Tipo.CADENA)
+                    {
+                        nodo.cadena = GeneradorC3D.getTemporal();
+                        nodo.tipo = nder.tipo;
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , caracter + str"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, "H", "+", "0"));
+                        concatenar(nizq.tipo, nizq.cadena);
+                        concatenar(nder.tipo, nder.cadena);
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "0"));
+                        GeneradorC3D.aumentarHeap("1");
+                        return nodo;
+                    }
+                    break;
+                case (int)Simbolo.Tipo.BOOLEAN:
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO || nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                    {
+                        String temp = GeneradorC3D.getTemporal();
+                        if(nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                        {
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar , bool + num"));
+                        }
+                        else
+                        {
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Sumar , bool + decimal"));
+                        }
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "+", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nder.tipo;
+                        return nodo;
                     }
                     else if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
                     {
-                        if (nder.etqVerdadera == null && nder.etqFalsa == null)
-                        {
-                            nder.tipo = (int)Simbolo.Tipo.NUMERO;
-                            nder = castearC3D((int)Simbolo.Tipo.BOOLEAN, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
+                        return Logica.generarC3D(izq, "||", der);
+                    }
+                    break;
+                case (int)Simbolo.Tipo.CADENA:
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL ||
+                        nder.tipo == (int)Simbolo.Tipo.CARACTER)
+                    {
                         nodo.cadena = GeneradorC3D.getTemporal();
                         nodo.tipo = nizq.tipo;
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , str + bool"));
+                        if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                        {
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , str + num"));
+                        }
+                        else if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                        {
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , str + decimal"));
+                        }
+                        else
+                        {
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , str + caracter"));
+                        }
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, "H", "+", "0"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-                        GeneradorC3D.aumentarHeap("1");
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nodo.cadena, "S"));
-                        // GENERAR CADENA DE BOOL!
-                        String eSal = GeneradorC3D.getEtiqueta();
-                        String temporal = GeneradorC3D.getTemporal();
-                        GeneradorC3D.generarEtiquetas((nder.etqVerdadera));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar palabra true"));
-                        Nodo ncad = guardarCadenaC3D("true");
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar el puntero de true"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temporal, ncad.cadena, "", ""));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSal));
-                        GeneradorC3D.generarEtiquetas((nder.etqFalsa));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar palabra false"));
-                        Nodo ncad2 = guardarCadenaC3D("false");
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar el puntero de false"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temporal, ncad2.cadena, "", ""));
-                        GeneradorC3D.generarEtiquetas((eSal));
                         concatenar(nizq.tipo, nizq.cadena);
-                        concatenar(nodo.tipo, temporal);
+                        concatenar(nder.tipo, nder.cadena);
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-                        aumentarPool();
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "0"));
+                        GeneradorC3D.aumentarHeap("1");
+                        return nodo;
                     }
                     else if (nder.tipo == (int)Simbolo.Tipo.CADENA)
                     {
@@ -205,25 +188,27 @@ namespace _Compi2_Proyecto2_201314863
                         nodo.tipo = nizq.tipo;
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Concatenar , str + str"));
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, "H", "+", "0"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-                        GeneradorC3D.aumentarHeap("1");
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nodo.cadena, "S"));
                         concatenar(nizq.tipo, nizq.cadena);
                         concatenar(nder.tipo, nder.cadena);
                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-                        aumentarPool();
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "0"));
+                        GeneradorC3D.aumentarHeap("1");
+                        return nodo;
                     }
                     break;
             }
-            return nodo;
+            // Error semantico!
+            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                 "No se puede sumar " + Simbolo.getValor(nizq.tipo) + " con " + Simbolo.getValor(nder.tipo) + ".",
+                 izq.Span.Location.Line, izq.Span.Location.Column));
+            return null;
         }
 
         public static Nodo generarRestaC3D(ParseTreeNode izq, ParseTreeNode der)
         {
             Nodo nodo = new Nodo();
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
+            Nodo nizq = Expresion.expresionC3D(izq);
+            Nodo nder = Expresion.expresionC3D(der);
             if (nizq == null || nder == null)
             {
                 return null;
@@ -241,51 +226,88 @@ namespace _Compi2_Proyecto2_201314863
             switch (nizq.tipo)
             {
                 case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.CARACTER ||
+                        nder.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
-                        // num - num
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar num - num"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "-", nder.cadena));
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar dos temporales, num + num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "-", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
+                        if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                        {
+                            nodo.tipo = nder.tipo;
+                        }
                         return nodo;
                     }
-                    else if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
+                    break;
+                case (int)Simbolo.Tipo.DECIMAL:
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.CARACTER ||
+                        nder.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
-                        // num - bool
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
-                        {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar num - bool"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "-", nder.cadena));
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar dos temporales, decimal - num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "-", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
                         return nodo;
                     }
                     break;
                 case (int)Simbolo.Tipo.BOOLEAN:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                    // bool - num
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
-                        // bool - num
-                        if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar dos temporales, bool - num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "-", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
+                        if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                         {
-                            nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
+                            nodo.tipo = nder.tipo;
                         }
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar bool - num"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "-", nder.cadena));
+                        return nodo;
+                    }
+                    break;
+                case (int)Simbolo.Tipo.CARACTER:
+                    // bool - num
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                    {
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar dos temporales, caracter - num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "-", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
+                        if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                        {
+                            nodo.tipo = nder.tipo;
+                        }
                         return nodo;
                     }
                     break;
             }
             //Error semantico! 
             Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede restar " + getTipo(nizq.tipo) + " con " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
+                 "No se puede restar " + Simbolo.getValor(nizq.tipo) + " con " + Simbolo.getValor(nder.tipo) + ".",
+                 izq.Span.Location.Line, izq.Span.Location.Column));
             return null;
         }
 
         public static Nodo generarMultiplicarC3D(ParseTreeNode izq, ParseTreeNode der)
         {
             Nodo nodo = new Nodo();
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
+            Nodo nizq = Expresion.expresionC3D(izq);
+            Nodo nder = Expresion.expresionC3D(der);
             if (nizq == null || nder == null)
             {
                 return null;
@@ -303,65 +325,92 @@ namespace _Compi2_Proyecto2_201314863
             switch (nizq.tipo)
             {
                 case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.CARACTER ||
+                        nder.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
-                        // num * num
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar num * num"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "*", nder.cadena));
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar dos temporales, num * num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "*", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
+                        if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                        {
+                            nodo.tipo = nder.tipo;
+                        }
                         return nodo;
                     }
-                    else if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
+                    break;
+                case (int)Simbolo.Tipo.DECIMAL:
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.CARACTER ||
+                        nder.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
-                        // num * bool
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
-                        {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar num * bool"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "*", nder.cadena));
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar dos temporales, decimal * num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "*", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
                         return nodo;
                     }
                     break;
                 case (int)Simbolo.Tipo.BOOLEAN:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
+                    // bool - num
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                     {
-                        // bool * num
-                        if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar dos temporales, bool * num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "*", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
+                        if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                         {
-                            nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
+                            nodo.tipo = nder.tipo;
                         }
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar bool * num"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "*", nder.cadena));
                         return nodo;
                     }
-                    else if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
+                    else if(nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
                     {
-                        if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
+                        return Logica.generarC3D(izq, "&&", der);
+                    }
+                    break;
+                case (int)Simbolo.Tipo.CARACTER:
+                    // bool - num
+                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                        nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                    {
+                        String temp = GeneradorC3D.getTemporal();
+                        // temp = nizq.cad operador nder.der
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Restar dos temporales, caracter * num"));
+                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nizq.cadena, "*", nder.cadena));
+                        nodo.cadena = temp;
+                        nodo.tipo = nizq.tipo;
+                        if (nder.tipo == (int)Simbolo.Tipo.DECIMAL)
                         {
-                            nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
+                            nodo.tipo = nder.tipo;
                         }
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
-                        {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar bool * bool"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "*", nder.cadena));
                         return nodo;
                     }
                     break;
             }
             //Error semantico! 
             Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede multiplicar " + getTipo(nizq.tipo) + " con " + getTipo(nder.tipo) + ".",
-                izq.Span.Location.Line, izq.Span.Location.Column));
+                 "No se puede multiplicar " + Simbolo.getValor(nizq.tipo) + " con " + Simbolo.getValor(nder.tipo) + ".",
+                 izq.Span.Location.Line, izq.Span.Location.Column));
             return null;
         }
 
         public static Nodo generarDividirC3D(ParseTreeNode izq, ParseTreeNode der)
         {
             Nodo nodo = new Nodo();
-            Nodo nizq = expresionC3D(izq);
-            Nodo nder = expresionC3D(der);
+            Nodo nizq = Expresion.expresionC3D(izq);
+            Nodo nder = Expresion.expresionC3D(der);
             if (nizq == null || nder == null)
             {
                 return null;
@@ -375,77 +424,40 @@ namespace _Compi2_Proyecto2_201314863
                 //Error: NullPointerException
             }
             nodo.cadena = GeneradorC3D.getTemporal();
-            nodo.tipo = (int)Simbolo.Tipo.NUMERO;
-            switch (nizq.tipo)
+            nodo.tipo = (int)Simbolo.Tipo.DECIMAL;
+            if (nizq.tipo == (int)Simbolo.Tipo.NUMERO ||
+                nizq.tipo == (int)Simbolo.Tipo.CARACTER ||
+                nizq.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                nizq.tipo == (int)Simbolo.Tipo.DECIMAL)
             {
-                case (int)Simbolo.Tipo.NUMERO:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        // num - num
-                        String eError = GeneradorC3D.getEtiqueta();
-                        String eSalida = GeneradorC3D.getEtiqueta();
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Dividir num / num"));
-                        // Verificar si num en nder no es 0
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, eError, nder.cadena, "==", "0"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "/", nder.cadena));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSalida));
-                        GeneradorC3D.generarEtiquetas((eError));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Error: No se puede dividir entre 0"));
-                        GeneradorC3D.generarEtiquetas((eSalida));
-                        return nodo;
-                    }
-                    else if (nder.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                    {
-                        // num - bool
-                        if (nder.etqVerdadera != null && nder.etqFalsa != null)
-                        {
-                            nder = castearC3D((int)Simbolo.Tipo.NUMERO, nder, der.Span.Location.Line, der.Span.Location.Column);
-                        }
-                        String eError = GeneradorC3D.getEtiqueta();
-                        String eSalida = GeneradorC3D.getEtiqueta();
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Dividir num / bool"));
-                        // Verificar si num en nder no es 0
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, eError, nder.cadena, "==", "0"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "/", nder.cadena));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSalida));
-                        GeneradorC3D.generarEtiquetas((eError));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Error: No se puede dividir entre 0"));
-                        GeneradorC3D.generarEtiquetas((eSalida));
-                        return nodo;
-                    }
-                    break;
-                case (int)Simbolo.Tipo.BOOLEAN:
-                    if (nder.tipo == (int)Simbolo.Tipo.NUMERO)
-                    {
-                        // bool - num
-                        if (nizq.etqVerdadera != null && nizq.etqFalsa != null)
-                        {
-                            nizq = castearC3D((int)Simbolo.Tipo.NUMERO, nizq, izq.Span.Location.Line, izq.Span.Location.Column);
-                        }
-                        String eError = GeneradorC3D.getEtiqueta();
-                        String eSalida = GeneradorC3D.getEtiqueta();
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Dividir bool / num"));
-                        // Verificar si num en nder no es 0
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, eError, nder.cadena, "==", "0"));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "/", nder.cadena));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSalida));
-                        GeneradorC3D.generarEtiquetas((eError));
-                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Error: No se puede dividir entre 0"));
-                        GeneradorC3D.generarEtiquetas((eSalida));
-                        return nodo;
-                    }
-                    break;
+                if (nder.tipo == (int)Simbolo.Tipo.NUMERO ||
+                nder.tipo == (int)Simbolo.Tipo.CARACTER ||
+                nder.tipo == (int)Simbolo.Tipo.BOOLEAN ||
+                nder.tipo == (int)Simbolo.Tipo.DECIMAL)
+                {
+                    String eError = GeneradorC3D.getEtiqueta();
+                    String eSalida = GeneradorC3D.getEtiqueta();
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Dividir num / num"));
+                    // Verificar si num en nder no es 0
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, eError, nder.cadena, "==", "0"));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.cadena, nizq.cadena, "/", nder.cadena));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSalida));
+                    GeneradorC3D.generarEtiquetas((eError));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Error: No se puede dividir entre 0"));
+                    GeneradorC3D.generarEtiquetas((eSalida));
+                    return nodo;
+                }
             }
             //Error semantico! 
             Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                "No se puede dividir " + getTipo(nizq.tipo) + " con " + getTipo(nder.tipo) + ".",
+                "No se puede dividir " + Simbolo.getValor(nizq.tipo) + " con " + Simbolo.getValor(nder.tipo) + ".",
                 izq.Span.Location.Line, izq.Span.Location.Column));
             return null;
         }
         
         public static Nodo generarPotenciaC3D(ParseTreeNode izq, ParseTreeNode der)
         {
-            Nodo nodo = new Nodo();
+            /*Nodo nodo = new Nodo();
             Nodo nizq = expresionC3D(izq);
             Nodo nder = expresionC3D(der);
             if (nizq == null || nder == null)
@@ -505,7 +517,7 @@ namespace _Compi2_Proyecto2_201314863
             Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
                 "No se puede operar potencia de " + getTipo(nizq.tipo) + " con " + getTipo(nder.tipo) + ".",
                 izq.Span.Location.Line, izq.Span.Location.Column));
-            return null;
+            */return null;
         }
 
         public static void concatenar(int tipo, String cadena)
@@ -513,33 +525,42 @@ namespace _Compi2_Proyecto2_201314863
             switch (tipo)
             {
                 case (int)Simbolo.Tipo.NUMERO:
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "-241094.22"));
-                    aumentarPool();
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "-241094.22"));
+                    GeneradorC3D.aumentarHeap("1");
                     GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar numero"));
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", cadena));
-                    aumentarPool();
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", cadena));
+                    GeneradorC3D.aumentarHeap("1");
+                    break;
+                case (int)Simbolo.Tipo.DECIMAL:
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", "-241094.22"));
+                    GeneradorC3D.aumentarHeap("1");
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar decimal"));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", cadena));
+                    GeneradorC3D.aumentarHeap("1");
+                    break;
+                case (int)Simbolo.Tipo.CARACTER:
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar caracter"));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", cadena));
+                    GeneradorC3D.aumentarHeap("1");
                     break;
                 case (int)Simbolo.Tipo.CADENA:
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "//Guardar cadena en " + cadena));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "//Guardar cadena de " + cadena));
                     String taux = GeneradorC3D.getTemporal();
                     String eFin = GeneradorC3D.getEtiqueta();
                     String eInicio = GeneradorC3D.getEtiqueta();
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", taux, cadena));
                     GeneradorC3D.generarEtiquetas((eInicio));
-                    String tval = GeneradorC3D.getTemporal();
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar el valor de Pool en " + tval));
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Pool", tval, taux));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", taux, cadena));
                     GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "//Si no es fin de cadena guarda el valor"));
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, eFin, tval, "==", "0"));
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", tval));
-                    aumentarPool();
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Aumentar el contador que lleva la posicion del Pool"));
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, taux, taux, "+", "1"));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, eFin, taux, "==", "0"));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", "H", taux));
+                    GeneradorC3D.aumentarHeap("1");
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Aumentar el contador que lleva la posicion del Heap"));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, cadena, cadena, "+", "1"));
                     GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eInicio));
                     GeneradorC3D.generarEtiquetas((eFin));
                     break;
             }
-        }*/
+        }
 
     }
 }
