@@ -204,6 +204,25 @@ namespace _Compi2_Proyecto2_201314863
             return null;
         }
 
+        internal static Nodo unarioC3D(ParseTreeNode n2)
+        {
+            Nodo nodo = Expresion.expresionC3D(n2);
+            if(nodo.tipo == (int)Simbolo.Tipo.NUMERO || nodo.tipo == (int)Simbolo.Tipo.DECIMAL)
+            {
+                String temp = GeneradorC3D.getTemporal();
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Multiplicar -1 * "+Simbolo.getValor(nodo.tipo)));
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, "-1", "*", nodo.cadena));
+                nodo.cadena = temp;
+            }
+            else
+            {
+                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                 "No se puede cambiar signo a " + Simbolo.getValor(nodo.tipo)+".",
+                 n2.Span.Location.Line, n2.Span.Location.Column));
+            }
+            return nodo;
+        }
+
         public static Nodo generarRestaC3D(ParseTreeNode izq, ParseTreeNode der)
         {
             Nodo nodo = new Nodo();
@@ -562,5 +581,42 @@ namespace _Compi2_Proyecto2_201314863
             }
         }
 
+        public static Nodo generarCrecimientoC3D(ParseTreeNode crecer)
+        {
+            // Es incremento o decremento y tiene que ser de tipo entero
+            // CRECER -> EXP (++ | --)
+            Nodo nodo = Expresion.expresionC3D(crecer.ChildNodes[0]);
+            if(nodo == null)
+            {
+                return null;
+            }
+            ParseTreeNode varC = crecer.ChildNodes[1];
+            String ope;
+            if (varC.Term.Name.Equals("++"))
+            {
+                ope = "+";
+            }
+            else
+            {
+                ope = "-";
+            }
+            if(nodo.tipo == (int)Simbolo.Tipo.NUMERO || nodo.tipo == (int)Simbolo.Tipo.DECIMAL ||
+                nodo.tipo == (int)Simbolo.Tipo.CARACTER)
+            {
+                String temp = GeneradorC3D.getTemporal();
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// expresion "+ope+" expresion"));
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nodo.cadena, ope, "1"));
+                nodo.cadena = temp;
+                nodo.tipo = (int)Simbolo.Tipo.DECIMAL;
+            }
+            else
+            {
+                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                "No se puede incrementar o decrementar el tipo " + Simbolo.getValor(nodo.tipo) + ".",
+                crecer.Token.Location.Line, crecer.Token.Location.Column));
+            }
+            return nodo;
+        }
+        
     }
 }

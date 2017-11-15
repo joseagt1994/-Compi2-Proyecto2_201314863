@@ -157,8 +157,8 @@ namespace _Compi2_Proyecto2_201314863
             var BANDERA = new NonTerminal("BANDERA");
             var EXP = new NonTerminal("EXP");
             var EXPS = new NonTerminal("EXPS");
-            var LEXPS = new NonTerminal("LEXPS");
             var ACCESO = new NonTerminal("ACCESO");
+            var TACCESO = new NonTerminal("TACCESO");
             var TIPO = new NonTerminal("TIPO");
             var LLAMADA = new NonTerminal("LLAMADA");
             var TPROC = new NonTerminal("TPROC");
@@ -179,12 +179,19 @@ namespace _Compi2_Proyecto2_201314863
             var EXCEPTION = new NonTerminal("EXCEPTION");
             var Fasignar = new NonTerminal("Fasignar");
             var DIM = new NonTerminal("DIM");
+            var DIM2 = new NonTerminal("DIM");
             var INDICES = new NonTerminal("INDICES");
             var AID = new NonTerminal("AID");
             var Tasignar = new NonTerminal("EXP");
             var CRECE = new NonTerminal("EXP");
             var ARR = new NonTerminal("ARR");
             var A = new NonTerminal("A");
+            var NARREGLO = new NonTerminal("NARREGLO");
+            var DARREGLO = new NonTerminal("NARREGLO");
+            var NUMEROS = new NonTerminal("INDICES");
+            var NUEVO = new NonTerminal("NUEVO");
+            var SUPER = new NonTerminal("SUPER");
+            var ESTE = new NonTerminal("ESTE");
 
             //Terminales Expresiones Regulares
             RegexBasedTerminal archivo = new RegexBasedTerminal("archivo", "[a-zA-Z][0-9a-zA-Z]*.(tree|olc)");
@@ -246,32 +253,42 @@ namespace _Compi2_Proyecto2_201314863
 
             DECLARACION.Rule = TIPO + LISTA_IDS + asignarR
                              | TIPO + LISTA_IDS
-                             | TIPO + id + INDICES;
+                             | TIPO + DARREGLO;
+
+            DARREGLO.Rule = id + NUMEROS;
+
+            NUMEROS.Rule = MakeStarRule(NUMEROS, DIM2);
+
+            DIM2.Rule = acor + numero + ccor;
 
             asignarR.Rule = asignar + EXP;
 
-            ASIGNACION.Rule = Tasignar + asignar + EXP;
-
-            Tasignar.Rule = ACCESO
-                         | id + INDICES;
+            ASIGNACION.Rule = ACCESO + asignar + EXP;
 
             INDICES.Rule = MakeStarRule(INDICES, DIM);
 
-            LISTA_IDS.Rule = MakeStarRule(LISTA_IDS, coma, id);
+            LISTA_IDS.Rule = LISTA_IDS + coma + id
+                           | id;
 
             BLOQUE.Rule = Indent + LISTA_SENTENCIAS + Dedent;
 
             LISTA_SENTENCIAS.Rule = MakeStarRule(LISTA_SENTENCIAS, SENTENCIA);
 
             SENTENCIA.Rule = DECLARACION + Eos
+                | self + punto + ASIGNACION + Eos
                 | ASIGNACION + Eos
                 | CONTROL
-                | LLAMADA + Eos
+                | ACCESO + Eos
                 | INTERRUMPIR + Eos
                 | CONTINUAR + Eos
                 | RETORNO + Eos
                 | NATIVAS + Eos
-                | IMPRIMIR + Eos;
+                | IMPRIMIR + Eos
+                | SUPER + Eos;
+            
+            SUPER.Rule = super + punto + ASIGNACION
+                       | super + punto + ACCESO
+                       | super + acor + EXPS + ccor;
 
             IMPRIMIR.Rule = mostrar + acor + EXP + ccor
                           | outStr + acor + EXP + ccor
@@ -289,10 +306,7 @@ namespace _Compi2_Proyecto2_201314863
 
             RETORNO.Rule = retornar + EXP;
 
-            LLAMADA.Rule = super + acor + LEXPS
-                | super + punto + id + acor + LEXPS
-                | self + punto + id + acor + LEXPS
-                | id + acor + LEXPS;
+            LLAMADA.Rule = id + acor + EXPS + ccor;
 
             CONTROL.Rule = IF1
                          | IF2
@@ -351,6 +365,8 @@ namespace _Compi2_Proyecto2_201314863
                       | boolean
                       | id;
 
+            NARREGLO.Rule = id + INDICES;
+
             EXP.Rule = EXP + EXP + ToTerm("or")
                 | EXP + EXP + ToTerm("and")
                 | EXP + EXP + ToTerm("xor")
@@ -370,15 +386,12 @@ namespace _Compi2_Proyecto2_201314863
                 | EXP + ToTerm("-")
                 | EXP + ToTerm("not")
                 | CRECE
-                | nuevo + acor + LEXPS
+                | NUEVO
                 | LLAMADA
                 | NATIVAS
                 | super + punto + ACCESO
-                | super + punto + id + INDICES
                 | self + punto + ACCESO
-                | self + punto + id + INDICES
                 | ACCESO
-                | id + INDICES
                 | numero
                 | tstring
                 | tchar
@@ -387,12 +400,15 @@ namespace _Compi2_Proyecto2_201314863
             BANDERA.Rule = falso
                          | verdadero;
 
-            ACCESO.Rule = MakeStarRule(ACCESO, punto, id);
+            NUEVO.Rule = nuevo + id + acor + EXPS + ccor;
 
-            DIM.Rule = acor + numero + ccor;
+            ACCESO.Rule = MakeStarRule(ACCESO, punto, TACCESO);
 
-            LEXPS.Rule = ccor
-                       | EXPS + ccor;
+            TACCESO.Rule = LLAMADA
+                         | id
+                         | NARREGLO;
+
+            DIM.Rule = acor + EXP + ccor;
 
             EXPS.Rule = MakeStarRule(EXPS, coma, EXP);
 
@@ -419,7 +435,7 @@ namespace _Compi2_Proyecto2_201314863
             //Eliminacion de caracters, no terminales que son estorbos
             this.MarkPunctuation("(", ")", ":", "=>", ",", ".", "[", "]", "://", "/");
             this.MarkPunctuation("clase", "si", "si_no_si", "si_no", "elegir", "caso", "defecto", "hacer", "mientras", "loop", "repetir", "para", "return", "continuar", "salir");
-            this.MarkTransient(AID, IMPORTACIONES, IMPORTAR, ARCHIVO, SENTENCIA, DIM, CONTROL, Fasignar, TIPO);
+            this.MarkTransient(AID, asignarR, IMPORTACIONES, IMPORTAR, ARCHIVO, TACCESO, SENTENCIA, DIM, DIM2, CONTROL, Fasignar, TIPO);
 
         }
 

@@ -180,5 +180,21 @@ namespace _Compi2_Proyecto2_201314863
             }
             return nuevo;
         }
+
+        public static Nodo negacionC3D(ParseTreeNode exp)
+        {
+            Nodo cond = Expresion.castearC3D((int)Simbolo.Tipo.BOOLEAN, Expresion.expresionC3D(exp),
+                exp.Span.Location.Line, exp.Span.Location.Column);
+            if(cond != null)
+            {
+                if(cond.tipo == (int)Simbolo.Tipo.BOOLEAN)
+                {
+                    String eTemp = cond.etqVerdadera;
+                    cond.etqVerdadera = cond.etqFalsa;
+                    cond.etqFalsa = eTemp;
+                }
+            }
+            return cond;
+        }
     }
 }

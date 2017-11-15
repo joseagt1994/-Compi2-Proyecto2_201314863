@@ -53,19 +53,19 @@ namespace _Compi2_Proyecto2_201314863
                     return;
                 }     
             }
-            if(globales != null)
-            {
-                foreach(Atributo g in globales)
-                {
-                    if(g.nombre == var.nombre)
-                    {
-                        Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                        "La variable " + var.nombre + "ya existe y es global!", var.linea,
-                        var.columna));
-                        return;
-                    }
-                }
-            }
+            //if(globales != null)
+            //{
+            //    foreach(Atributo g in globales)
+            //    {
+            //        if(g.nombre == var.nombre)
+            //        {
+            //            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+            //            "La variable " + var.nombre + "ya existe y es global!", var.linea,
+            //            var.columna));
+            //            return;
+            //        }
+            //    }
+            //}
             declaraciones.Add(var);
             variables.Last.Value.Add(var.nombre);
         }
@@ -170,19 +170,26 @@ namespace _Compi2_Proyecto2_201314863
 
         public void evaluarDeclaracion(ParseTreeNode declara)
         {
-            /* DECLARACION -> TIPO + LISTA_IDS + asignarR
-                            | TIPO + LISTA_IDS
-                            | TIPO + id + INDICES */
+            /* OLC++
+             * DECLARACION.Rule = TIPO + LISTA_IDS + asignarR
+                             | TIPO + LISTA_IDS + DARREGLO -> INDICES (ARREGLO)?
+                             | TIPO + LISTA_IDS;
+             * Tree
+             * DECLARACION.Rule = TIPO + LISTA_IDS + asignarR
+                             | TIPO + LISTA_IDS
+                             | TIPO + NARREGLO -> id + INDICES;
+            */
             int tipo = Simbolo.getTipo(declara.ChildNodes[0].Token.Text);
             ParseTreeNode ids = declara.ChildNodes[1];
-            if (ids.Term.Name.Equals("id"))
+            if (ids.Term.Name.Equals("NARREGLO"))
             {
-                Atributo variable = new Atributo(ids.Token.Text, tipo,
-                        ids.Token.Location.Line, ids.Token.Location.Column);
-                variable.asignarArreglo(declara.ChildNodes[2]);
+                Atributo variable = new Atributo(ids.ChildNodes[0].Token.Text, tipo,
+                        ids.ChildNodes[0].Token.Location.Line, 
+                        ids.ChildNodes[0].Token.Location.Column);
+                variable.asignarArreglo(ids.ChildNodes[1]);
                 if (tipo == (int)Simbolo.Tipo.CLASE)
                 {
-                    variable.asignarClase(declara.ChildNodes[0].ChildNodes[0].Token.Text);
+                    variable.asignarClase(declara.ChildNodes[0].Token.Text);
                 }
                 agregarVariable(variable);
             }
@@ -194,7 +201,18 @@ namespace _Compi2_Proyecto2_201314863
                         var.Token.Location.Line, var.Token.Location.Column);
                     if (declara.ChildNodes.Count == 3)
                     {
-                        a.asignarValor(declara.ChildNodes[2]);
+                        if (declara.ChildNodes[2].Term.Name.Equals("DARREGLO"))
+                        {
+                            a.asignarArreglo(declara.ChildNodes[2].ChildNodes[0]);
+                            if(declara.ChildNodes[2].ChildNodes.Count == 2)
+                            {
+                                a.asignarValor(declara.ChildNodes[2].ChildNodes[1]);
+                            }
+                        }
+                        else
+                        {
+                            a.asignarValor(declara.ChildNodes[2]);
+                        }
                     }
                     agregarVariable(a);
                 }

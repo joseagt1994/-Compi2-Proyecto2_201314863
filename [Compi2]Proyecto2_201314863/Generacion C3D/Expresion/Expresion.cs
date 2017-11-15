@@ -60,6 +60,42 @@ namespace _Compi2_Proyecto2_201314863
                 #endregion
                 #region "2 hijos"
                 case 2:
+                    ParseTreeNode n1 = nodo.ChildNodes[0];
+                    ParseTreeNode n2 = nodo.ChildNodes[1];
+                    /*
+                    | EXP + ToTerm("-")
+                    | EXP + ToTerm("not")
+                    | ToTerm("-") + EXP
+                    | ToTerm("not") + EXP
+                    | super + punto + ACCESO
+                    | super + punto + NARREGLO
+                    | self + punto + ACCESO
+                    | self + punto + NARREGLO
+                    */
+                    if (n1.Term.Name.Equals("super") || n1.Term.Name.Equals("este") || n1.Term.Name.Equals("this"))
+                    {
+                        // (super | self)  (NARREGLO | ACCESO)
+                    }
+                    else
+                    {
+                        // Ver si es de OLC++ o Tree
+                        if (n1.Term.Name.Equals("EXP"))
+                        {
+                            ParseTreeNode aux = n2;
+                            n2 = n1;
+                            n1 = aux;
+                        }
+                        if(n1.Term.Name.Equals("not") || n1.Term.Name.Equals("!"))
+                        {
+                            // NEGACION
+                            return Logica.negacionC3D(n2);
+                        }
+                        else
+                        {
+                            // UNARIO
+                            return Aritmetica.unarioC3D(n2);
+                        }
+                    }
                     break;
                 #endregion
                 #region "1 hijo"
@@ -69,9 +105,9 @@ namespace _Compi2_Proyecto2_201314863
                     Nodo nval = new Nodo();
                     switch (tipo)
                     {
-                        case "LLAMADA":
-                            // Generar codigo 3D de llamada a metodo!
-                            //return generarC3DMetodo(nodo.ChildNodes.ElementAt(0), true);
+                        case "NUEVO":
+                            // Generar codigo 3D de llamara a constructor
+                            return null;
                         case "NATIVAS":
                             // getBool, getNum, getRandom, getLength(str), getLength(str id,num)
                             //return generarC3DNativas(nodo.ChildNodes.ElementAt(0));
@@ -86,12 +122,12 @@ namespace _Compi2_Proyecto2_201314863
                         case "ACCESO":
                             return null;
                         case "CRECE":
-                            return null;
+                            return Aritmetica.generarCrecimientoC3D(nodo.ChildNodes[0]);
                         case "cadena":
-                            return guardarCadenaC3D(nodo.ChildNodes.ElementAt(0).ChildNodes.ElementAt(0).Token.Value.ToString());
+                            return guardarCadenaC3D(nodo.ChildNodes[0].Token.Value.ToString().Replace("\"", ""));
                         case "caracter":
                             nval.tipo = (int)Simbolo.Tipo.CARACTER;
-                            String cadena = nodo.ChildNodes.ElementAt(0).Token.Value.ToString().Replace("'", "");
+                            String cadena = nodo.ChildNodes[0].Token.Value.ToString().Replace("'", "");
                             int val = (int)cadena.ElementAt(0);
                             nval.cadena = Convert.ToString(val);
                             return nval;
@@ -104,7 +140,7 @@ namespace _Compi2_Proyecto2_201314863
             }
             return null;
         }
-        
+
         //GENERAR CADENAS!
         public static Nodo guardarCadenaC3D(String cadena)
         {
@@ -554,12 +590,20 @@ namespace _Compi2_Proyecto2_201314863
             return retorno;
         }
         */
-        //CASTEO DE EXPRESIONES!
-        public Nodo castearC3D(int tipo, Nodo nodo, int f, int c)
+
+                //CASTEO DE EXPRESIONES!
+        public static Nodo castearC3D(int tipo, Nodo nodo, int f, int c)
         {
             if (nodo == null)
             {
                 return null;
+            }
+            if (nodo.tipo == (int)Simbolo.Tipo.BOOLEAN)
+            {
+                if (nodo.etqFalsa == null && nodo.etqVerdadera == null)
+                {
+                    nodo.tipo = (int)Simbolo.Tipo.NUMERO;
+                }
             }
             if (nodo.tipo == tipo)
             {
@@ -568,102 +612,94 @@ namespace _Compi2_Proyecto2_201314863
             else
             {
                 Nodo nuevo = new Nodo();
-                if (nodo.tipo == (int)Simbolo.Tipo.BOOLEAN)
-                {
-                    if (nodo.etqFalsa == null && nodo.etqVerdadera == null)
-                    {
-                        nodo.tipo = (int)Simbolo.Tipo.NUMERO;
-                    }
-                }
                 switch (tipo)
                 {
                     case (int)Simbolo.Tipo.NUMERO:
-                        if (nodo.tipo == (int)Simbolo.Tipo.BOOLEAN)
+                        if (nodo.tipo == (int)Simbolo.Tipo.CARACTER || nodo.tipo == (int)Simbolo.Tipo.DECIMAL)
                         {
-                            nuevo.tipo = tipo;
-                            nuevo.cadena = getTemporal();
-                            String eSal = getEtiqueta();
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Castear bool a num"));
-                            generarEtiquetas((nodo.etqVerdadera));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Devolver 1"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nuevo.cadena, "1", "", ""));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSal));
-                            generarEtiquetas((nodo.etqFalsa));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Devolver 0"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nuevo.cadena, "0", "", ""));
-                            generarEtiquetas((eSal));
-                            return nuevo;
+                            nodo.tipo = tipo;
+                            return nodo;
                         }
                         else
                         {
-                            // CADENA
-                            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                "No se puede castear implicitamente str a num", f, c));
+                            // CADENA o BOOLEAN
+                            if(nodo.tipo == (int)Simbolo.Tipo.CADENA)
+                            {
+                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "No se puede castear implicitamente cadena a entero", f, c));
+                            }
+                            else
+                            {
+                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "No se puede castear implicitamente booleano a entero", f, c));
+                            }
                             return null;
                         }
-                    case (int)Simbolo.Tipo.CADENA:
-                        if (nodo.tipo == (int)Simbolo.Tipo.BOOLEAN)
+                    case (int)Simbolo.Tipo.CARACTER:
+                        if (nodo.tipo == (int)Simbolo.Tipo.NUMERO || nodo.tipo == (int)Simbolo.Tipo.DECIMAL)
                         {
-                            nuevo.cadena = getTemporal();
-                            nuevo.tipo = tipo;
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Castear bool a str"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nuevo.cadena, "H", "+", "0"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-                            aumentarHeap("1");
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nuevo.cadena, "S"));
-                            // GENERAR CADENA DE BOOL!
-                            String eSal = getEtiqueta();
-                            generarEtiquetas((nodo.etqVerdadera));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar palabra true"));
-                            Nodo ncad = guardarCadenaC3D("true");
-                            concatenar(ncad.tipo, ncad.cadena);
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSal));
-                            generarEtiquetas((nodo.etqFalsa));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar palabra false"));
-                            Nodo ncad2 = guardarCadenaC3D("false");
-                            concatenar(ncad2.tipo, ncad2.cadena);
-                            generarEtiquetas((eSal));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-                            aumentarPool();
-                            return nuevo;
+                            nodo.tipo = tipo;
+                            return nodo;
                         }
                         else
                         {
-                            // NUMERO
-                            nuevo.cadena = getTemporal();
-                            nuevo.tipo = tipo;
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Castear num a str"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nuevo.cadena, "H", "+", "0"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para nueva cadena"));
-                            aumentarHeap("1");
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Heap", nuevo.cadena, "S"));
-                            // Guardar numero en cadena
-                            concatenar(nodo.tipo, nodo.cadena);
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar fin de cadena"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Pool", "S", "0"));
-                            aumentarPool();
-                            return nuevo;
+                            // CADENA o BOOLEAN
+                            if (nodo.tipo == (int)Simbolo.Tipo.CADENA)
+                            {
+                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "No se puede castear implicitamente cadena a caracter", f, c));
+                            }
+                            else
+                            {
+                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "No se puede castear implicitamente booleano a caracter", f, c));
+                            }
+                            return null;
                         }
-                    default:
+                    case (int)Simbolo.Tipo.DECIMAL:
+                        if (nodo.tipo == (int)Simbolo.Tipo.CARACTER || nodo.tipo == (int)Simbolo.Tipo.NUMERO)
+                        {
+                            nodo.tipo = tipo;
+                            return nodo;
+                        }
+                        else
+                        {
+                            // CADENA o BOOLEAN
+                            if (nodo.tipo == (int)Simbolo.Tipo.CADENA)
+                            {
+                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "No se puede castear implicitamente cadena a decimal", f, c));
+                            }
+                            else
+                            {
+                                Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "No se puede castear implicitamente booleano a decimal", f, c));
+                            }
+                            return null;
+                        }
+                    case (int)Simbolo.Tipo.BOOLEAN:
                         // BOOLEAN
                         if (nodo.tipo == (int)Simbolo.Tipo.NUMERO)
                         {
                             nuevo.tipo = tipo;
-                            nuevo.etqVerdadera = getEtiqueta();
-                            nuevo.etqFalsa = getEtiqueta();
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Castear num a bool"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nuevo.etqFalsa, nodo.cadena, "==", "0"));
-                            instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nuevo.etqVerdadera));
+                            nuevo.etqVerdadera = GeneradorC3D.getEtiqueta();
+                            nuevo.etqFalsa = GeneradorC3D.getEtiqueta();
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Castear num a bool"));
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.CONDICIONAL, nuevo.etqFalsa, nodo.cadena, "==", "0"));
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, nuevo.etqVerdadera));
                             return nuevo;
                         }
                         else
                         {
-                            // CADENA
                             Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
-                                "No se puede castear implicitamente cadena a bool", f, c));
+                                "No se puede castear implicitamente "+Simbolo.getValor(nodo.tipo)+" a bool", f, c));
                             return null;
                         }
+                    default:
+                        // CADENA
+                        Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "No se puede castear implicitamente " + Simbolo.getValor(nodo.tipo) + " a cadena", f, c));
+                        return null;
                 }
             }
         }

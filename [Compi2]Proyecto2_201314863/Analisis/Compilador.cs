@@ -23,7 +23,7 @@ namespace _Compi2_Proyecto2_201314863
         #endregion
 
         #region "Fases del Compilador"
-        public List<C3D> compilar(String texto, RichTextBox consola, int lenguaje)
+        public List<C3D> compilar(String texto, RichTextBox consola, int lenguaje, String clase)
         {
             
             // *************** FASE 1 Analisis Lexico y Sintactico **************//
@@ -32,19 +32,46 @@ namespace _Compi2_Proyecto2_201314863
                 // OLC++
                 InterpreteOLC interprete = new InterpreteOLC();
                 clases = interprete.analizarOLC(texto);
+                clase = clase.Replace(".olc","");
             }
             else
             {
                 // Tree
                 InterpreteTree interprete = new InterpreteTree();
                 clases = interprete.analizarTree(texto);
+                clase = clase.Replace(".tree", "");
             }
             // **************** FASE 2 Llenar Tabla de Simbolos *****************//
             llenarTablaSimbolos();
-            
-            // **************** FASE 3 Analisis Semantico y Codigo Intermedio ***//
-            return null;
 
+            // **************** FASE 3 Analisis Semantico y Codigo Intermedio ***//
+            if (clases.Count > 0)
+            {
+                Clase main = buscarMain(clases[0]);
+                if (main == null)
+                {
+                    // Error! No hay procedimiento main en la clase de inicio!
+                    return null;
+                }
+                GeneradorC3D.clases = clases;
+                return GeneradorC3D.generarC3D(main);
+            }
+            return null;
+        }
+
+        private Clase buscarMain(Clase clase)
+        {
+            foreach(Simbolo simbolo in tablaSimbolos)
+            {
+                if(simbolo.padre != null)
+                {
+                    if(simbolo.rol == (int)Simbolo.Tipo.METODO && simbolo.nombre.Equals("main"))
+                    {
+                        return clase;
+                    }
+                }
+            }
+            return null;
         }
         #endregion
 
@@ -134,6 +161,7 @@ namespace _Compi2_Proyecto2_201314863
             sprocedimiento.clase = "";
             sprocedimiento.dimensiones = null;
             sprocedimiento.nombre = procedimiento.completo;
+            sprocedimiento.visibilidad = procedimiento.visibilidad;
             sprocedimiento.padre = padre;
             sprocedimiento.pos = tamanio;
             sprocedimiento.tam = 2;
@@ -154,6 +182,7 @@ namespace _Compi2_Proyecto2_201314863
         {
             Simbolo sconstructor = new Simbolo();
             sconstructor.ambito = (int)Simbolo.Tipo.GLOBAL;
+            sconstructor.visibilidad = constructor.visibilidad;
             sconstructor.clase = "";
             sconstructor.dimensiones = null;
             sconstructor.nombre = constructor.completo;
@@ -222,11 +251,16 @@ namespace _Compi2_Proyecto2_201314863
         public Simbolo guardarSimboloVariable(String padre, Atributo atributo, bool global)
         {
             Simbolo sglobal = new Simbolo();
-            sglobal.ambito = (int)Simbolo.Tipo.GLOBAL;
+            sglobal.ambito = (int)Simbolo.Tipo.LOCAL;
+            if (global)
+            {
+                sglobal.ambito = (int)Simbolo.Tipo.GLOBAL;
+            }
             sglobal.clase = "";
             sglobal.nombre = atributo.nombre;
             sglobal.padre = padre;
             sglobal.pos = tamanio;
+            sglobal.visibilidad = atributo.visibilidad;
             tamanio++;
             sglobal.rol = (int)Simbolo.Tipo.VARIABLE;
             sglobal.tam = 1;

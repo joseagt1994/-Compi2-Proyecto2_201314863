@@ -62,8 +62,13 @@
     <Compile Include="Estructuras\Simbolo.cs" />
     <Compile Include="Estructuras\TablaSimbolos.cs" />
     <Compile Include="Generacion C3D\C3D.cs" />
+    <Compile Include="Generacion C3D\C3DSentencias.cs" />
+    <Compile Include="Generacion C3D\Control\Si.cs" />
+    <Compile Include="Generacion C3D\Expresion\Acceso.cs" />
     <Compile Include="Generacion C3D\Expresion\Aritmetica.cs" />
+    <Compile Include="Generacion C3D\Expresion\Arreglo.cs" />
     <Compile Include="Generacion C3D\Expresion\Expresion.cs" />
+    <Compile Include="Generacion C3D\Expresion\Llamada.cs" />
     <Compile Include="Generacion C3D\Expresion\Logica.cs" />
     <Compile Include="Generacion C3D\Expresion\Relacional.cs" />
     <Compile Include="Generacion C3D\GeneradorC3D.cs" />
@@ -153,6 +158,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Generacion C3D\Ciclos\" />
     <Folder Include="Optimizacion C3D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

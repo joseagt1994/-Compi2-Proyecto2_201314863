@@ -92,9 +92,9 @@ namespace _Compi2_Proyecto2_201314863
                 case (int)TipoC3D.CONDICIONAL:
                     return "if(" + id1 + " " + operacion + " " + id2 + ") goto " + cadena;
                 case (int)TipoC3D.INICIO_METODO:
-                    return "void " + cadena + "(){";
+                    return "\nvoid " + cadena + "(){\n";
                 case (int)TipoC3D.FIN_METODO:
-                    return "}";
+                    return "\n}\n";
                 case (int)TipoC3D.LLAMADA:
                     return "call " + cadena + "()";
                 case (int)TipoC3D.IMPRIMIR:

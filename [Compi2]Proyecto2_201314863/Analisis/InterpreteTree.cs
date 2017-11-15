@@ -160,14 +160,14 @@ namespace _Compi2_Proyecto2_201314863
                     ParseTreeNode declara = cuerpo.ChildNodes[0];
                     /* DECLARACION -> TIPO + LISTA_IDS + asignarR
                                     | TIPO + LISTA_IDS
-                                    | TIPO + id + INDICES */
+                                    | TIPO + NARREGLO -> id + INDICES */
                     int tipo = Simbolo.getTipo(declara.ChildNodes[0].Token.Text);
                     ParseTreeNode ids = declara.ChildNodes[1];
-                    if (ids.Term.Name.Equals("id"))
+                    if (ids.Term.Name.Equals("NARREGLO"))
                     {
-                        Atributo variable = new Atributo(ids.Token.Text, tipo,
-                                ids.Token.Location.Line, ids.Token.Location.Column);
-                        variable.asignarArreglo(declara.ChildNodes[2]);
+                        Atributo variable = new Atributo(ids.ChildNodes[0].Token.Text, tipo,
+                                ids.ChildNodes[0].Token.Location.Line, ids.ChildNodes[0].Token.Location.Column);
+                        variable.asignarArreglo(ids.ChildNodes[1]);
                         if(tipo == (int)Simbolo.Tipo.CLASE)
                         {
                             variable.asignarClase(declara.ChildNodes[0].ChildNodes[0].Token.Text);
@@ -194,11 +194,11 @@ namespace _Compi2_Proyecto2_201314863
                     ParseTreeNode declara = cuerpo.ChildNodes[1];
                     int tipo = Simbolo.getTipo(declara.ChildNodes[0].Token.Text);
                     ParseTreeNode ids = declara.ChildNodes[1];
-                    if (ids.Term.Name.Equals("id"))
+                    if (ids.Term.Name.Equals("NARREGLO"))
                     {
-                        Atributo variable = new Atributo(ids.Token.Text, tipo,
-                                ids.Token.Location.Line, ids.Token.Location.Column);
-                        variable.asignarArreglo(declara.ChildNodes[2]);
+                        Atributo variable = new Atributo(ids.ChildNodes[0].Token.Text, tipo,
+                                ids.ChildNodes[0].Token.Location.Line, ids.ChildNodes[0].Token.Location.Column);
+                        variable.asignarArreglo(ids.ChildNodes[1]);
                         if (tipo == (int)Simbolo.Tipo.CLASE)
                         {
                             variable.asignarClase(declara.ChildNodes[0].ChildNodes[0].Token.Text);
@@ -384,7 +384,7 @@ namespace _Compi2_Proyecto2_201314863
             List<Atributo> parametros = new List<Atributo>();
             foreach(ParseTreeNode pa in nodo.ChildNodes)
             {
-                // PARAMETRO -> TIPO id INDICES
+                // PARAMETRO -> TIPO NARREGLO -> id INDICES
                 int tipo = Simbolo.getTipo(pa.ChildNodes[0].Token.Text);
                 Atributo parametro = new Atributo(pa.ChildNodes[1].Token.Text, tipo,
                     pa.ChildNodes[1].Token.Location.Line,

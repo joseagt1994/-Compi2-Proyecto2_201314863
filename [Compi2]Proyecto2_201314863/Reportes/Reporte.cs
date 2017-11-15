@@ -23,29 +23,35 @@ namespace _Compi2_Proyecto2_201314863
             tabla.Columns.Add(crearColumna("Tipo"));
             tabla.Columns.Add(crearColumna("Clase"));
             tabla.Columns.Add(crearColumna("Ambito"));
+            tabla.Columns.Add(crearColumna("Visibilidad"));
             tabla.Columns.Add(crearColumna("Posicion"));
             tabla.Columns.Add(crearColumna("Tamaño"));
             tabla.Columns.Add(crearColumna("Dimensiones"));
             int id = 1;
             foreach(Simbolo simbolo in ts)
             {
-                object[] fila = new object[10];
+                object[] fila = new object[11];
                 fila[0] = id;
                 fila[1] = Simbolo.getValor(simbolo.rol);
                 fila[2] = simbolo.nombre;
                 fila[3] = simbolo.padre;
                 fila[4] = Simbolo.getValor(simbolo.tipo);
                 fila[5] = simbolo.clase;
+                if(simbolo.clase == null)
+                {
+                    fila[5] = "--------";
+                }
                 fila[6] = Simbolo.getValor(simbolo.ambito);
-                fila[7] = simbolo.pos;
-                fila[8] = simbolo.tam;
-                fila[9] = "--------";
+                fila[7] = Simbolo.getVisibilidad(simbolo.visibilidad);
+                fila[8] = simbolo.pos;
+                fila[9] = simbolo.tam;
+                fila[10] = "--------";
                 if(simbolo.dimensiones != null)
                 {
-                    fila[9] = "";
+                    fila[10] = "";
                     foreach (int v in simbolo.dimensiones)
                     {
-                        fila[9] += v+" ";
+                        fila[10] += v+" ";
                     }
                 }
                 tabla.Rows.Add(fila);

@@ -133,8 +133,8 @@ namespace _Compi2_Proyecto2_201314863
             var BANDERA = new NonTerminal("BANDERA");
             var EXP = new NonTerminal("EXP");
             var EXPS = new NonTerminal("EXPS");
-            var LEXPS = new NonTerminal("LEXPS");
             var ACCESO = new NonTerminal("ACCESO");
+            var TACCESO = new NonTerminal("TACCESO");
             var TIPO = new NonTerminal("TIPO");
             var LLAMADA = new NonTerminal("LLAMADA");
             var TPROC = new NonTerminal("TPROC");
@@ -155,6 +155,7 @@ namespace _Compi2_Proyecto2_201314863
             var EXCEPTION = new NonTerminal("EXCEPTION");
             var Fasignar = new NonTerminal("Fasignar");
             var DIM = new NonTerminal("DIM");
+            var DIM2 = new NonTerminal("DIM");
             var INDICES = new NonTerminal("INDICES");
             var AID = new NonTerminal("AID");
             var Tasignar = new NonTerminal("EXP");
@@ -163,8 +164,11 @@ namespace _Compi2_Proyecto2_201314863
             var A = new NonTerminal("A");
             var ARREGLO = new NonTerminal("ARREGLO");
             var TARREGLO = new NonTerminal("TARREGLO");
+            var NARREGLO = new NonTerminal("NARREGLO");
             var DARREGLO = new NonTerminal("DARREGLO");
             var X = new NonTerminal("X");
+            var NUEVO = new NonTerminal("NUEVO");
+            var NUMEROS = new NonTerminal("INDICES");
 
             //Terminales Expresiones Regulares
             NumberLiteral numero = TerminalFactory.CreateCSharpNumber("numero");
@@ -229,17 +233,20 @@ namespace _Compi2_Proyecto2_201314863
                              | TIPO + LISTA_IDS + DARREGLO
                              | TIPO + LISTA_IDS;
 
-            DARREGLO.Rule = INDICES + asignar + alla + ARREGLO + clla
-                   | INDICES;
+            DARREGLO.Rule = NUMEROS + asignar + alla + ARREGLO + clla
+                   | NUMEROS;
 
-            LISTA_IDS.Rule = MakeStarRule(LISTA_IDS, coma, id);
+            NUMEROS.Rule = MakeStarRule(NUMEROS, DIM2);
+
+            DIM2.Rule = acor + numero + ccor;
+
+            LISTA_IDS.Rule = LISTA_IDS + coma + id
+                | id;
 
             asignarR.Rule = asignar + EXP;
 
-            ASIGNACION.Rule = Tasignar + asignar + EXP;
-
-            Tasignar.Rule = ACCESO
-                         | id + INDICES;
+            ASIGNACION.Rule = self + punto + ACCESO + asignar + EXP
+                | ACCESO + asignar + EXP;
 
             INDICES.Rule = MakeStarRule(INDICES, DIM);
 
@@ -256,8 +263,8 @@ namespace _Compi2_Proyecto2_201314863
 
             RETORNO.Rule = retornar + EXP;
 
-            LLAMADA.Rule = self + punto + id + acor + LEXPS
-                | id + acor + LEXPS;
+            LLAMADA.Rule = self + punto + id + apar + EXPS + cpar
+                | id + apar + EXPS + cpar;
 
             CONTROL.Rule = IF1
                          | IF2
@@ -304,6 +311,8 @@ namespace _Compi2_Proyecto2_201314863
                       | boolean
                       | id;
 
+            NARREGLO.Rule = id + INDICES;
+
             EXP.Rule = EXP + ToTerm("||") + EXP
                 | EXP + ToTerm("&&") + EXP
                 | EXP + ToTerm("??") + EXP
@@ -322,16 +331,15 @@ namespace _Compi2_Proyecto2_201314863
                 | ToTerm("-") + EXP
                 | ToTerm("!") + EXP
                 | CRECE
-                | nuevo + acor + LEXPS
-                | LLAMADA
+                | NUEVO
                 | self + punto + ACCESO
-                | self + punto + id + INDICES
                 | ACCESO
-                | id + INDICES
                 | numero
                 | tstring
                 | tchar
                 | BANDERA;
+
+            NUEVO.Rule = nuevo + id + apar + EXPS + cpar;
 
             ARREGLO.Rule = MakeStarRule(ARREGLO, coma, TARREGLO);
 
@@ -341,12 +349,13 @@ namespace _Compi2_Proyecto2_201314863
             BANDERA.Rule = falso
                          | verdadero;
 
-            ACCESO.Rule = MakeStarRule(ACCESO, punto, id);
+            ACCESO.Rule = MakeStarRule(ACCESO, punto, TACCESO);
 
-            DIM.Rule = acor + numero + ccor;
+            TACCESO.Rule = LLAMADA
+                         | id
+                         | NARREGLO;
 
-            LEXPS.Rule = ccor
-                       | EXPS + ccor;
+            DIM.Rule = acor + EXP + ccor;
 
             EXPS.Rule = MakeStarRule(EXPS, coma, EXP);
 
@@ -373,7 +382,7 @@ namespace _Compi2_Proyecto2_201314863
             //Eliminacion de caracters, no terminales que son estorbos
             this.MarkPunctuation("(", ")", ":", "=", ",", ".", "[", "]", "{", "}", ";");
             this.MarkPunctuation("clase", "hereda_de", "principal", "si", "sino", "hacer", "mientras", "repetir", "para", "retornar");
-            this.MarkTransient(AID, IMPORTACIONES, SENTENCIA, asignarR, DIM, CONTROL, Fasignar, TIPO, TCUERPO, TARREGLO);
+            this.MarkTransient(AID, TACCESO, IMPORTACIONES, SENTENCIA, asignarR, DIM, DIM2, CONTROL, Fasignar, TIPO, TCUERPO, TARREGLO);
 
         }
     }

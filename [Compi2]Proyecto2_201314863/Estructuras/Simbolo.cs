@@ -21,7 +21,7 @@ namespace _Compi2_Proyecto2_201314863
 
         //ATRIBUTOS DE SIMBOLO
         public String nombre, padre, clase;
-        public int ambito, tipo, rol, pos, tam;
+        public int ambito, tipo, rol, pos, tam, visibilidad;
         //public int fila, columna;
         public List<int> dimensiones;
         //public C3D instruccion;
@@ -29,6 +29,19 @@ namespace _Compi2_Proyecto2_201314863
         public Simbolo()
         {
 
+        }
+
+        public int getTamanio(int dimension)
+        {
+            int tam = 1;
+            if (dimension > 1)
+            {
+                for(int i = 0; i < dimension-1; i++)
+                {
+                    tam *= dimensiones[i];
+                }
+            }
+            return tam;
         }
 
         public static int getVisibilidad(String vis)
@@ -41,6 +54,19 @@ namespace _Compi2_Proyecto2_201314863
                     return (int)Visibilidad.PRIVADO;
                 default:
                     return (int)Visibilidad.PROTEGIDO;
+            }
+        }
+
+        public static String getVisibilidad(int vis)
+        {
+            switch (vis)
+            {
+                case (int)Visibilidad.PUBLICO:
+                    return "Publico";
+                case (int)Visibilidad.PRIVADO:
+                    return "Privado";
+                default:
+                    return "Protegido";
             }
         }
 

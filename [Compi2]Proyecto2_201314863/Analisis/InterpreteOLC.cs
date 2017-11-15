@@ -151,10 +151,8 @@ namespace _Compi2_Proyecto2_201314863
                         {
 
                             Procedimiento proc = new Procedimiento("main", 
-                                (int)Simbolo.Tipo.VACIO, new List<Atributo>(),
-                                cuerpo.ChildNodes[0].ChildNodes[1], 
-                                cuerpo.ChildNodes[0].ChildNodes[0].Token.Location.Line,
-                                cuerpo.ChildNodes[0].ChildNodes[0].Token.Location.Column);
+                                (int)Simbolo.Tipo.VACIO, new List<Atributo>(),cuerpo.ChildNodes[0].ChildNodes[0],
+                                cuerpo.Span.Location.Line, cuerpo.Span.Location.Column);
                             proc.llenarDeclaraciones(proc.sentencias, nueva.atributos);
                             nueva.agregarProcedimiento(proc);
                         }
@@ -165,7 +163,7 @@ namespace _Compi2_Proyecto2_201314863
                         if (cuerpo.ChildNodes[1].Term.Name.Equals("CONSTRUCTOR"))
                         {
                             int vis = Simbolo.getVisibilidad(cuerpo.ChildNodes[0].ChildNodes[0].Token.Text);
-                            Procedimiento cons = guardarConstructor(cuerpo.ChildNodes[0], vis);
+                            Procedimiento cons = guardarConstructor(cuerpo.ChildNodes[1], vis);
                             cons.llenarDeclaraciones(cons.sentencias, nueva.atributos);
                             nueva.agregarConstructor(cons);
                         }
@@ -271,7 +269,7 @@ namespace _Compi2_Proyecto2_201314863
                             String ctipo = tproc.ChildNodes[0].Token.Text;
                             int tipo = Simbolo.getTipo(ctipo);
                             Atributo a = new Atributo(cuerpo.ChildNodes[2].Token.Text,
-                                tipo, cuerpo.ChildNodes[2].Token.Location.Line,
+                                tipo, vis2, cuerpo.ChildNodes[2].Token.Location.Line,
                                 cuerpo.ChildNodes[2].Token.Location.Column);
                             // Ver si el tipo de la variable es una clase
                             if (tipo == (int)Simbolo.Tipo.CLASE)
@@ -347,14 +345,14 @@ namespace _Compi2_Proyecto2_201314863
             List<Atributo> parametros = new List<Atributo>();
             foreach (ParseTreeNode pa in nodo.ChildNodes)
             {
-                // PARAMETRO -> TIPO id INDICES
+                // PARAMETRO -> TIPO NARREGLO -> id INDICES
                 int tipo = Simbolo.getTipo(pa.ChildNodes[0].Token.Text);
                 Atributo parametro = new Atributo(pa.ChildNodes[1].Token.Text, tipo,
                     pa.ChildNodes[1].Token.Location.Line,
                     pa.ChildNodes[1].Token.Location.Column);
                 if (tipo == (int)Simbolo.Tipo.CLASE)
                 {
-                    parametro.asignarClase(pa.ChildNodes[0].ChildNodes[0].Token.Text);
+                    parametro.asignarClase(pa.ChildNodes[0].Token.Text);
                 }
                 if (pa.ChildNodes[2].ChildNodes.Count > 0)
                 {

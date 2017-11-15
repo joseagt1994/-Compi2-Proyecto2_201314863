@@ -35,8 +35,14 @@ namespace _Compi2_Proyecto2_201314863
             if(actual >= 0)
             {
                 Compilador compilador = new Compilador();
+                txtC3D.Text = "";
                 Pagina pag = (Pagina)paginas.SelectedTab;
-                compilador.compilar(pag.cuerpo.Text, txtConsola, pag.tipo);
+                List<C3D> codigo3d = compilador.compilar(pag.cuerpo.Text, txtConsola, pag.tipo, pag.nombre);
+                if (codigo3d == null) { return; }
+                foreach (C3D codigo in codigo3d)
+                {
+                    txtC3D.AppendText(codigo.getInstruccion()+"\n");
+                }
             }
             else
             {
