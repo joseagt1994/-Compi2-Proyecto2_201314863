@@ -80,6 +80,9 @@ namespace _Compi2_Proyecto2_201314863
                         guardarDeclaraciones(s);
                     }
                     break;
+                case "Fasignar":
+                    evaluarDeclaracion(sen.ChildNodes[0]);
+                    break;
                 case "DECLARACION":
                     evaluarDeclaracion(sen);
                     break;

@@ -183,7 +183,7 @@ namespace _Compi2_Proyecto2_201314863
             var INDICES = new NonTerminal("INDICES");
             var AID = new NonTerminal("AID");
             var Tasignar = new NonTerminal("EXP");
-            var CRECE = new NonTerminal("EXP");
+            var CRECE = new NonTerminal("CRECE");
             var ARR = new NonTerminal("ARR");
             var A = new NonTerminal("A");
             var NARREGLO = new NonTerminal("NARREGLO");
@@ -435,7 +435,7 @@ namespace _Compi2_Proyecto2_201314863
             //Eliminacion de caracters, no terminales que son estorbos
             this.MarkPunctuation("(", ")", ":", "=>", ",", ".", "[", "]", "://", "/");
             this.MarkPunctuation("clase", "si", "si_no_si", "si_no", "elegir", "caso", "defecto", "hacer", "mientras", "loop", "repetir", "para", "return", "continuar", "salir");
-            this.MarkTransient(AID, asignarR, IMPORTACIONES, IMPORTAR, ARCHIVO, TACCESO, SENTENCIA, DIM, DIM2, CONTROL, Fasignar, TIPO);
+            this.MarkTransient(AID, asignarR, IMPORTACIONES, IMPORTAR, ARCHIVO, TACCESO, SENTENCIA, DIM, DIM2, CONTROL, TIPO, DEFECTO);
 
         }
 

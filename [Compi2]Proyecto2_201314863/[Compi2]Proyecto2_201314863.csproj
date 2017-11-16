@@ -72,6 +72,12 @@
     <Compile Include="Estructuras\TablaSimbolos.cs" />
     <Compile Include="Generacion C3D\C3D.cs" />
     <Compile Include="Generacion C3D\C3DSentencias.cs" />
+    <Compile Include="Generacion C3D\Ciclos\Hacer.cs" />
+    <Compile Include="Generacion C3D\Ciclos\Loop.cs" />
+    <Compile Include="Generacion C3D\Ciclos\Mientras.cs" />
+    <Compile Include="Generacion C3D\Ciclos\Para.cs" />
+    <Compile Include="Generacion C3D\Ciclos\Repetir.cs" />
+    <Compile Include="Generacion C3D\Ciclos\X.cs" />
     <Compile Include="Generacion C3D\Control\Elegir.cs" />
     <Compile Include="Generacion C3D\Control\Si.cs" />
     <Compile Include="Generacion C3D\Expresion\Acceso.cs" />
@@ -172,7 +178,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Generacion C3D\Ciclos\" />
     <Folder Include="Optimizacion C3D\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

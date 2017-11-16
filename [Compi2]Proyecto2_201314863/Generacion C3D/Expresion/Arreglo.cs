@@ -11,6 +11,7 @@ namespace _Compi2_Proyecto2_201314863
     {
         public static void guardarC3D(string id, ParseTreeNode arreglo, Acceso.Tipo tipo)
         {
+            Acceso.actual = null;
             Nodo nodo = Acceso.generarC3DID(id, tipo, "P", "Stack");
             if(nodo == null)
             {
@@ -79,8 +80,8 @@ namespace _Compi2_Proyecto2_201314863
         {
             if(arreglo.Term.Name.Equals("ARREGLO"))
             {
-                dimensiones.Add(arreglo.ChildNodes.Count);
                 dimensionesArreglo(arreglo.ChildNodes[0], ref dimensiones);
+                dimensiones.Add(arreglo.ChildNodes.Count);
             }
         }
 

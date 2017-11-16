@@ -19,14 +19,11 @@ namespace _Compi2_Proyecto2_201314863
         // LISTA DE CLASES
         public static List<Clase> clases;
         //DISPLAY DE CICLOS!
-        //Display display;
+        public static Display display;
         //DISPLAY DE AMBITOS
         //DisplayAmbitos ambitos;
         //AMBITO DE FUNCIONES O METODOS
-        String nombreMetodo; //Nombre de funcion o metodo
-        int tipo;       //Funcion o metodo
         public static int tamMain;
-        String eSalidaMetodo;
         #endregion
 
         #region "Generacion de C3D"
@@ -34,7 +31,7 @@ namespace _Compi2_Proyecto2_201314863
         public static List<C3D> generarC3D(Clase main_clase)
         {
             instrucciones = new List<C3D>();
-            //this.display = new Display();
+            display = new Display();
             //this.ambitos = new DisplayAmbitos();
             temporales = 1;
             etiquetas = 1;

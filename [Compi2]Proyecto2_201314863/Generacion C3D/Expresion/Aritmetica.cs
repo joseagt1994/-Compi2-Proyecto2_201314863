@@ -606,6 +606,12 @@ namespace _Compi2_Proyecto2_201314863
                 String temp = GeneradorC3D.getTemporal();
                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// expresion "+ope+" expresion"));
                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, nodo.cadena, ope, "1"));
+                if (!nodo.referencia.Equals(""))
+                {
+                    // Guardar en la variable
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "//guardar valor en id"));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, nodo.estructura, nodo.referencia, temp));
+                }
                 nodo.cadena = temp;
                 nodo.tipo = (int)Simbolo.Tipo.DECIMAL;
             }

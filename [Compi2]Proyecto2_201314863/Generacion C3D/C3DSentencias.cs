@@ -47,7 +47,41 @@ namespace _Compi2_Proyecto2_201314863
                         Acceso.generarC3DAcceso(sentencia, Acceso.Tipo.NINGUNO, null);
                         break;
                     case "RETORNO":
-
+                        if(procedimientoActual != null)
+                        {
+                            if(procedimientoActual.rol == (int)Simbolo.Tipo.FUNCION)
+                            {
+                                // Evaluar expresion
+                                Nodo expRetorno = Expresion.expresionC3D(sentencia.ChildNodes[0]);
+                                if (expRetorno != null)
+                                {
+                                    // Guardar en retorno la posicion del objeto creado
+                                    String temp = C3DSentencias.retornarC3D(sentencia.Span.Location.Line, sentencia.Span.Location.Column);
+                                    if (!temp.Equals(""))
+                                    {
+                                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
+                                            "// Guardar el retorno en la posicion"));
+                                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", temp,
+                                            expRetorno.cadena));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if(procedimientoActual.rol == (int)Simbolo.Tipo.METODO)
+                                {
+                                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                    "Retornar vino dentro de un metodo!", sentencia.Span.Location.Line,
+                                    sentencia.Span.Location.Column));
+                                }
+                                else
+                                {
+                                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                    "Retornar vino dentro de un constructor!", sentencia.Span.Location.Line,
+                                    sentencia.Span.Location.Column));
+                                }
+                            }
+                        }
                         break;
                     case "IMPRIMIR":
                         Nodo exp = Expresion.expresionC3D(sentencia.ChildNodes[1]);
@@ -60,30 +94,91 @@ namespace _Compi2_Proyecto2_201314863
                     case "NATIVAS":
                         break;
                     case "CONTINUAR":
+                        // continue;
+                        String eInicio = GeneradorC3D.display.buscarInicio();
+                        if (eInicio == null)
+                        {
+                            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "Continuar vino fuera de un ciclo.", sentencia.Span.Location.Line,
+                                sentencia.Span.Location.Column));
+                        }
+                        else
+                        {
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Continue"));
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eInicio));
+                        }
                         break;
                     case "INTERRUMPIR":
+                        // break;
+                        String eSalidaI = GeneradorC3D.display.buscarSalida();
+                        if (eSalidaI == null)
+                        {
+                            Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                                "Interrumpir vino fuera de un ciclo.", sentencia.Span.Location.Line,
+                                sentencia.Span.Location.Column));
+                        }
+                        else
+                        {
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Break"));
+                            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eSalidaI));
+                        }
                         break;
                     case "IF1":
+                        // IF1 -> EXP Sentencias
+                        String eSalida = GeneradorC3D.getEtiqueta();
+                        Si.evaluarSi(sentencia.ChildNodes[0], sentencia.ChildNodes[1], eSalida);
+                        GeneradorC3D.generarEtiquetas(eSalida);
                         break;
                     case "IF2":
+                        // IF2 -> EXP Sentencias Sentencias
+                        String eSalida2 = GeneradorC3D.getEtiqueta();
+                        Si.evaluarSi(sentencia.ChildNodes[0], sentencia.ChildNodes[1], eSalida2);
+                        Si.evaluarSino(sentencia.ChildNodes[2], eSalida2);
+                        GeneradorC3D.generarEtiquetas(eSalida2);
                         break;
                     case "IF3":
+                        // IF3 -> EXP Sentencias IF4
+                        /*
+                         * IF4.Rule = IF4 EXP Sentencias
+                                    | EXP Sentencias;
+                         * */
+                        String eSalida3 = GeneradorC3D.getEtiqueta();
+                        Si.evaluarSi(sentencia.ChildNodes[0], sentencia.ChildNodes[1], eSalida3);
+                        Si.evaluarIF4(sentencia.ChildNodes[2], eSalida3);
+                        GeneradorC3D.generarEtiquetas(eSalida3);
                         break;
                     case "IF5":
+                        // IF5 -> EXP Sentencias IF4 Sentencias
+                        String eSalida4 = GeneradorC3D.getEtiqueta();
+                        Si.evaluarSi(sentencia.ChildNodes[0], sentencia.ChildNodes[1], eSalida4);
+                        Si.evaluarIF4(sentencia.ChildNodes[2], eSalida4);
+                        Si.evaluarSino(sentencia.ChildNodes[3], eSalida4);
+                        GeneradorC3D.generarEtiquetas(eSalida4);
                         break;
                     case "FOR":
+                        // FOR.Rule = Fasignar (D o A) EXP EXP Sentencias 
+                        // Declarar o asignar!
+                        Para.evaluarParaC3D(sentencia.ChildNodes[0], sentencia.ChildNodes[1],
+                            sentencia.ChildNodes[2], sentencia.ChildNodes[3]);
                         break;
                     case "WHILE":
+                        //WHILE -> EXP Sentencias
+                        Mientras.evaluarMientrasC3D(sentencia.ChildNodes[0], sentencia.ChildNodes[1]);
                         break;
                     case "X":
+                        X.evaluarXC3D(sentencia.ChildNodes[0], sentencia.ChildNodes[1], sentencia.ChildNodes[2]);
                         break;
                     case "REPEAT":
+                        Repetir.evaluarRepetirC3D(sentencia.ChildNodes[0], sentencia.ChildNodes[1]);
                         break;
                     case "DO_WHILE":
+                        Hacer.evaluarHacerC3D(sentencia.ChildNodes[0], sentencia.ChildNodes[1]);
                         break;
                     case "SWITCH":
+                        Elegir.evaluarElegirC3D(sentencia.ChildNodes[0], sentencia.ChildNodes[1]);
                         break;
                     case "LOOP":
+                        Loop.evaluarLoopC3D(sentencia.ChildNodes[0].ChildNodes[0]);
                         break;
                 }
             }

@@ -56,7 +56,7 @@ namespace _Compi2_Proyecto2_201314863
                 }
                 else if(instruccion.tipo == (int)C3D.TipoC3D.INICIO_METODO)
                 {
-                    metodos.Add(instruccion.cadena, i);
+                    metodos.Add(instruccion.cadena, i+1);
                 }
             }
         }
@@ -195,52 +195,10 @@ namespace _Compi2_Proyecto2_201314863
                         }
                     }
                     break;
-                /*case (int)C3D.TipoC3D.EXIT:
+                case (int)C3D.TipoC3D.EXIT:
                     // EXIT -> "EXIT " + cadena; //VER QUE SE GENERA!!!!!??????
-                    int ex = (int)Stack[P + 1];
-                    switch (ex)
-                    {
-                        case 0:
-                            puntero = -1;
-                            break;
-                        case 102:
-                            Errores.getInstance.agregar(new Error((int)Error.tipoError.EXCEPCION,
-                            "NullPointerException, objeto es null!", puntero, 0));
-                            puntero = ambitos.buscarSalida();
-                            ambitos.disminuirAmbito();
-                            break;
-                        case 243:
-                            Errores.getInstance.agregar(new Error((int)Error.tipoError.EXCEPCION,
-                            "MissingReturnException, falta retorno en " + ambitos.ElementAt(0).nombre + "!", puntero, 0));
-                            puntero = ambitos.buscarSalida();
-                            ambitos.disminuirAmbito();
-                            break;
-                        case 396:
-                            Errores.getInstance.agregar(new Error((int)Error.tipoError.EXCEPCION,
-                            "ArithmeticException, no se puede operar!", puntero, 0));
-                            puntero = ambitos.buscarSalida();
-                            ambitos.disminuirAmbito();
-                            break;
-                        case 624:
-                            Errores.getInstance.agregar(new Error((int)Error.tipoError.EXCEPCION,
-                            "StackOverFlowException, no se puede guardar.. se excedio tamaño del Stack!", puntero, 0));
-                            puntero = ambitos.buscarSalida();
-                            ambitos.disminuirAmbito();
-                            break;
-                        case 789:
-                            Errores.getInstance.agregar(new Error((int)Error.tipoError.EXCEPCION,
-                            "HeapOverFlowException, no se puede guardar.. se excedio tamaño del Heap!", puntero, 0));
-                            puntero = ambitos.buscarSalida();
-                            ambitos.disminuirAmbito();
-                            break;
-                        case 801:
-                            Errores.getInstance.agregar(new Error((int)Error.tipoError.EXCEPCION,
-                            "PoolOverFlowException, no se puede guardar.. se excedio tamaño del Pool!", puntero, 0));
-                            puntero = ambitos.buscarSalida();
-                            ambitos.disminuirAmbito();
-                            break;
-                    }
-                    break;*/
+                    puntero = -1;
+                    break;
                 case (int)C3D.TipoC3D.NATIVA:
                     if (mostrarMensaje)
                     {

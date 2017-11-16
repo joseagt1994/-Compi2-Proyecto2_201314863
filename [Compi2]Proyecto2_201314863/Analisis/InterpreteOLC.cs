@@ -160,6 +160,7 @@ namespace _Compi2_Proyecto2_201314863
                     case 2:
                         // sobreescribir METODO
                         // VISIBILIDAD CONSTRUCTOR
+                        // TPROC id
                         if (cuerpo.ChildNodes[1].Term.Name.Equals("CONSTRUCTOR"))
                         {
                             int vis = Simbolo.getVisibilidad(cuerpo.ChildNodes[0].ChildNodes[0].Token.Text);
@@ -179,9 +180,14 @@ namespace _Compi2_Proyecto2_201314863
                             // TPROC id
                             ParseTreeNode tproc = cuerpo.ChildNodes[0];
                             int tipo = Simbolo.getTipo(tproc.ChildNodes[0].Token.Text);
-                            nueva.agregarAtributo(new Atributo(cuerpo.ChildNodes[1].Token.Text,
+                            Atributo a = new Atributo(cuerpo.ChildNodes[1].Token.Text,
                                 tipo, cuerpo.ChildNodes[1].Token.Location.Line,
-                                cuerpo.ChildNodes[1].Token.Location.Column));
+                                cuerpo.ChildNodes[1].Token.Location.Column);
+                            if(tipo == (int)Simbolo.Tipo.CLASE)
+                            {
+                                a.asignarClase(tproc.ChildNodes[0].Token.Text);
+                            }
+                            nueva.agregarAtributo(a);
                         }
                         break;
                     case 3:
