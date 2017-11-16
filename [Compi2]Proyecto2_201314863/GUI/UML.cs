@@ -117,15 +117,17 @@ namespace _Compi2_Proyecto2_201314863
         private void btnConvertirCodigo_Click(object sender, EventArgs e)
         {
             // Convertir codigo a imagen
-            InterpreteTree interprete = new InterpreteTree();
+            
             if(tipoArchivo.SelectedIndex == 0)
             {
                 // OLC
-                //clases = interprete.analizarOLC(txtCodigo.Text);
+                InterpreteOLC interprete = new InterpreteOLC();
+                clases = interprete.analizarOLC(txtCodigo.Text);
             }
             else if(tipoArchivo.SelectedIndex == 1)
             {
                 // Tree
+                InterpreteTree interprete = new InterpreteTree();
                 clases = interprete.analizarTree(txtCodigo.Text);
             }
             else

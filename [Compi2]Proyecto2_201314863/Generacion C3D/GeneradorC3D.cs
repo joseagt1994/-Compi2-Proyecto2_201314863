@@ -25,7 +25,7 @@ namespace _Compi2_Proyecto2_201314863
         //AMBITO DE FUNCIONES O METODOS
         String nombreMetodo; //Nombre de funcion o metodo
         int tipo;       //Funcion o metodo
-        int tamMetodo;
+        public static int tamMain;
         String eSalidaMetodo;
         #endregion
 
@@ -45,7 +45,7 @@ namespace _Compi2_Proyecto2_201314863
             return instrucciones;
         }
 
-        private static Clase getClasePadre(String nombre)
+        public static Clase getClasePadre(String nombre)
         {
             foreach(Clase clase in clases)
             {
@@ -60,21 +60,23 @@ namespace _Compi2_Proyecto2_201314863
         private static void generarC3DMain(Clase clase)
         {
             C3DSentencias.claseActual = clase;
-            instrucciones.Add(new C3D((int)C3D.TipoC3D.INICIO_METODO, "main"));
+            Simbolo smain = TablaSimbolos.getInstance.getProcedimiento(clase.nombre,"main");
             // Guardar this de la clase main
-            generarC3DThis(clase, "P", "Stack");
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para this y super de "+clase.nombre));
+            String t1 = getTemporal();
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar inicio -> pos 0"));
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, t1, "H", "+", "0"));
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", "0", "0"));
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", "1", "1"));
+            GeneradorC3D.aumentarHeap("2");
+            // Generar this y super
+            generarC3DThis(clase, t1, "Heap");
             // Guardar super de la clase main
-            generarC3DSuper(clase, "P", "Stack");
-            foreach(Procedimiento proc in clase.procedimientos)
-            {
-                if (proc.nombre.Equals("main"))
-                {
-                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Inicio de Sentencias"));
-                    C3DSentencias.generarC3D(proc.sentencias);
-                    break;
-                }
-            }
-            instrucciones.Add(new C3D((int)C3D.TipoC3D.FIN_METODO, "}"));
+            generarC3DSuper(clase, t1, "Heap");
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Llamada al main"));
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.LLAMADA, clase.nombre+"_main"));
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Terminar la ejecucion"));
+            instrucciones.Add(new C3D((int)C3D.TipoC3D.EXIT, ""));
         }
 
         private static void generarC3DSuper(Clase clase, String puntero, String estructura)
@@ -83,7 +85,9 @@ namespace _Compi2_Proyecto2_201314863
             if (sclase != null)
             {
                 String t1 = getTemporal();
+                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar apuntador del super"));
                 instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, t1, puntero, "+", "1"));
+                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar posicion donde empieza super"));
                 instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, estructura, t1, "H"));
                 // Buscar clase padre
                 Clase padre;
@@ -104,6 +108,7 @@ namespace _Compi2_Proyecto2_201314863
                 {
                     return;
                 }
+                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para la clase padre"+sclase.nombre));
                 aumentarHeap(Convert.ToString(sclase.tam));
                 // Recorrer las variables globales y asignarles
                 foreach (Atributo atr in padre.atributos)
@@ -119,12 +124,16 @@ namespace _Compi2_Proyecto2_201314863
                         {
                             if (atr.valor != null)
                             {
+                                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor del atributo "+atr.nombre));
                                 Nodo exp = Expresion.expresionC3D(atr.valor);
+                                Acceso.actual = null;
+                                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion del atributo "+atr.nombre));
                                 Nodo nodo = Acceso.generarC3DID(atr.nombre, Acceso.Tipo.SUPER, 
-                                    puntero, estructura);
+                                    "P", "Stack");
                                 if (nodo != null)
                                 {
                                     // Asignar la expresion
+                                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar valor del atributo "+atr.nombre));
                                     instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR,
                                         nodo.estructura, nodo.referencia, exp.cadena));
                                 }
@@ -141,8 +150,11 @@ namespace _Compi2_Proyecto2_201314863
             if(sclase != null)
             {
                 String t1 = getTemporal();
+                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar apuntador del this"));
                 instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, t1, puntero, "+", "0"));
+                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar apuntador donde incia el this"));
                 instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, estructura, t1, "H"));
+                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Reservar espacio para globales de "+clase.nombre));
                 aumentarHeap(Convert.ToString(sclase.tam));
                 // Recorrer las variables globales y asignarles
                 foreach (Atributo atr in clase.atributos)
@@ -155,11 +167,15 @@ namespace _Compi2_Proyecto2_201314863
                     {
                         if(atr.valor != null)
                         {
+                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor del atributo "+atr.nombre));
                             Nodo exp = Expresion.expresionC3D(atr.valor);
-                            Nodo nodo = Acceso.generarC3DID(atr.nombre, Acceso.Tipo.ESTE, puntero, estructura);
+                            Acceso.actual = null;
+                            instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener posicion del atributo "+atr.nombre));
+                            Nodo nodo = Acceso.generarC3DID(atr.nombre, Acceso.Tipo.ESTE, "P", "Stack");
                             if(nodo != null)
                             {
                                 // Asignar la expresion
+                                instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Asignar expresion al atributo "+atr.nombre));
                                 instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR,
                                     nodo.estructura, nodo.referencia, exp.cadena));
                             }
@@ -178,18 +194,26 @@ namespace _Compi2_Proyecto2_201314863
                 // Recorrer cada uno de los constructores
                 foreach (Procedimiento constructor in clase.constructores)
                 {
+                    C3DSentencias.procedimientoActual = TablaSimbolos.getInstance.getProcedimiento(clase.nombre,
+                        constructor.completo);
                     //C3DSentencias.procedimientoActual = constructor.completo;
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.INICIO_METODO, 
                         clase.nombre+"_"+constructor.completo));
                     // Guardar H en t1
                     String t1 = GeneradorC3D.getTemporal();
+                    instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar apuntador de la instancia"));
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, t1, "H", "+", "0"));
                     GeneradorC3D.aumentarHeap("2");
                     // Generar this y super
-                    generarC3DThis(clase, t1, "Heap");
                     String t2 = getTemporal();
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, t2, "P", "+", "0"));
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", t2, t1));
+                    generarC3DThis(clase, t1, "Heap");
+                    t2 = getTemporal();
+                    instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, t2, "P", "+", "1"));
+                    String t5 = getTemporal();
+                    instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, t5, t1, "+", "1"));
+                    instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", t2, t5));
                     generarC3DSuper(clase, t1, "Heap");
                     String t3 = getTemporal();
                     String t4 = getTemporal();
@@ -198,16 +222,23 @@ namespace _Compi2_Proyecto2_201314863
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", t4, t3));
                     // Sentencias del constructor
                     C3DSentencias.generarC3D(constructor.sentencias);
+                    // Guardar en retorno la posicion del objeto creado
+                    String temp = C3DSentencias.retornarC3D(constructor.linea, constructor.columna);
+                    if (!temp.Equals(""))
+                    {
+                        instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
+                            "// Guardar el retorno en la posicion"));
+                        instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", temp,
+                            t1));
+                    }
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.FIN_METODO, "}"));
                 }
                 // Recorrer cada uno de los procedimientos
                 foreach (Procedimiento procedimiento in clase.procedimientos)
                 {
-                    if (procedimiento.nombre.Equals("main"))
-                    {
-                        continue;
-                    }
                     //C3DSentencias.procedimientoActual = procedimiento.completo;
+                    C3DSentencias.procedimientoActual = TablaSimbolos.getInstance.getProcedimiento(clase.nombre,
+                        procedimiento.completo);
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.INICIO_METODO, 
                         clase.nombre + "_" + procedimiento.completo));
                     // Sentencias del procedimiento

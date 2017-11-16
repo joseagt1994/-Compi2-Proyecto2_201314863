@@ -214,14 +214,15 @@
             // generacionToolStripMenuItem
             // 
             this.generacionToolStripMenuItem.Name = "generacionToolStripMenuItem";
-            this.generacionToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.generacionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.generacionToolStripMenuItem.Text = "Generacion";
             // 
             // ejecucionToolStripMenuItem
             // 
             this.ejecucionToolStripMenuItem.Name = "ejecucionToolStripMenuItem";
-            this.ejecucionToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.ejecucionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ejecucionToolStripMenuItem.Text = "Ejecucion";
+            this.ejecucionToolStripMenuItem.Click += new System.EventHandler(this.ejecucionToolStripMenuItem_Click);
             // 
             // codigoCompartidoToolStripMenuItem
             // 

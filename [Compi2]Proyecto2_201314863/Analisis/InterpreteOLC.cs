@@ -26,8 +26,8 @@ namespace _Compi2_Proyecto2_201314863
 
             ParseTree arbol = parser.Parse(entrada);
             ParseTreeNode raiz = arbol.Root;
-            AST ast = new AST();
-            ast.graficarAST(raiz);
+            //AST ast = new AST();
+            //ast.graficarAST(raiz);
             if (raiz == null || arbol.ParserMessages.Count > 0 || arbol.HasErrors())
             {
                 //Hay Errores      

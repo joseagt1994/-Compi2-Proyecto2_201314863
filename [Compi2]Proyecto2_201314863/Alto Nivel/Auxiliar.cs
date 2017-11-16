@@ -199,6 +199,10 @@ namespace _Compi2_Proyecto2_201314863
                 {
                     Atributo a = new Atributo(var.Token.Text, tipo,
                         var.Token.Location.Line, var.Token.Location.Column);
+                    if (tipo == (int)Simbolo.Tipo.CLASE)
+                    {
+                        a.asignarClase(declara.ChildNodes[0].Token.Text);
+                    }
                     if (declara.ChildNodes.Count == 3)
                     {
                         if (declara.ChildNodes[2].Term.Name.Equals("DARREGLO"))

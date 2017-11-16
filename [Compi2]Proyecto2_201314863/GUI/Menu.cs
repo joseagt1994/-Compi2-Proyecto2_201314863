@@ -12,6 +12,7 @@ namespace _Compi2_Proyecto2_201314863
 {
     public partial class Form1 : Form
     {
+        List<C3D> instrucciones = new List<C3D>();
         public Form1()
         {
             InitializeComponent();
@@ -39,6 +40,7 @@ namespace _Compi2_Proyecto2_201314863
                 Pagina pag = (Pagina)paginas.SelectedTab;
                 List<C3D> codigo3d = compilador.compilar(pag.cuerpo.Text, txtConsola, pag.tipo, pag.nombre);
                 if (codigo3d == null) { return; }
+                instrucciones = codigo3d;
                 foreach (C3D codigo in codigo3d)
                 {
                     txtC3D.AppendText(codigo.getInstruccion()+"\n");
@@ -71,6 +73,15 @@ namespace _Compi2_Proyecto2_201314863
             Reportes rpts = new Reportes();
             rpts.setReporteTS(TablaSimbolos.getInstance);
             rpts.Show();
+        }
+
+        private void ejecucionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Ejecutar C3D
+            if(instrucciones != null && instrucciones.Count > 0)
+            {
+                Ejecutor ejecutar = new Ejecutor(instrucciones, this.txtConsola);
+            }
         }
     }
 }

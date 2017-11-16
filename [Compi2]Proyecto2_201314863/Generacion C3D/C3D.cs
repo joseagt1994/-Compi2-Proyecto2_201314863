@@ -11,7 +11,7 @@ namespace _Compi2_Proyecto2_201314863
         public enum TipoC3D : int
         {
             COMENTARIO, ETIQUETA, ASIGNACION, INCONDICIONAL, CONDICIONAL, INICIO_METODO,
-            FIN_METODO, LLAMADA, IMPRIMIR, EXIT, ACCESO, VALOR, NATIVA
+            FIN_METODO, LLAMADA, IMPRIMIR, EXIT, ACCESO, VALOR, NATIVA, CONDICIONALFALSA
         }
 
         //COMENTARIO,INICIO_METODO,FIN_METODO -------> cadena
@@ -78,31 +78,31 @@ namespace _Compi2_Proyecto2_201314863
             switch (this.tipo)
             {
                 case (int)TipoC3D.COMENTARIO:
-                    return cadena;
+                    return "\t" + cadena;
                 case (int)TipoC3D.ETIQUETA:
                     return cadena + ":";
                 case (int)TipoC3D.ASIGNACION:
-                    return cadena + " = " + id1 + " " + operacion + " " + id2;
+                    return "\t" + cadena + " = " + id1 + " " + operacion + " " + id2;
                 case (int)TipoC3D.ACCESO:
-                    return id1 + " = " + cadena + "[" + id2 + "]";
+                    return "\t" + id1 + " = " + cadena + "[" + id2 + "]";
                 case (int)TipoC3D.VALOR:
-                    return cadena + "[" + id1 + "] = " + id2;
+                    return "\t" + cadena + "[" + id1 + "] = " + id2;
                 case (int)TipoC3D.INCONDICIONAL:
-                    return "goto " + cadena;
+                    return "\t" + "goto " + cadena;
                 case (int)TipoC3D.CONDICIONAL:
-                    return "if(" + id1 + " " + operacion + " " + id2 + ") goto " + cadena;
+                    return "\t" + "if(" + id1 + " " + operacion + " " + id2 + ") goto " + cadena;
                 case (int)TipoC3D.INICIO_METODO:
                     return "\nvoid " + cadena + "(){\n";
                 case (int)TipoC3D.FIN_METODO:
                     return "\n}\n";
                 case (int)TipoC3D.LLAMADA:
-                    return "call " + cadena + "()";
+                    return "\t" + cadena + "()";
                 case (int)TipoC3D.IMPRIMIR:
-                    return "printf(" + cadena + "," + id1 + ")";
+                    return "\t" + "printf(" + cadena + "," + id1 + ")";
                 case (int)TipoC3D.NATIVA:
-                    return "call " + cadena + "()";
+                    return "\t" + cadena + "()";
                 default:
-                    return "call exit() "; //VER QUE SE GENERA!!!!!??????
+                    return "\texit() "; //VER QUE SE GENERA!!!!!??????
             }
         }
     }

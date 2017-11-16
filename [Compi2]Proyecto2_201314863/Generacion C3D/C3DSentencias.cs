@@ -35,17 +35,27 @@ namespace _Compi2_Proyecto2_201314863
                         else if (sentencia.ChildNodes[1].Term.Name.Equals("ACCESO"))
                         {
                             // super + ACCESO
+                            Acceso.generarC3DAcceso(sentencia.ChildNodes[1], Acceso.Tipo.SUPER, null);
                         }
                         else
                         {
                             // super + [ + EXPS + ]
+
                         }
                         break;
-                    case "LLAMADA":
+                    case "ACCESO":
+                        Acceso.generarC3DAcceso(sentencia, Acceso.Tipo.NINGUNO, null);
                         break;
                     case "RETORNO":
+
                         break;
                     case "IMPRIMIR":
+                        Nodo exp = Expresion.expresionC3D(sentencia.ChildNodes[1]);
+                        // Recorrer e imprimir segun el caso
+                        if(exp != null)
+                        {
+                            Imprimir.imprimirC3D(exp);
+                        }
                         break;
                     case "NATIVAS":
                         break;
@@ -77,6 +87,26 @@ namespace _Compi2_Proyecto2_201314863
                         break;
                 }
             }
+        }
+
+        public static String retornarC3D(int f, int c)
+        {
+            if(procedimientoActual.rol != (int)Simbolo.Tipo.CONSTRUCTOR)
+            {
+                if(procedimientoActual.rol == (int)Simbolo.Tipo.METODO)
+                {
+                    // Error!
+                    Errores.getInstance.agregar(new Error((int)Error.tipoError.SEMANTICO,
+                        "El metodo "+procedimientoActual.nombre+"no tiene retorno!", f, c));
+                    return "";
+                }
+            }
+            String temp = GeneradorC3D.getTemporal();
+            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
+                    "// Obtener posicion del retorno en el ambito actual "));
+            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, temp, "P",
+                "+", "2"));
+            return temp;
         }
 
         public static void declararAsignarC3D(ParseTreeNode declaracion)
@@ -113,6 +143,7 @@ namespace _Compi2_Proyecto2_201314863
                     else
                     {
                         // EXP
+                        Acceso.actual = null;
                         Nodo exp = Expresion.expresionC3D(declaracion.ChildNodes[2]);
                         Nodo nodo = Acceso.generarC3DID(id.Token.Text, Acceso.Tipo.NINGUNO,
                             "P", "Stack");
@@ -153,11 +184,14 @@ namespace _Compi2_Proyecto2_201314863
                 tipo = Acceso.Tipo.SUPER;
                 asignacion = asignacion.ChildNodes[1];
             }
+            GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Obtener valor de la asignacion"));
             Nodo exp = Expresion.expresionC3D(asignacion.ChildNodes[indice + 1]);
             if(exp != null)
             {
                 if (asignacion.ChildNodes[indice].Term.Name.Equals("ACCESO"))
                 {
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
+                        "// Empezar a Realizar el acceso"));
                     Acceso.generarC3DAcceso(asignacion.ChildNodes[indice], tipo, exp);
                 }
             }

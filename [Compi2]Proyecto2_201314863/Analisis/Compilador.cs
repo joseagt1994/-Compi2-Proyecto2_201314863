@@ -110,7 +110,10 @@ namespace _Compi2_Proyecto2_201314863
             // Agregar this y super a la lista de simbolos
             simbolos.AddLast(guardarEste(constructor.completo));
             simbolos.AddLast(guardarSuper(constructor.completo));
-            tamanio = 2;
+            Atributo retorno = new Atributo("retorno", (int)Simbolo.Tipo.CLASE, constructor.linea, constructor.columna);
+            retorno.clase = clase;
+            simbolos.AddLast(guardarSimboloRetorno(constructor.completo, retorno));
+            tamanio = 3;
             // Recorrer parametros
             foreach(Atributo parametro in constructor.parametros)
             {
@@ -137,6 +140,7 @@ namespace _Compi2_Proyecto2_201314863
             if(procedimiento.tipo != (int)Simbolo.Tipo.VACIO)
             {
                 Atributo retorno = new Atributo("retorno", procedimiento.tipo, procedimiento.linea, procedimiento.columna);
+                retorno.clase = procedimiento.clase;
                 simbolos.AddLast(guardarSimboloRetorno(procedimiento.completo, retorno));
             }
             // Recorrer parametros
@@ -163,8 +167,7 @@ namespace _Compi2_Proyecto2_201314863
             sprocedimiento.nombre = procedimiento.completo;
             sprocedimiento.visibilidad = procedimiento.visibilidad;
             sprocedimiento.padre = padre;
-            sprocedimiento.pos = tamanio;
-            sprocedimiento.tam = 2;
+            sprocedimiento.tam = tamanio;
             sprocedimiento.tipo = procedimiento.tipo;
             sprocedimiento.rol = (int)Simbolo.Tipo.FUNCION;
             if (procedimiento.tipo == (int)Simbolo.Tipo.VACIO)
@@ -187,9 +190,9 @@ namespace _Compi2_Proyecto2_201314863
             sconstructor.dimensiones = null;
             sconstructor.nombre = constructor.completo;
             sconstructor.padre = padre;
-            sconstructor.pos = tamanio;
+            sconstructor.pos = -1;
             sconstructor.rol = (int)Simbolo.Tipo.CONSTRUCTOR;
-            sconstructor.tam = 1;
+            sconstructor.tam = tamanio;
             sconstructor.tipo = -1;
             return sconstructor;
         }
@@ -281,7 +284,7 @@ namespace _Compi2_Proyecto2_201314863
             seste.nombre = "this";
             seste.padre = padre;
             seste.pos = 0;
-            seste.rol = (int)Simbolo.Tipo.PARAMETRO;
+            seste.rol = (int)Simbolo.Tipo.VARIABLE;
             seste.tam = 1;
             seste.tipo = -1;
             seste.dimensiones = null;
@@ -296,7 +299,7 @@ namespace _Compi2_Proyecto2_201314863
             seste.nombre = "super";
             seste.padre = padre;
             seste.pos = 1;
-            seste.rol = (int)Simbolo.Tipo.PARAMETRO;
+            seste.rol = (int)Simbolo.Tipo.VARIABLE;
             seste.tam = 1;
             seste.tipo = -1;
             seste.dimensiones = null;

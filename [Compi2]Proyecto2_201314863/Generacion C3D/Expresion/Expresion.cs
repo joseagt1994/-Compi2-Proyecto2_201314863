@@ -68,13 +68,19 @@ namespace _Compi2_Proyecto2_201314863
                     | ToTerm("-") + EXP
                     | ToTerm("not") + EXP
                     | super + punto + ACCESO
-                    | super + punto + NARREGLO
                     | self + punto + ACCESO
-                    | self + punto + NARREGLO
                     */
                     if (n1.Term.Name.Equals("super") || n1.Term.Name.Equals("este") || n1.Term.Name.Equals("this"))
                     {
-                        // (super | self)  (NARREGLO | ACCESO)
+                        // (super | self)  ACCESO)
+                        if (n1.Term.Name.Equals("super"))
+                        {
+                            return Acceso.generarC3DAcceso(n2, Acceso.Tipo.SUPER, null);
+                        }
+                        else
+                        {
+                            return Acceso.generarC3DAcceso(n2, Acceso.Tipo.NINGUNO, null);
+                        }
                     }
                     else
                     {
@@ -107,7 +113,7 @@ namespace _Compi2_Proyecto2_201314863
                     {
                         case "NUEVO":
                             // Generar codigo 3D de llamara a constructor
-                            return null;
+                            return Llamada.instanciaC3D(nodo.ChildNodes[0], Acceso.Tipo.NINGUNO);
                         case "NATIVAS":
                             // getBool, getNum, getRandom, getLength(str), getLength(str id,num)
                             //return generarC3DNativas(nodo.ChildNodes.ElementAt(0));
@@ -120,7 +126,7 @@ namespace _Compi2_Proyecto2_201314863
                             }
                             return nval;
                         case "ACCESO":
-                            return null;
+                            return Acceso.generarC3DAcceso(nodo.ChildNodes[0], Acceso.Tipo.NINGUNO, null);
                         case "CRECE":
                             return Aritmetica.generarCrecimientoC3D(nodo.ChildNodes[0]);
                         case "cadena":
@@ -149,7 +155,6 @@ namespace _Compi2_Proyecto2_201314863
             nuevo.tipo = (int)Simbolo.Tipo.CADENA;
             nuevo.cadena = GeneradorC3D.getTemporal();
             GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nuevo.cadena, "H", "+", "0"));
-            GeneradorC3D.aumentarHeap("1");
             foreach (char c in cadena)
             {
                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, "// Guardar " + c));

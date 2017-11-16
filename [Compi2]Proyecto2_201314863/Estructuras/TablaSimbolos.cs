@@ -83,6 +83,32 @@ namespace _Compi2_Proyecto2_201314863
             return null;
         }
 
+        public List<Simbolo> getParametros(String clase, Simbolo procedimiento)
+        {
+            List<Simbolo> parametros = new List<Simbolo>();
+            int pos = getPosicionPadre(clase, procedimiento.nombre);
+            bool salir = false;
+            for (int i = pos + 1; i < this.Count; i++)
+            {
+                if (this[i].rol == (int)Simbolo.Tipo.PARAMETRO)
+                {
+                    salir = true;
+                    if (this[i].padre.Equals(procedimiento.nombre))
+                    {
+                        parametros.Add(this[i]);
+                    }
+                }
+                else
+                {
+                    if (salir)
+                    {
+                        break;
+                    }
+                }
+            }
+            return parametros;
+        }
+
         public Simbolo buscarVariable(String nombre, String clase, String procedimiento, Acceso.Tipo tipo)
         {
             if(tipo == Acceso.Tipo.NINGUNO)
@@ -108,7 +134,7 @@ namespace _Compi2_Proyecto2_201314863
                 for(int i = pos+1; i < this.Count; i++)
                 {
                     if(this[i].rol == (int)Simbolo.Tipo.VARIABLE ||
-                       this[i].rol == (int)Simbolo.Tipo.PARAMETRO)
+                       this[i].rol == (int)Simbolo.Tipo.PARAMETRO || this[i].rol == (int)Simbolo.Tipo.RETORNO)
                     {
                         if (this[i].nombre.Equals(nombre))
                         {
@@ -141,7 +167,7 @@ namespace _Compi2_Proyecto2_201314863
                     return simbolo;
                 }
             }
-            return null;
+            return getVariableHeredada(nombre, clase);
         }
 
         public Simbolo getVariableHeredada(String nombre, String clase)
@@ -175,9 +201,10 @@ namespace _Compi2_Proyecto2_201314863
             int contar = 0;
             foreach (Simbolo simbolo in this)
             {
-                if (simbolo.rol == (int)Simbolo.Tipo.FUNCION || simbolo.rol == (int)Simbolo.Tipo.METODO)
+                if (simbolo.rol == (int)Simbolo.Tipo.FUNCION || simbolo.rol == (int)Simbolo.Tipo.METODO ||
+                    simbolo.rol == (int)Simbolo.Tipo.CONSTRUCTOR)
                 {
-                    if(simbolo.padre != null && simbolo.padre.Equals(clase))
+                    if(simbolo.padre != null && simbolo.padre.Equals(clase) && simbolo.nombre.Equals(procedimiento))
                     {
                         return contar;
                     }
