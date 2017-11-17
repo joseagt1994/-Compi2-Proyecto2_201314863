@@ -82,7 +82,7 @@ namespace _Compi2_Proyecto2_201314863
                         "P", "+", Convert.ToString(tam)));
                     GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
                         "// Llamar al procedimiento " + llave));
-                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.LLAMADA, procedimiento.nombre+"_"+llave));
+                    GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.LLAMADA, procedimiento.padre+"_"+llave));
                     // Ver si hay retorno Y guardarlo
                     if (procedimiento.rol == (int)Simbolo.Tipo.FUNCION)
                     {

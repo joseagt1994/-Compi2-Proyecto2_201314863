@@ -11,6 +11,7 @@ namespace _Compi2_Proyecto2_201314863
     {
         public static Clase claseActual;
         public static Simbolo procedimientoActual;
+        public static String eFinProcedimiento;
 
         public static void generarC3D(ParseTreeNode sentencias)
         {
@@ -63,6 +64,9 @@ namespace _Compi2_Proyecto2_201314863
                                             "// Guardar el retorno en la posicion"));
                                         GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, "Stack", temp,
                                             expRetorno.cadena));
+                                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO, 
+                                            "// Salto al final de la funcion "+procedimientoActual.nombre));
+                                        GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.INCONDICIONAL, eFinProcedimiento));
                                     }
                                 }
                             }

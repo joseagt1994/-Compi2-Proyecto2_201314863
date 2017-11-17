@@ -44,6 +44,16 @@ namespace _Compi2_Proyecto2_201314863
             return tam;
         }
 
+        public int getTamanioTotal()
+        {
+            int tam = 1;
+            foreach(int d in dimensiones)
+            {
+                tam *= d;
+            }
+            return tam;
+        }
+
         public static int getVisibilidad(String vis)
         {
             switch (vis)

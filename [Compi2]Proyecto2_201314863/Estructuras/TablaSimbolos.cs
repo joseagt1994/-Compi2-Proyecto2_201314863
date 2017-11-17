@@ -75,7 +75,7 @@ namespace _Compi2_Proyecto2_201314863
             foreach (Simbolo simbolo in this)
             {
                 if ((simbolo.rol == (int)Simbolo.Tipo.METODO || simbolo.rol == (int)Simbolo.Tipo.FUNCION) 
-                    && simbolo.padre.Equals(clase) || simbolo.nombre.Equals(nombre))
+                    && (simbolo.padre.Equals(clase) && simbolo.nombre.Equals(nombre)))
                 {
                     return simbolo;
                 }

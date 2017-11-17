@@ -42,12 +42,21 @@ namespace _Compi2_Proyecto2_201314863
                     }
                 }
                 // Todo bien!
+                /* String t1 = GeneradorC3D.getTemporal();
+                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
+                     "// Obtener puntero al heap del arreglo " + id));
+                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, nodo.estructura, t1, nodo.referencia));
+                 */
+                int tamH = sid.getTamanioTotal();
                 String t1 = GeneradorC3D.getTemporal();
                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
-                    "// Obtener puntero al heap del arreglo " + id));
-                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, nodo.estructura, t1, nodo.referencia));
-
-                recorrerDimensiones(arreglo, t1);
+                     "// Guardar H disponible en " + id));
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.VALOR, 
+                    nodo.estructura, nodo.referencia, "H"));
+                recorrerDimensiones(arreglo, "H");
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
+                     "// Incrementar H para reservar tam del arreglo "+id));
+                GeneradorC3D.aumentarHeap(Convert.ToString(tamH));
             }
         }
 
@@ -112,15 +121,15 @@ namespace _Compi2_Proyecto2_201314863
             String tpos = generarParametrizacionC3D(indices, sid);
             if(nodo != null && tpos != null)
             {
-                String t1 = GeneradorC3D.getTemporal();
-                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
-                    "// Obtener puntero al heap del arreglo " + id));
-                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, nodo.estructura, t1, nodo.referencia));
-                nodo.referencia = GeneradorC3D.getTemporal();
                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
                     "// Sumar la posicion del Heap del arreglo y la posicion del arreglo"));
                 GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ASIGNACION, nodo.referencia,
-                    t1, "+", tpos));
+                    nodo.cadena, "+", tpos));
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.COMENTARIO,
+                    "// Obtener el valor en la posicion del arreglo "+id));
+                nodo.cadena = GeneradorC3D.getTemporal();
+                GeneradorC3D.instrucciones.Add(new C3D((int)C3D.TipoC3D.ACCESO, "Heap", nodo.cadena, 
+                    nodo.referencia));
             }
             return nodo;
         }

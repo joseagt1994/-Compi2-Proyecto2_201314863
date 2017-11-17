@@ -233,6 +233,7 @@ namespace _Compi2_Proyecto2_201314863
                 // Recorrer cada uno de los procedimientos
                 foreach (Procedimiento procedimiento in clase.procedimientos)
                 {
+                    C3DSentencias.eFinProcedimiento = getEtiqueta();
                     //C3DSentencias.procedimientoActual = procedimiento.completo;
                     C3DSentencias.procedimientoActual = TablaSimbolos.getInstance.getProcedimiento(clase.nombre,
                         procedimiento.completo);
@@ -240,6 +241,8 @@ namespace _Compi2_Proyecto2_201314863
                         clase.nombre + "_" + procedimiento.completo));
                     // Sentencias del procedimiento
                     C3DSentencias.generarC3D(procedimiento.sentencias);
+                    generarEtiquetas(C3DSentencias.eFinProcedimiento);
+                    C3DSentencias.eFinProcedimiento = null;
                     instrucciones.Add(new C3D((int)C3D.TipoC3D.FIN_METODO, "}"));
                 }
             }
