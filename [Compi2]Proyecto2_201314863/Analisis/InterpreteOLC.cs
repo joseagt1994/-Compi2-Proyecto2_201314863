@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Irony.Parsing;
+using System.IO;
+using System.Windows.Forms;
 
 namespace _Compi2_Proyecto2_201314863
 {
@@ -67,7 +69,105 @@ namespace _Compi2_Proyecto2_201314863
 
         public void guardarImportaciones(ParseTreeNode nodo)
         {
+            /*
+             * LLAMAR.Rule = importar + apar + tstring + cpar + fin
+                | llamar + apar + tstring + cpar + fin;
+             */
+            foreach(ParseTreeNode importacion in nodo.ChildNodes)
+            {
+                if (importacion.ChildNodes[0].Term.Name.Equals("importar"))
+                {
+                    guardarImportacionTree(importacion.ChildNodes[1].Token.Text.Replace("\"",""));
+                }
+                else
+                {
+                    guardarImportacionOLC(importacion.ChildNodes[1].Token.Text.Replace("\"",""));
+                }
+            }
+        }
 
+        public void guardarImportacionTree(string cadena)
+        {
+            // ver si es del tipo tree
+            if (cadena.Contains(".tree"))
+            {
+                string texto = null;
+                // Es del tipo tree
+                if (cadena.Contains("http"))
+                {
+                    // Es web
+                }
+                else
+                {
+                    if (!cadena.Contains("\\"))
+                    {
+                        cadena = Compilador.rutaEjecutada + cadena;
+                    }
+                    // Esta en un path
+                    try
+                    {
+                        texto = File.ReadAllText(cadena);
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show("No se puede leer el archivo: " + cadena);
+                    }
+                }
+                if(texto != null)
+                {
+                    // Analizar texto
+                    InterpreteTree interprete = new InterpreteTree();
+                    List<Clase> otras = interprete.analizarTree(texto);
+                    foreach(Clase clase in otras)
+                    {
+                        if (!existeClase(clase))
+                        {
+                            clases.Add(clase);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Error Semantico!
+
+            }
+        }
+
+        public void guardarImportacionOLC(string cadena)
+        {
+            if (cadena.Contains(".olc"))
+            {
+                String texto = null;
+                if (!cadena.Contains("\\"))
+                {
+                    // Esta en un path
+                    cadena = Compilador.rutaEjecutada + cadena;
+                }
+                try
+                {
+                    texto = File.ReadAllText(cadena);
+                }
+                catch (IOException ex)
+                {
+                    MessageBox.Show("No se puede leer el archivo: " + cadena);
+                }
+                if(texto != null)
+                {
+                    List<Clase> otras = analizarOLC(texto);
+                    foreach (Clase clase in otras)
+                    {
+                        if (!existeClase(clase))
+                        {
+                            clases.Add(clase);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Error Semantico!
+            }
         }
 
         #endregion

@@ -38,6 +38,7 @@ namespace _Compi2_Proyecto2_201314863
                 Compilador compilador = new Compilador();
                 txtC3D.Text = "";
                 Pagina pag = (Pagina)paginas.SelectedTab;
+                Compilador.rutaEjecutada = pag.ruta;
                 List<C3D> codigo3d = compilador.compilar(pag.cuerpo.Text, txtConsola, pag.tipo, pag.nombre);
                 if (codigo3d == null) { return; }
                 instrucciones = codigo3d;
@@ -82,6 +83,25 @@ namespace _Compi2_Proyecto2_201314863
             {
                 Ejecutor ejecutar = new Ejecutor(instrucciones, this.txtConsola);
             }
+        }
+
+        private void nuevoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Nuevo archivo
+            Pagina.Lenguaje tipoArchivo = (Pagina.Lenguaje)Opciones.ObtenerArchivo();
+            Pagina nueva = new Pagina((int)tipoArchivo, "nuevo");
+            paginas.Controls.Add(nueva);
+            MessageBox.Show(tipoArchivo.ToString());
+        }
+
+        private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Abrir 
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            // Abrir
         }
     }
 }

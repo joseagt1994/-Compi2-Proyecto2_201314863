@@ -23,11 +23,9 @@ namespace _Compi2_Proyecto2_201314863
 
         // Puntero a lista de instrucciones
         public int puntero;
-        bool error = false;
 
         // Atributos a utilizar!
         int ambito;
-        bool esHeap, esStack;
         public int P,H;
         public double NULL = -201314863.102494;
         public double SIGNUM = -241094.22;
@@ -66,7 +64,7 @@ namespace _Compi2_Proyecto2_201314863
         //Llenar estructuras
         public void llenar()
         {
-            for(int i = 0; i < 100000; i++)
+            for(int i = 0; i < 10000; i++)
             {
                 Stack[i] = NULL;
                 Heap[i] = NULL;
@@ -77,8 +75,8 @@ namespace _Compi2_Proyecto2_201314863
         public void ejecutar(List<C3D> instrucciones)
         {
             puntero = 0;
-            Stack = new double[100000];
-            Heap = new double[100000];
+            Stack = new double[10000];
+            Heap = new double[10000];
             llenar();
             ambitos = new DisplayAmbitos();
             etiquetas = new Dictionary<string, int>();
@@ -87,8 +85,6 @@ namespace _Compi2_Proyecto2_201314863
             // Guardar las etiquetas y sus punteros
             guardarEtiquetasMetodos();
             // Empezar ejecucion
-            esHeap = false;
-            esStack = false;
             ambitos.aumentarAmbito(-1,0,"");
             ejecutarInstrucciones();
         }
@@ -200,15 +196,7 @@ namespace _Compi2_Proyecto2_201314863
                     puntero = -1;
                     break;
                 case (int)C3D.TipoC3D.NATIVA:
-                    if (mostrarMensaje)
-                    {
-                        // inNum, inStr
-                        recibirParametro(instruccion);
-                    }
-                    else
-                    {
-                        ejecutarNativa(instruccion);
-                    }
+                    ejecutarNativa(instruccion);
                     break;
                 default:
                     break;
@@ -217,142 +205,69 @@ namespace _Compi2_Proyecto2_201314863
 
         public void ejecutarNativa(C3D instruccion)
         {
-            /*switch (instruccion.cadena)
+            switch (instruccion.cadena)
             {
-                case "$$_inStr":
-                    // 0 -> retorno, no se usa
-                    // 1 -> referencia a la posicion de la variable en Stack
-                    // 2 -> referencia de donde leer la cadena
-                    int refVar = (int)Stack[P + 1];
-                    int refCadena = (int)Stack[P + 2];
-                    cadenaMostrar = devolverCadena(refCadena);
-                    puntero = puntero - 1;
-                    mostrarMensaje = true;
-                    break;
-                case "$$_inNum":
-                    // 0 -> retorno, si se usa
-                    // 1 -> referencia a la cadena a mostrar
-                    // 2 -> num por defecto
-                    int ptr = (int)Stack[P + 1];
-                    cadenaMostrar = devolverCadena(ptr);
-                    puntero = puntero - 1;
-                    mostrarMensaje = true;
-                    break;
-                case "$$_getNum":
-                    // 0 -> retorno, si se usa
-                    // 1 -> referencia a la base
-                    // 2 -> referencia a la cadena a convertir
-                    // 3 -> num por defecto
-                    InterpreteInNum interpretar = new InterpreteInNum();
-                    int ptrN = (int)Stack[P + 2];
-                    String cadena = devolverCadena(ptrN);
-                    double valor = interpretar.analizar(cadena);
-                    if(valor == -1)
-                    {
-                        Stack[P + 0] = Stack[P + 3];
-                    }
-                    else
-                    {
-                        Stack[P + 0] = valor;
-                    }
-                    break;
-                case "$$_getBool":
-                    // 0 -> retorno, bool
-                    // 1 -> referencia a la cadena 
-                    int ptrCad = (int)Stack[P + 1];
-                    String cad = devolverCadena(ptrCad);
-                    if (cad.Equals("true"))
-                    {
-                        Stack[P + 0] = 1;
-                    }
-                    else
-                    {
-                        Stack[P + 0] = 0;
-                    }
-                    break;
-                case "$$_outStr":
-                    // 0 -> retorno, no se usa
-                    // 1 -> referencia a la cadena a mostrar
-                    int ptroCad = (int)Stack[P + 1];
-                    cadenaMostrar = devolverCadena(ptroCad);
-                    imprimir = true;
-                    break;
-                case "$$_outNum":
-                    // 0 -> retorno, no se usa
-                    // 1 -> numero
-                    // 2 -> booleano
-                    double td = Stack[P + 1];
-                    int ptrB = (int)Stack[P + 2];
-                    if(ptrB == 1)
-                    {
-                        int V = (int)td;
-                        cadenaMostrar = V.ToString();
-                    }
-                    else
-                    {
-                        cadenaMostrar = td.ToString();
-                    }
-                    imprimir = true;
-                    break;
-                case "$$_show":
-                    // 0 -> retorno, no se usa
-                    // 1 -> referencia a la cadena
-                    int ptrC = (int)Stack[P + 1];
-                    cadenaMostrar = devolverCadena(ptrC);
-                    imprimir = true;
-                    break;
-                case "$$_getRandom":
+                case "$$_parseInt":
                     // 0 -> retorno
-                    Random rnd = new Random();
-                    Stack[P + 0] = rnd.NextDouble();
+                    // 1 -> referencia a la posicion de la cadena en Stack
+                    int refCadena = (int)Stack[P + 1];
+                    String cadena = devolverCadena(refCadena);
+                    try
+                    {
+                        Stack[P + 0] = Convert.ToInt32(cadena);
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show("No se puede convertir "+cadena+" a entero!");
+                    }
                     break;
-                case "$$_getStrLength":
+                case "$$_parseDouble":
                     // 0 -> retorno
-                    // 1 -> referencia a la cadena
-                    int ptrCc = (int)Stack[P + 1];
-                    String cdn = devolverCadena(ptrCc);
-                    Stack[P + 0] = cdn.Length;
+                    // 1 -> referencia a la posicion de la cadena en Stack
+                    int refCadenaD = (int)Stack[P + 1];
+                    String cadenaD = devolverCadena(refCadenaD);
+                    try
+                    {
+                        Stack[P + 0] = Convert.ToDouble(cadenaD);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("No se puede convertir " + cadenaD + " a decimal!");
+                    }
                     break;
-            }*/
-        }
-
-        public void recibirParametro(C3D instruccion)
-        {
-            /*switch (instruccion.cadena)
-            {
-                case "$$_inStr":
-                    // 0 -> retorno, no se usa
-                    // 1 -> referencia a la posicion de la variable en Stack
-                    // 2 -> referencia de donde leer la cadena
-                    int rV = (int)Stack[P + 1];
-                    Stack[rV] = H;
-                    H = H + 1;
-                    foreach (char c in Debugger.guardada)
+                case "$$_intToStr":
+                    // 0 -> retorno, puntero de la cadena
+                    // 1 -> referencia al numero a convertir a cadena
+                    int refEntero = (int)Stack[P + 1];
+                    String entero = refEntero.ToString();
+                    int posCadI = H;
+                    foreach(char cInt in entero)
                     {
-                        double v = (int)c;
-                        Pool[S] = v;
-                        S = S + 1;
+                        Heap[H] = (int)cInt;
+                        H = H + 1;
                     }
-                    Pool[S] = 0;
-                    S = S + 1;
+                    Stack[P + 0] = posCadI;
                     break;
-                case "$$_inNum":
-                    // 0 -> retorno, si se usa
-                    // 1 -> referencia a la cadena a mostrar
-                    // 2 -> num por defecto
-                    InterpreteInNum interpretarn = new InterpreteInNum();
-                    double val = interpretarn.analizar(Debugger.guardada);
-                    if(val == -1)
+                case "$$_doubleToStr":
+                    // 0 -> retorno, puntero de la cadena
+                    // 1 -> referencia al decimal a convertir a cadena 
+                    double refDec = Stack[P + 1];
+                    String cdecimal = refDec.ToString();
+                    int posCad = H;
+                    foreach (char c in cdecimal)
                     {
-                        Stack[P + 0] = Stack[P + 2];
+                        Heap[H] = (int)c;
+                        H = H + 1;
                     }
-                    else
-                    {
-                        Stack[P + 0] = val;
-                    }
+                    Stack[P + 0] = posCad;
+                    break;
+                case "$$_doubleToInt":
+                    // 0 -> retorno
+                    // 1 -> referencia al decimal a convertir a entero
+                    double refDecimal = Stack[P + 1];
+                    Stack[P + 0] = (int)refDecimal;
                     break;
             }
-            mostrarMensaje = false;*/
         }
 
         public String devolverCadena(int pHeap)

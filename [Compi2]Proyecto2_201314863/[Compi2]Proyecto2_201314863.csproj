@@ -88,6 +88,7 @@
     <Compile Include="Generacion C3D\Expresion\Logica.cs" />
     <Compile Include="Generacion C3D\Expresion\Relacional.cs" />
     <Compile Include="Generacion C3D\GeneradorC3D.cs" />
+    <Compile Include="Generacion C3D\Nativas\Convertidor.cs" />
     <Compile Include="Generacion C3D\Nativas\Imprimir.cs" />
     <Compile Include="Generacion C3D\Nodo.cs" />
     <Compile Include="GUI\EditorClase.cs">

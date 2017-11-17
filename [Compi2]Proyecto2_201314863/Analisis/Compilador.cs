@@ -13,6 +13,7 @@ namespace _Compi2_Proyecto2_201314863
         List<Clase> clases;
         TablaSimbolos tablaSimbolos;
         LinkedList<Simbolo> simbolos;
+        public static String rutaEjecutada;
         int tamanio;
 
         public Compilador()

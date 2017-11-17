@@ -476,12 +476,12 @@ namespace _Compi2_Proyecto2_201314863
                     foreach (Atributo a in atributos)
                     {
                         // Verificar si hay un contructor con parametro con esa Clase y nombre
-                        if (getConstructorClase(clase, a.clase, a.nombre))
+                        if (getConstructorClase(clase, a.clase))
                         {
                             relaciones.Add(new Relacion(clase.nombre, a.clase, (int)Relacion.Tipo.COMPOSICION));
                         }
                         // Sino Verificar si hay un metodo con parametro con esa Clase y nombre
-                        else if (getProcedimientoClase(clase, a.clase, a.nombre))
+                        else if (getProcedimientoClase(clase, a.clase))
                         {
                             relaciones.Add(new Relacion(clase.nombre, a.clase, (int)Relacion.Tipo.AGREGACION));
                         }
@@ -520,13 +520,13 @@ namespace _Compi2_Proyecto2_201314863
             return clases;
         }
 
-        public bool getProcedimientoClase(Clase clase, String nclase, String id)
+        public bool getProcedimientoClase(Clase clase, String nclase)
         {
             foreach (Procedimiento c in clase.procedimientos)
             {
                 foreach (Atributo parametro in c.parametros)
                 {
-                    if (parametro.nombre == id && parametro.clase == nclase)
+                    if (parametro.clase == nclase)
                     {
                         return true;
                     }
@@ -535,13 +535,13 @@ namespace _Compi2_Proyecto2_201314863
             return false;
         }
 
-        public bool getConstructorClase(Clase clase, String nclase, String id)
+        public bool getConstructorClase(Clase clase, String nclase)
         {
             foreach(Procedimiento c in clase.constructores)
             {
                 foreach(Atributo parametro in c.parametros)
                 {
-                    if(parametro.nombre == id && parametro.clase == nclase)
+                    if(parametro.clase == nclase)
                     {
                         return true;
                     }

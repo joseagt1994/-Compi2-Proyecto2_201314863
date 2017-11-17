@@ -100,12 +100,12 @@ namespace _Compi2_Proyecto2_201314863
             var caracter = ToTerm("caracter");
             var str = ToTerm("cadena");
             var boolean = ToTerm("booleano");
-            var getNum = ToTerm("out_String");
-            var getBool = ToTerm("parseInt");
-            var outNum = ToTerm("parseDouble");
-            var outStr = ToTerm("intToStr");
-            var inStr = ToTerm("doubleToStr");
-            var inNum = ToTerm("doubleToInt");
+            var outStr = ToTerm("out_String");
+            var parseInt = ToTerm("parseInt");
+            var parseDouble = ToTerm("parseDouble");
+            var intToStr = ToTerm("intToStr");
+            var doubleToStr = ToTerm("doubleToStr");
+            var doubleToInt = ToTerm("doubleToInt");
             var mostrar = ToTerm("imprimir");
 
             //Signos
@@ -291,16 +291,15 @@ namespace _Compi2_Proyecto2_201314863
                        | super + acor + EXPS + ccor;
 
             IMPRIMIR.Rule = mostrar + acor + EXP + ccor
-                          | outStr + acor + EXP + ccor
-                          | inStr + acor + EXP + coma + EXP + ccor
-                          | outNum + acor + EXP + coma + EXP + ccor;
+                          | outStr + acor + EXP + ccor;
 
-            NATIVAS.Rule = getNum + acor + EXP + ccor
-                         | getBool + acor + EXP + coma + EXP + coma + EXP + ccor
-                         | inNum + acor + EXP + coma + EXP + ccor;
+            NATIVAS.Rule = parseInt + acor + EXP + ccor
+                         | parseDouble + acor + EXP + ccor
+                         | intToStr + acor + EXP + ccor
+                         | doubleToStr + acor + EXP + ccor
+                         | doubleToInt + acor + EXP + ccor;
 
-            INTERRUMPIR.Rule = quiebre
-                             | quiebre + id;
+            INTERRUMPIR.Rule = quiebre;
 
             CONTINUAR.Rule = continuar;
 

@@ -102,7 +102,6 @@ namespace _Compi2_Proyecto2_201314863
                             return Aritmetica.unarioC3D(n2);
                         }
                     }
-                    break;
                 #endregion
                 #region "1 hijo"
                 default:
@@ -115,8 +114,12 @@ namespace _Compi2_Proyecto2_201314863
                             // Generar codigo 3D de llamara a constructor
                             return Llamada.instanciaC3D(nodo.ChildNodes[0], Acceso.Tipo.NINGUNO);
                         case "NATIVAS":
-                            // getBool, getNum, getRandom, getLength(str), getLength(str id,num)
-                            //return generarC3DNativas(nodo.ChildNodes.ElementAt(0));
+                            Nodo exp = expresionC3D(nodo.ChildNodes[1]);
+                            if(exp != null)
+                            {
+                                return Convertidor.generarC3D(nodo.ChildNodes[0].Token.Text, exp);
+                            }
+                            break;
                         case "numero":
                             nval.tipo = (int)Simbolo.Tipo.NUMERO;
                             nval.cadena = nodo.ChildNodes.ElementAt(0).Token.Value.ToString();
@@ -142,6 +145,7 @@ namespace _Compi2_Proyecto2_201314863
                         default:
                             return expresionC3D(nodo.ChildNodes.ElementAt(0));
                     }
+                    break;
                     #endregion
             }
             return null;

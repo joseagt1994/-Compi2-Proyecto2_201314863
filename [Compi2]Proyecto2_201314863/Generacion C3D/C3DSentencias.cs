@@ -96,6 +96,11 @@ namespace _Compi2_Proyecto2_201314863
                         }
                         break;
                     case "NATIVAS":
+                        Nodo expN = Expresion.expresionC3D(sentencia.ChildNodes[1]);
+                        if(expN != null)
+                        {
+                            Convertidor.generarC3D(sentencia.ChildNodes[0].Token.Text,expN);
+                        }
                         break;
                     case "CONTINUAR":
                         // continue;
